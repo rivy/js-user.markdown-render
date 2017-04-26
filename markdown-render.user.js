@@ -3,7 +3,7 @@
 // @namespace   com.houseofivy
 // @description renders markdown files
 //
-// @version     0.004
+// @version     0.006
 // @//updateURL   https://raw.githubusercontent.com/rivy/gms-markdown_viewer.custom-css/master/markdown_viewer.custom-css.user.js
 //
 // file extension: .m(arkdown|kdn?|d(o?wn)?)
@@ -15,10 +15,6 @@
 // @include     file://*.md
 //
 // @require     https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js
-//
-// @//resource    css   https://raw.githubusercontent.com/rivy/js-user.markdown-render/master/css/s.css
-// @//resource    css   https://cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/plugins/line-highlight/prism-line-highlight.min.css
-// @//resource    css   https://cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/plugins/line-numbers/prism-line-numbers.min.css
 //
 // @grant       none
 // ==/UserScript==
@@ -35,12 +31,21 @@ var required_js = [
   protocol+"//cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/plugins/line-highlight/prism-line-highlight.min.js",
   protocol+"//cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/plugins/line-numbers/prism-line-numbers.min.js",
   ],
+  [
+  // syntax highlighter grammers (ToDO: change to lazy loading)
+  protocol+"//cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/components/prism-haskell.min.js",
+  protocol+"//cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/components/prism-perl.min.js",
+  protocol+"//cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/components/prism-python.min.js",
+  ],
   // markdown conversion
   protocol+"//cdnjs.cloudflare.com/ajax/libs/markdown-it/8.3.1/markdown-it.min.js",
   ];
 var optional_css = [
+  // basic
   protocol+"//raw.githubusercontent.com/rivy/js-user.markdown-render/master/css/s.css",
   // syntax highlighter
+  protocol+"//cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/themes/prism.min.css",
+  protocol+"//cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/themes/prism-solarizedlight.min.css",
   protocol+"//cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/plugins/line-highlight/prism-line-highlight.min.css",
   protocol+"//cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/plugins/line-numbers/prism-line-numbers.min.css",
   ];
@@ -50,7 +55,22 @@ load_js_inorder( required_js, function(){
     document.body.innerHTML = render( document.body.textContent );
     });
 
+load_css( optional_css );
+
+
 // #### subs
+
+function load_css( uri ) {
+var styles = Array.from(uri);
+styles.forEach( function( style ){
+    console.log( 'load_css:style = ' + style );
+    $.get( style, function(css){
+       $('<style type="text/css"></style>')
+       .html(css)
+       .appendTo("head");
+       });
+});
+}
 
 function load_js_inorder( uri, callback, timeout ) {
 callback = callback || function(){};
@@ -93,30 +113,47 @@ scripts.forEach( function( script ){
 });
 }
 
-function hightlight_html ( s, lang ) {
+function highlight_code ( s, lang ) {
     console.log('here#1: '+lang);
-    //let grammer = Prism.languages[lang];
-    var grammer = get_prism_grammer(lang);
-    if (grammer !== undefined) {
-        try {
-            console.log('here#2: '+ lang);
-            return Prism.highlight(str, grammer).value;
-        } catch (__) {}
+    // //let grammer = Prism.languages[lang];
+    // // let grammer = get_prism_grammer(lang);
+    // const prismLang = Prism.languages[lang];
+    // if (grammer) {
+    //     console.log('here#2: '+ lang);
+    //     try {
+    //         return Prism.highlight(s, grammer).value;
+    //     } catch (__) {}
+    // }
+    var grammer = Prism.languages[lang];
+    if (grammer) {
+        console.log('here#2: '+ lang);
+        return Prism.highlight( s, grammer);
     }
 }
 
 function get_prism_grammer(lang, callback){
     var grammer = Prism.languages[lang];
-    if (grammer !== undefined) {
-       }
+//    if (grammer !== undefined) {
+//       }
     return grammer;
+}
+
+const DEFAULTS = {
+    plugins: [],
+    init: () => {}
+};
+function p_highlight(text, lang) {
+    const prismLang = Prism.languages[lang];
+    if (prismLang) {
+        return Prism.highlight(text, prismLang);
+    }
 }
 
 var md;
 function render( text ){
     md = md || new markdownit({
       html: true,
-      highlight: hightlight_html,
+      highlight: highlight_code,
       });
     return md.render(text);
     }
