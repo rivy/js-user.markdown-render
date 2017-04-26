@@ -1,6 +1,8 @@
+/*
 // css selectors
 // ref: [base css ~ sss.css] https://github.com/Thiht/sss/blob/master/sss.css
 // see http://www.cssfontstack.com for font stack info
+*/
 body { font-family: Lora, "Noto Serif", "DejaVu Serif", Palatino, serif; font-size: 1.2em; line-height: 1.35; }
 body { max-width: 90%; }
 
@@ -14,8 +16,10 @@ h3 { font-size: 2em }
 h4 { font-size: 1.5em }
 h5, h6 { font-size: 1.25em }
 
+/*
 // // see jsfiddle @ http://jsfiddle.net/5HQ7p
 // h1:after { content:' '; display:block; border:1px dashed #505050; border-radius:2px; -webkit-border-radius:2px; -moz-border-radius:2px; }
+*/
 h1 { border-bottom: 0.05em solid lightgrey; border-radius: 2px; }
 h6 { color: grey }
 pre { border-left: 4px solid green; }
@@ -25,5 +29,7 @@ pre code { padding: 0; border: none; background: none; font-size: 75%; line-heig
 sup code { padding: 0; background: none; font-size: 75%; border: none; }
 table { width: auto; }
 
+/*
 //.hljs-number,.hljs-symbol,.hljs-literal,.hljs-deletion,.hljs-link { color: #cc6666 }
 //.hljs-keyword { color: red }
+*/
