@@ -3,7 +3,7 @@
 // @namespace   com.houseofivy
 // @description renders markdown files
 //
-// @version     0.001
+// @version     0.004
 // @//updateURL   https://raw.githubusercontent.com/rivy/gms-markdown_viewer.custom-css/master/markdown_viewer.custom-css.user.js
 //
 // file extension: .m(arkdown|kdn?|d(o?wn)?)
@@ -15,6 +15,10 @@
 // @include     file://*.md
 //
 // @require     https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js
+//
+// @//resource    css   https://raw.githubusercontent.com/rivy/js-user.markdown-render/master/css/s.css
+// @//resource    css   https://cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/plugins/line-highlight/prism-line-highlight.min.css
+// @//resource    css   https://cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/plugins/line-numbers/prism-line-numbers.min.css
 //
 // @grant       none
 // ==/UserScript==
@@ -35,12 +39,10 @@ var required_js = [
   protocol+"//cdnjs.cloudflare.com/ajax/libs/markdown-it/8.3.1/markdown-it.min.js",
   ];
 var optional_css = [
-  // syntax highlighter (with plugins)
-  protocol+"//raw.githubusercontent.com/rivy/js-user.markdown-render/master/css/markdown_viewer.custom-css.user.js",
-  protocol+"//cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/plugins/line-highlight/prism-line-highlight.min.js",
-  protocol+"//cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/plugins/line-numbers/prism-line-numbers.min.js",
-  // markdown conversion
-  protocol+"//cdnjs.cloudflare.com/ajax/libs/markdown-it/8.3.1/markdown-it.min.js",
+  protocol+"//raw.githubusercontent.com/rivy/js-user.markdown-render/master/css/s.css",
+  // syntax highlighter
+  protocol+"//cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/plugins/line-highlight/prism-line-highlight.min.css",
+  protocol+"//cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/plugins/line-numbers/prism-line-numbers.min.css",
   ];
 
 load_js_inorder( required_js, function(){
