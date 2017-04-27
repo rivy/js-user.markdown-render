@@ -3,16 +3,17 @@
 // ref: [base css ~ sss.css] https://github.com/Thiht/sss/blob/master/sss.css
 // see http://www.cssfontstack.com for font stack info
 */
-body { font-family: Lora, "Noto Serif", "DejaVu Serif", Palatino, serif; font-size: 1.2em; line-height: 1.35; }
-body { max-width: 90%; }
+body { font-family: Lora, "Noto Serif", "DejaVu Serif", Palatino, serif; font-size: 1.2em; line-height: 1.5; }
+body { max-width: 90%; padding-left: 5%;}
 
+h1, h2, h3, h4, h5, h6 { font-family: "Fira Sans", "Open Sans", "DejaVu Sans", Calibri, Arial, sans-serif; }
 h1, h2, h3, h4, h5, h6 { font-family: "Fira Sans", "Open Sans", "DejaVu Sans", Calibri, Arial, sans-serif; }
 h1, h2 { font-weight: 400; }
 h3, h4 { font-weight: 300; }
 h5, h6 { font-weight: 200; }
-h1 { font-size: 3em; }
-h2 { font-size: 2.5em }
-h3 { font-size: 2em }
+h1 { font-size: 2.5em; }
+h2 { font-size: 2em }
+h3 { font-size: 1.75em }
 h4 { font-size: 1.5em }
 h5, h6 { font-size: 1.25em }
 
@@ -20,11 +21,11 @@ h5, h6 { font-size: 1.25em }
 // // see jsfiddle @ http://jsfiddle.net/5HQ7p
 // h1:after { content:' '; display:block; border:1px dashed #505050; border-radius:2px; -webkit-border-radius:2px; -moz-border-radius:2px; }
 */
-h1 { border-bottom: 0.05em solid lightgrey; border-radius: 2px; }
+h1 { border-bottom: 0.05em solid lightgrey; border-radius: 0.01em; }
 h6 { color: grey }
-pre { border-left: 4px solid green; }
-code { font-family: "Fira Mono", "Open Sans Mono", "Anonymous Pro", monospace; font-size: 80%; }
-code { border: 1px solid teal; border-radius: 2px; }
+pre { border-left: 0.25em solid green; border-left-color: rgba(0,128,0,0.8); padding: 0 0.5em; }
+code { font-family: "Fira Mono", "Open Sans Mono", "Anonymous Pro", "Consolas", "Lucida Console", monospace; font-size: 80%; background: /* #EEE */ gainsboro; padding: 0.1em 0.25em; }
+code { border: 0.01em solid teal; border-color: rgba(0,128,0,0.5); border-radius: 0.1em; }
 pre code { padding: 0; border: none; background: none; font-size: 75%; line-height: 1.5; }
 sup code { padding: 0; background: none; font-size: 75%; border: none; }
 table { width: auto; }
@@ -33,3 +34,32 @@ table { width: auto; }
 //.hljs-number,.hljs-symbol,.hljs-literal,.hljs-deletion,.hljs-link { color: #cc6666 }
 //.hljs-keyword { color: red }
 */
+
+
+blockquote {
+  border-left: 0.25em solid /* #EEE */ gainsboro;
+  margin: 0;
+  padding: 0 0.5em;
+}
+
+table {
+  border-collapse: collapse;
+  /* width: 100%; */
+}
+table + table {
+  margin-top: 1em;
+}
+thead {
+  background: /* #EEE */ gainsboro;
+  background: rgba(238,238,238,0.8);
+  text-align: left;
+}
+th, td {
+  border: /* 1px */ 0.05em solid /* #EEE */ gainsboro;
+  padding: /* 5px 10px */ 0.35em 0.7em;
+}
+hr {
+  background: /* #EEE */ gainsboro;
+  border: 0;
+  height: /* 1px */ 0.05em;
+}
