@@ -3,7 +3,7 @@
 // @namespace   com.houseofivy
 // @description renders markdown files
 //
-// @version     0.009
+// @version     0.011
 // @//updateURL   https://raw.githubusercontent.com/rivy/gms-markdown_viewer.custom-css/master/markdown_viewer.custom-css.user.js
 //
 // file extension: .m(arkdown|kdn?|d(o?wn)?)
@@ -145,7 +145,7 @@ const DEFAULTS = {
 function p_highlight(text, lang) {
     const prismLang = Prism.languages[lang];
     if (prismLang) {
-        return Prism.highlight(text, prismLang);
+        return Prism.highlightElement(text, prismLang);
     }
 }
 
@@ -193,6 +193,7 @@ function render( text ){
         }
         tToken = { attrs: tAttrs };
 
+        var content = '<pre ' + slf.renderAttrs(tToken) + ' ' + ((extraAttrs !== null)?extraAttrs:'') +'><code' + slf.renderAttrs(token) + '>' + token.content + '</code></pre>\n';
         if (options.highlight) {
            highlighted = options.highlight(token.content, langName) || escapeHtml(token.content);
         } else {
