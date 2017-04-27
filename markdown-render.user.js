@@ -3,7 +3,7 @@
 // @namespace   com.houseofivy
 // @description renders markdown files
 //
-// @version     0.011
+// @version     0.013
 // @//updateURL   https://raw.githubusercontent.com/rivy/gms-markdown_viewer.custom-css/master/markdown_viewer.custom-css.user.js
 //
 // file extension: .m(arkdown|kdn?|d(o?wn)?)
@@ -45,14 +45,15 @@ var optional_css = [
   protocol+"//raw.githubusercontent.com/rivy/js-user.markdown-render/master/css/s.css",
   // syntax highlighter
   protocol+"//cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/themes/prism.min.css",
-  /* protocol+"//cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/themes/prism-solarizedlight.min.css", */
-//  protocol+"//cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/plugins/line-highlight/prism-line-highlight.min.css",
-//  protocol+"//cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/plugins/line-numbers/prism-line-numbers.min.css",
+  protocol+"//cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/themes/prism-solarizedlight.min.css",
+  protocol+"//cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/plugins/line-highlight/prism-line-highlight.min.css",
+  protocol+"//cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/plugins/line-numbers/prism-line-numbers.min.css",
   ];
 
 load_js_inorder( required_js, function(){
     console.log('rendering');
     document.body.innerHTML = render( document.body.textContent );
+    Prism.highlightAll();
     });
 
 load_css( optional_css );
@@ -153,7 +154,7 @@ var md;
 function render( text ){
     md = md || new markdownit({
       html: true,
-      highlight: highlight_code,
+      //highlight: highlight_code,
       });
 
     md.renderer.rules.fence = function (tokens, idx, options, env, slf) {
@@ -173,10 +174,11 @@ function render( text ){
         if (info) {
            info_tokens = info.split(/\s+/g);
            langName = info_tokens.shift();
-           token.attrPush([ 'class', options.langPrefix + langName ]);
+           var className = (options.langPrefix + langName).trim();
+           token.attrPush([ 'class', className ]);
 
-           tAttrs = token.attrs ? token.attrs.slice() : [];
-           var class_value = token.attrs.class, id_value = null, attrs_value = null;
+           tAttrs = [];
+           var class_value = (className || ''), id_value = null, attrs_value = '';
            info_tokens.forEach((tok)=>{
                tok = tok.trim();
                tok = tok.replace(/^{\s*/,'');
@@ -184,16 +186,16 @@ function render( text ){
                //
                console.log('info token = '+tok);
                //
-               if ( tok.search(/^#/) >= 0 ) { tok = tok.replace(/^#/,''); id_value = tok; }
-               else if ( tok.search(/^\./) >= 0 ) { tok = tok.replace(/^\./,''); class_value = class_value + ' ' + tok; class_value = class_value.trim(); }
+               if ( tok.search(/^#/) >= 0 ) { tok = tok.replace(/^#/,''); id_value = tok.trim(); }
+               else if ( tok.search(/^\./) >= 0 ) { tok = tok.replace(/^\./,''); class_value += ' ' + tok.trim(); class_value = class_value.trim(); }
                else { attrs_value = attrs_value + ' ' + tok; attrs_value = attrs_value.trim(); }
            });
-           if ( id_value ) { tAttrs.push([ 'id', id_value ]); }
+           tAttrs.push([ 'class', class_value ]);
+           if ( id_value !== null ) { tAttrs.push([ 'id', id_value ]); }
            extraAttrs = attrs_value;
         }
         tToken = { attrs: tAttrs };
 
-        var content = '<pre ' + slf.renderAttrs(tToken) + ' ' + ((extraAttrs !== null)?extraAttrs:'') +'><code' + slf.renderAttrs(token) + '>' + token.content + '</code></pre>\n';
         if (options.highlight) {
            highlighted = options.highlight(token.content, langName) || escapeHtml(token.content);
         } else {
