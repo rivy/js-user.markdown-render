@@ -3,7 +3,7 @@
 // @namespace   com.houseofivy
 // @description renders markdown files
 //
-// @version     0.008
+// @version     0.009
 // @//updateURL   https://raw.githubusercontent.com/rivy/gms-markdown_viewer.custom-css/master/markdown_viewer.custom-css.user.js
 //
 // file extension: .m(arkdown|kdn?|d(o?wn)?)
@@ -46,8 +46,8 @@ var optional_css = [
   // syntax highlighter
   protocol+"//cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/themes/prism.min.css",
   /* protocol+"//cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/themes/prism-solarizedlight.min.css", */
-  protocol+"//cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/plugins/line-highlight/prism-line-highlight.min.css",
-  protocol+"//cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/plugins/line-numbers/prism-line-numbers.min.css",
+//  protocol+"//cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/plugins/line-highlight/prism-line-highlight.min.css",
+//  protocol+"//cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/plugins/line-numbers/prism-line-numbers.min.css",
   ];
 
 load_js_inorder( required_js, function(){
@@ -92,7 +92,7 @@ if (scripts.length > 0) {
        .fail( () => { console.log('$:getScript:FAIL: ' + script); } )
       ;
     }
-}
+} else { callback(); }
 }
 
 function load_js( uri, callback, timeout ){
@@ -155,8 +155,55 @@ function render( text ){
       html: true,
       highlight: highlight_code,
       });
+
+    md.renderer.rules.fence = function (tokens, idx, options, env, slf) {
+        var escapeHtml = md.utils.escapeHtml,
+            unescapeAll = md.utils.unescapeAll,
+            token = tokens[idx],
+            info = token.info ? unescapeAll(token.info).trim() : '',
+            langName = '',
+            highlighted;
+
+        // see source for Renderer (see https://github.com/markdown-it/markdown-it/blob/master/lib/renderer.js)
+        // do usual parse of info string plus simplistic pandoc-type interpretation (no allowed internal whitespace)
+        var info_tokens;
+        var tAttrs = null, tToken = null;
+        var extraAttrs = null;
+
+        if (info) {
+           info_tokens = info.split(/\s+/g);
+           langName = info_tokens.shift();
+           token.attrPush([ 'class', options.langPrefix + langName ]);
+
+           tAttrs = token.attrs ? token.attrs.slice() : [];
+           var class_value = token.attrs.class, id_value = null, attrs_value = null;
+           info_tokens.forEach((tok)=>{
+               tok = tok.trim();
+               tok = tok.replace(/^{\s*/,'');
+               tok = tok.replace(/\s*}$/,'');
+               //
+               console.log('info token = '+tok);
+               //
+               if ( tok.search(/^#/) >= 0 ) { tok = tok.replace(/^#/,''); id_value = tok; }
+               else if ( tok.search(/^\./) >= 0 ) { tok = tok.replace(/^\./,''); class_value = class_value + ' ' + tok; class_value = class_value.trim(); }
+               else { attrs_value = attrs_value + ' ' + tok; attrs_value = attrs_value.trim(); }
+           });
+           if ( id_value ) { tAttrs.push([ 'id', id_value ]); }
+           extraAttrs = attrs_value;
+        }
+        tToken = { attrs: tAttrs };
+
+        if (options.highlight) {
+           highlighted = options.highlight(token.content, langName) || escapeHtml(token.content);
+        } else {
+           highlighted = escapeHtml(token.content);
+        }
+
+        return '<pre ' + slf.renderAttrs(tToken) + ' ' + ((extraAttrs !== null)?extraAttrs:'') +'><code' + slf.renderAttrs(token) + '>' + highlighted + '</code></pre>\n';
+        };
+
     return md.render(text);
     }
 
-})( /* window.USERjs = window.USERjs || {} */ );
 
+})( /* window.USERjs = window.USERjs || {} */ );
