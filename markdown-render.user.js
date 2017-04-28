@@ -3,7 +3,7 @@
 // @namespace   com.houseofivy
 // @description renders markdown files
 //
-// @version     0.023
+// @version     0.025
 // @//updateURL   https://raw.githubusercontent.com/rivy/gms-markdown_viewer.custom-css/master/markdown_viewer.custom-css.user.js
 //
 // file extension: .m(arkdown|kdn?|d(o?wn)?)
@@ -45,6 +45,7 @@ var required_js = [
   protocol+"//cdnjs.cloudflare.com/ajax/libs/markdown-it/8.3.1/markdown-it.min.js",
   // markdown-it ~ definition lists (using rawgit ~ see https://github.com/rgrove/rawgit/blob/master/FAQ.md @@ http://archive.is/rMkAp)
   protocol+"//cdn.rawgit.com/markdown-it/markdown-it-deflist/8f2414f23316a2ec1c54bf4631a294fb2ae57ddd/dist/markdown-it-deflist.min.js", // markdown-it-deflist-2.0.1
+  protocol+"//cdn.rawgit.com/arve0/markdown-it-attrs/ce98279c9d3ad32bc0f94a9c1ab1206e6a9abaa8/markdown-it-attrs.browser.js", // markdown-it-attrs-0.8.0
   // markdown-it ~ footnotes
   protocol+"//cdnjs.cloudflare.com/ajax/libs/markdown-it-footnote/3.0.1/markdown-it-footnote.min.js",
   // MathJax
@@ -180,57 +181,11 @@ function render( text ){
 
     md.use(markdownitDeflist);
     md.use(markdownitFootnote);
+    md.use(markdownItAttrs);
 
-    md.renderer.rules.fence = function (tokens, idx, options, env, slf) {
-        var escapeHtml = md.utils.escapeHtml,
-            unescapeAll = md.utils.unescapeAll,
-            token = tokens[idx],
-            info = token.info ? unescapeAll(token.info).trim() : '',
-            langName = '',
-            highlighted;
-
-        // see source for Renderer (see https://github.com/markdown-it/markdown-it/blob/master/lib/renderer.js)
-        // do usual parse of info string plus simplistic pandoc-type interpretation (no allowed internal whitespace)
-        var info_tokens;
-        var tAttrs = null, tToken = null;
-        var extraAttrs = null;
-
-        if (info) {
-           info_tokens = info.split(/\s+/g);
-           langName = info_tokens.shift();
-           var className = (options.langPrefix + langName).trim();
-           token.attrPush([ 'class', className ]);
-
-           tAttrs = [];
-           var class_value = (className || ''), id_value = null, attrs_value = '';
-           info_tokens.forEach((tok)=>{
-               tok = tok.trim();
-               tok = tok.replace(/^{\s*/,'');
-               tok = tok.replace(/\s*}$/,'');
-               //
-               console.log('info token = '+tok);
-               //
-               if ( tok.search(/^#/) >= 0 ) { tok = tok.replace(/^#/,''); id_value = tok.trim(); }
-               else if ( tok.search(/^\./) >= 0 ) { tok = tok.replace(/^\./,''); class_value += ' ' + tok.trim(); class_value = class_value.trim(); }
-               else { attrs_value = attrs_value + ' ' + tok; attrs_value = attrs_value.trim(); }
-           });
-           tAttrs.push([ 'class', class_value ]);
-           if ( id_value !== null ) { tAttrs.push([ 'id', id_value ]); }
-           extraAttrs = attrs_value;
-        }
-        tToken = { attrs: tAttrs };
-
-        if (options.highlight) {
-           highlighted = options.highlight(token.content, langName) || escapeHtml(token.content);
-        } else {
-           highlighted = escapeHtml(token.content);
-        }
-
-        return '<pre ' + slf.renderAttrs(tToken) + ' ' + ((extraAttrs !== null)?extraAttrs:'') +'><code' + slf.renderAttrs(token) + '>' + highlighted + '</code></pre>\n';
-        };
+    // ToDO: hoist code attrs up to enclosing <pre> (but do not duplicate `id`)
 
     return md.render(text);
     }
-
 
 })( /* window.USERjs = window.USERjs || {} */ );
