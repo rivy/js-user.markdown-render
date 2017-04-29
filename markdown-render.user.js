@@ -3,7 +3,7 @@
 // @namespace   com.houseofivy
 // @description renders markdown files
 //
-// @version     0.029
+// @version     0.031
 // @//updateURL   https://raw.githubusercontent.com/rivy/gms-markdown_viewer.custom-css/master/markdown_viewer.custom-css.user.js
 //
 // file extension: .m(arkdown|kdn?|d(o?wn)?)
@@ -19,7 +19,7 @@
 // @grant       none
 // ==/UserScript==
 
-(function( /* USERjs */ ){
+(function( /* USERjs, */ window, $ ){
 'use strict';
 
 var protocol = document.location.protocol; if (protocol === 'file:') { protocol = 'https:'; }
@@ -75,15 +75,8 @@ var optional_css = [
 
 load_js_inorder( required_js, function(){
     console.log('rendering');
-    document.body.innerHTML = render( document.body.textContent );
+    document.body.innerHTML = render_markdown( document.body.textContent );
     Prism.highlightAll();
-    var clipboard = new Clipboard('.btn');
-    clipboard.on('success', function(e) {
-        console.log(e);
-    });
-    clipboard.on('error', function(e) {
-        console.log(e);
-    });
     });
 
 load_css( optional_css );
@@ -181,19 +174,19 @@ function p_highlight(text, lang) {
 }
 
 var md;
-function render( text ){
+function render_markdown( text ){
     md = md || new markdownit({
       html: true,
+      linkify: true,
+      typographer: true,
       //highlight: highlight_code,
       });
-
+    // plugins
     md.use(markdownitDeflist);
     md.use(markdownitFootnote);
     md.use(markdownItAttrs);
 
-    // ToDO: hoist code attrs up to enclosing <pre> (but do not duplicate `id`)
-
     return md.render(text);
     }
 
-})( /* window.USERjs = window.USERjs || {} */ );
+})( /* window.USERjs = window.USERjs || {}, */ window, jQuery );
