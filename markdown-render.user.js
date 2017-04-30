@@ -3,7 +3,7 @@
 // @namespace   com.houseofivy
 // @description renders markdown files
 //
-// @version     0.031
+// @version     0.033
 // @//updateURL   https://raw.githubusercontent.com/rivy/gms-markdown_viewer.custom-css/master/markdown_viewer.custom-css.user.js
 //
 // file extension: .m(arkdown|kdn?|d(o?wn)?)
@@ -177,7 +177,7 @@ var md;
 function render_markdown( text ){
     md = md || new markdownit({
       html: true,
-      linkify: true,
+      //linkify: true,
       typographer: true,
       //highlight: highlight_code,
       });
