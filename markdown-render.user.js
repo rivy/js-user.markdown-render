@@ -3,7 +3,7 @@
 // @namespace   com.houseofivy
 // @description renders markdown files
 //
-// @version     0.035
+// @version     0.037
 // @//updateURL   https://raw.githubusercontent.com/rivy/gms-markdown_viewer.custom-css/master/markdown_viewer.custom-css.user.js
 //
 // file extension: .m(arkdown|kdn?|d(o?wn)?)
@@ -75,6 +75,54 @@ var optional_css = [
   protocol+"//cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/plugins/toolbar/prism-toolbar.min.css",
   ];
 
+(function ($) {
+    // ref: http://stackoverflow.com/questions/6753362/jquery-how-to-copy-all-the-attributes-of-one-element-and-apply-them-to-another/24626637#24626637 @@ http://archive.is/i92ld
+    // Define the function here
+    $.fn.copyAllAttributes = function(sourceElement) {
+        // 'that' contains a pointer to the destination element
+        var that = this;
+
+        // Place holder for all attributes
+        var allAttributes = ($(sourceElement) && $(sourceElement).length > 0) ?
+            $(sourceElement).prop("attributes") : null;
+
+        // Iterate through attributes and add
+        if (allAttributes && $(that) && $(that).length == 1) {
+            $.each(allAttributes, function() {
+                // Ensure that class names are not copied but rather added
+                if (this.name == "class") {
+                    $(that).addClass(this.value);
+                } else if (this.name == "id") {
+                    // skip id's
+                } else {
+                    that.attr(this.name, this.value);
+                }
+            });
+        }
+        return that;
+    };
+    $.fn.copyID = function(sourceElement) {
+        // 'that' contains a pointer to the destination element
+        var that = this;
+
+        // Place holder for all attributes
+        var allAttributes = ($(sourceElement) && $(sourceElement).length > 0) ?
+            $(sourceElement).prop("attributes") : null;
+
+        // Iterate through attributes and add
+        if (allAttributes && $(that) && $(that).length == 1) {
+            $.each(allAttributes, function() {
+                // only id is copied and removed
+                if (this.name == "id") {
+                    that.attr(this.name, this.value);
+    //                this.removeAttr("id");
+                }
+            });
+        }
+        return that;
+    };
+})(jQuery);
+
 load_js_inorder( required_js, function(){
     console.log('rendering');
     document.body.innerHTML = render_markdown( document.body.textContent );
@@ -86,6 +134,19 @@ load_js_inorder( required_js, function(){
       }
     });
     MathJax.Hub.Configured();
+
+    // hoist 'id' from CODE to PRE; merge 'class' and duplicate other attributes from CODE into PRE
+    $('pre code').each(function(){
+        console.log( $(this).attr('class') );
+        if ( $(this).attr('class') ) {
+            $(this).parent('pre').attr('id', $(this).attr('id'));
+            $(this).removeAttr('id');
+            //
+            $(this).parent('pre').copyAllAttributes($(this));
+        }
+        //$(this).parent('pre').
+    });
+
     Prism.highlightAll();
     });
 
