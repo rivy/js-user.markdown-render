@@ -33,8 +33,8 @@ var required_js = [
   //protocol+"//cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/plugins/line-highlight/prism-line-highlight.min.js",
   protocol+"//cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/plugins/line-numbers/prism-line-numbers.min.js",
 //  ],
-  protocol+"//cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/plugins/toolbar/prism-toolbar.min.js",
-  protocol+"//cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/plugins/copy-to-clipboard/prism-copy-to-clipboard.min.js",
+//  protocol+"//cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/plugins/toolbar/prism-toolbar.min.js",
+//  protocol+"//cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/plugins/copy-to-clipboard/prism-copy-to-clipboard.min.js",
   [
   // syntax highlighter grammers (ToDO: change to lazy loading)
   protocol+"//cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/components/prism-haskell.min.js",
@@ -69,10 +69,10 @@ var optional_css = [
   //protocol+"//raw.githubusercontent.com/Thiht/markdown-viewer/master/chrome/lib/sss/sss.print.css",
   // syntax highlighter
   protocol+"//cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/themes/prism.min.css",
-  protocol+"//cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/themes/prism-solarizedlight.min.css",
-  protocol+"//cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/plugins/line-highlight/prism-line-highlight.min.css",
-  protocol+"//cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/plugins/line-numbers/prism-line-numbers.min.css",
-  protocol+"//cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/plugins/toolbar/prism-toolbar.min.css",
+  //protocol+"//cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/themes/prism-solarizedlight.min.css",
+  //protocol+"//cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/plugins/line-highlight/prism-line-highlight.min.css",
+  //protocol+"//cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/plugins/line-numbers/prism-line-numbers.min.css",
+  //protocol+"//cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/plugins/toolbar/prism-toolbar.min.css",
   ];
 
 (function ($) {
@@ -101,26 +101,6 @@ var optional_css = [
         }
         return that;
     };
-    $.fn.copyID = function(sourceElement) {
-        // 'that' contains a pointer to the destination element
-        var that = this;
-
-        // Place holder for all attributes
-        var allAttributes = ($(sourceElement) && $(sourceElement).length > 0) ?
-            $(sourceElement).prop("attributes") : null;
-
-        // Iterate through attributes and add
-        if (allAttributes && $(that) && $(that).length == 1) {
-            $.each(allAttributes, function() {
-                // only id is copied and removed
-                if (this.name == "id") {
-                    that.attr(this.name, this.value);
-    //                this.removeAttr("id");
-                }
-            });
-        }
-        return that;
-    };
 })(jQuery);
 
 load_js_inorder( required_js, function(){
@@ -138,15 +118,80 @@ load_js_inorder( required_js, function(){
     // hoist 'id' from CODE to PRE; merge 'class' and duplicate other attributes from CODE into PRE
     $('pre code').each(function(){
         console.log( $(this).attr('class') );
-        if ( $(this).attr('class') ) {
-            $(this).parent('pre').attr('id', $(this).attr('id'));
-            $(this).removeAttr('id');
+        var CODE = $(this);
+        var PRE = $(this).parent('pre');
+        if ( PRE && CODE.attr('class') ) {
+            PRE.attr('id', $(this).attr('id'));
+            CODE.removeAttr('id');
             //
-            $(this).parent('pre').copyAllAttributes($(this));
+            //PRE.copyAllAttributes($(this));
+        }
+        if (PRE) {
+            PRE.addClass('snippet');
+            //PRE.prepend('<button class="btn" data-clipboard-snippet=""><img class="clippy" width="13" src="https://cdn.rawgit.com/rivy/js-user.markdown-render/master/assets/clippy.svg" alt="Copy to clipboard"></button>');
         }
         //$(this).parent('pre').
     });
 
+    //var clipboard=new Clipboard('[data-clipboard-demo]');
+    //clipboard.on('success',function(e){e.clearSelection();console.info('Action:',e.action);console.info('Text:',e.text);console.info('Trigger:',e.trigger);showTooltip(e.trigger,'Copied!');});
+    //clipboard.on('error',function(e){console.error('Action:',e.action);console.error('Trigger:',e.trigger);showTooltip(e.trigger,fallbackMessage(e.action));});
+
+var clipboardDemos = new Clipboard('[data-clipboard-demo]');
+clipboardDemos.on('success', function(e) {
+    e.clearSelection();
+    console.info('Action:', e.action);
+    console.info('Text:', e.text);
+    console.info('Trigger:', e.trigger);
+    showTooltip(e.trigger, 'Copied!');
+});
+clipboardDemos.on('error', function(e) {
+    console.error('Action:', e.action);
+    console.error('Trigger:', e.trigger);
+    showTooltip(e.trigger, fallbackMessage(e.action));
+});
+
+var snippets = document.querySelectorAll('.snippet');
+[].forEach.call(snippets, function(snippet) {
+    snippet.firstChild.insertAdjacentHTML('beforebegin', '<button class="btn" data-clipboard-snippet><img class="clippy" width="14" src="https://cdn.rawgit.com/rivy/js-user.markdown-render/master/assets/clippy.svg" alt="Copy to clipboard"></button>');
+});
+var clipboardSnippets = new Clipboard('[data-clipboard-snippet]',{
+    target: function(trigger) {
+        return trigger.nextElementSibling;
+    }
+});
+clipboardSnippets.on('success', function(e) {
+    e.clearSelection();
+    showTooltip(e.trigger, 'Copied!');
+});
+clipboardSnippets.on('error', function(e) {
+    showTooltip(e.trigger, fallbackMessage(e.action));
+});
+
+var btns = document.querySelectorAll('.btn');
+for (var i = 0; i < btns.length; i++) {
+    btns[i].addEventListener('mouseleave', function(e) {
+        e.currentTarget.setAttribute('class', 'btn');
+        e.currentTarget.removeAttribute('aria-label');
+    });
+}
+function showTooltip(elem, msg) {
+    elem.setAttribute('class', 'btn tooltipped tooltipped-s');
+    elem.setAttribute('aria-label', msg);
+}
+function fallbackMessage(action) {
+    var actionMsg = '';
+    var actionKey = (action === 'cut' ? 'X' : 'C');
+    if (/iPhone|iPad/i.test(navigator.userAgent)) {
+        actionMsg = 'No support :(';
+    } else if (/Mac/i.test(navigator.userAgent)) {
+        actionMsg = 'Press ⌘-' + actionKey + ' to ' + action;
+    } else {
+        actionMsg = 'Press Ctrl-' + actionKey + ' to ' + action;
+    }
+    return actionMsg;
+}
+    //var clipboard = new Clipboard('.clippy-btn');
     Prism.highlightAll();
     });
 
