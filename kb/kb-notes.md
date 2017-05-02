@@ -42,3 +42,15 @@ info @ <https://www.npmjs.com/package/markdown-it-pandoc-renderer>; repo @ <http
 For parsing YAML front matter...
 
 info / repo @ <https://github.com/CaliStyle/markdown-it-meta>
+
+#### "markdown-it-replacements"
+
+For parsing "em-dash", "en-dashes", ellipses, and "plus-minus" symbols...
+
+info / repo @ <https://github.com/edemaine/markdown-it-replacements>
+
+The main script file is written in coffee script... not sure how that effects direct loading within a UserScript. 
+
+#### show "rendering" text
+
+Instead of the progressive changes to the markdown page being visible, @run-at document-start and hide the page content until it's rendered, possibly showing some sort of progression text. A discussion for page hiding during calculations, containing some UserScript, is at <https://forum.tampermonkey.net/viewtopic.php?t=301>[`@@`]<http://archive.is/xxM0f>.
