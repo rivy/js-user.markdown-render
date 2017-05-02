@@ -3,7 +3,7 @@
 // @namespace   com.houseofivy
 // @description renders markdown files
 //
-// @version     0.041
+// @version     0.043
 // @//updateURL   https://raw.githubusercontent.com/rivy/gms-markdown_viewer.custom-css/master/markdown_viewer.custom-css.user.js
 //
 // file extension: .m(arkdown|kdn?|d(o?wn)?)
@@ -21,6 +21,8 @@
 
 (function( /* USERjs, */ window, $ ){
 'use strict';
+
+// #### config
 
 var protocol = document.location.protocol; if (protocol === 'file:') { protocol = 'https:'; }
 var required_js = [
@@ -75,35 +77,19 @@ var optional_css = [
   //protocol+"//cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/plugins/toolbar/prism-toolbar.min.css",
   ];
 
-(function ($) {
-    // ref: http://stackoverflow.com/questions/6753362/jquery-how-to-copy-all-the-attributes-of-one-element-and-apply-them-to-another/24626637#24626637 @@ http://archive.is/i92ld
-    // Define the function here
-    $.fn.copyAllAttributes = function(sourceElement) {
-        // 'that' contains a pointer to the destination element
-        var that = this;
+// #### main()
 
-        // Place holder for all attributes
-        var allAttributes = ($(sourceElement) && $(sourceElement).length > 0) ?
-            $(sourceElement).prop("attributes") : null;
+(function main(){
 
-        // Iterate through attributes and add
-        if (allAttributes && $(that) && $(that).length == 1) {
-            $.each(allAttributes, function() {
-                // Ensure that class names are not copied but rather added
-                if (this.name == "class") {
-                    $(that).addClass(this.value);
-                } else if (this.name == "id") {
-                    // skip id's
-                } else {
-                    that.attr(this.name, this.value);
-                }
-            });
-        }
-        return that;
-    };
-})(jQuery);
+load_js_inorder( required_js, do_render );
+load_css( optional_css );
 
-load_js_inorder( required_js, function(){
+})();
+
+// #### subs
+
+function do_render(){
+    let meta = '<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />';
     console.log('rendering');
     document.body.innerHTML = render_markdown( document.body.textContent );
     console.log( 'document.compatMode = '+document.compatMode );
@@ -193,12 +179,35 @@ function fallbackMessage(action) {
 }
     //var clipboard = new Clipboard('.clippy-btn');
     Prism.highlightAll();
-    });
+}
 
-load_css( optional_css );
+(function ($) {
+    // ref: http://stackoverflow.com/questions/6753362/jquery-how-to-copy-all-the-attributes-of-one-element-and-apply-them-to-another/24626637#24626637 @@ http://archive.is/i92ld
+    // Define the function here
+    $.fn.copyAllAttributes = function(sourceElement) {
+        // 'that' contains a pointer to the destination element
+        var that = this;
 
+        // Place holder for all attributes
+        var allAttributes = ($(sourceElement) && $(sourceElement).length > 0) ?
+            $(sourceElement).prop("attributes") : null;
 
-// #### subs
+        // Iterate through attributes and add
+        if (allAttributes && $(that) && $(that).length == 1) {
+            $.each(allAttributes, function() {
+                // Ensure that class names are not copied but rather added
+                if (this.name == "class") {
+                    $(that).addClass(this.value);
+                } else if (this.name == "id") {
+                    // skip id's
+                } else {
+                    that.attr(this.name, this.value);
+                }
+            });
+        }
+        return that;
+    };
+})(jQuery);
 
 function load_css( uri ) {
 var styles = Array.from(uri);
