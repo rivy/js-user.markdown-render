@@ -16,3 +16,29 @@ FontAwesome (see http://fontawesome.io/get-started) may be useful for iconograph
 ### dynamic loading
 
 Both PrismJS and CodeMirror require loading of language files which are not automatically loaded. Some of the most common ones can be using the jQuery method. But a more dynamic method loading the needed languages on the fly might be better. RequireJS (see <http://requirejs.org/docs/api.html>) may be helpful with this instead of refactoring / adding code to the current jQuery `load...` methods.
+
+### investigate 
+
+#### "markdown-it-decorate"
+
+Look into "markdown-it-decorate" as an alternative to "markdown-it-attr".
+
+The attributes are hidden to other markdown processors, but may need massaging for pandoc compatiblity.
+
+#### "markdown-it-sub" & "markdown-it-sup"
+
+For super/subscript markdown ...
+
+"markdown-it-sub", repo @ <https://github.com/markdown-it/markdown-it-sub>
+
+"markdown-it-sup", repo @ <https://github.com/markdown-it/markdown-it-sup>
+
+#### "markdown-it-pandoc-renderer"
+
+info @ <https://www.npmjs.com/package/markdown-it-pandoc-renderer>; repo @ <https://github.com/classeur/markdown-it-pandoc-renderer>
+
+#### "markdown-it-meta"
+
+For parsing YAML front matter...
+
+info / repo @ <https://github.com/CaliStyle/markdown-it-meta>
