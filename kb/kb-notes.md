@@ -5,11 +5,13 @@
 see CodeMirror implementation with a JSFiddle-style theme @ <https://jsfiddle.net/rivy/r8emrr46/18>
 see clipboard button implementation(s) for CodeMirror @ <http://jsfiddle.net/rivy/q8n4tsub/5> (from <http://stackoverflow.com/questions/9492842/does-codemirror-provide-cut-copy-and-paste-api/33182647#33182647> @@ <http://archive.is/dcYQb>)
 
-Additionally, possibly add a 'toolbar', similar to <http://jagthedrummer.github.io/codemirror-ui> (repo @ <https://github.com/jagthedrummer/codemirror-ui>). The toolbar could contain the clipboard button as well as language, name/caption information. Alternatively, the panel addon from CodeMirror could be used (see `display/panel.js` within <http://codemirror.net/doc/manual.html#addons>). The "CodeMirror buttons addon" (see <https://github.com/samdark/codemirror-buttons>) may be a useful tool or reference as well.
+Additionally, possibly add a 'toolbar', similar to <http://jagthedrummer.github.io/codemirror-ui> (repo @ <https://github.com/jagthedrummer/codemirror-ui>). The toolbar could contain the clipboard button as well as language, name/caption information. Alternatively, the panel addon from CodeMirror could be used (see `display/panel.js` within <http://codemirror.net/doc/manual.html#addons>). The "CodeMirror buttons addon" (see <https://github.com/samdark/codemirror-buttons>) may be a useful tool or reference as well. "w2ui" (<https://w2ui.com>; repo @ <https://github.com/vitmalina/w2ui>) may have some helpful UI tools to clean up the look.
 
 There are further addons listed at <https://github.com/codemirror/CodeMirror/wiki/CodeMirror-addons>.
 
 New CodeMirror themes (such as Humane or Humanity/Humanx) may be developed at <http://mkaminsky11.github.io/codemirror-themes> (repo at <https://github.com/mkaminsky11/codemirror-themes>).
+
+FontAwesome (see http://fontawesome.io/get-started) may be useful for iconography.
 
 ### dynamic loading
 
