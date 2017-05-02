@@ -3,7 +3,7 @@
 // @namespace   com.houseofivy
 // @description renders markdown files
 //
-// @version     0.043
+// @version     0.045
 // @//updateURL   https://raw.githubusercontent.com/rivy/gms-markdown_viewer.custom-css/master/markdown_viewer.custom-css.user.js
 //
 // file extension: .m(arkdown|kdn?|d(o?wn)?)
@@ -67,6 +67,7 @@ var optional_css = [
   protocol+"cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css",
   // basic
   protocol+"//cdn.rawgit.com/rivy/js-user.markdown-render/21e0a5f8043b4e07d537eaed448ba053b4a8bf10/css/s.css",
+  protocol+"//cdn.rawgit.com/rivy/js-user.markdown-render/73ec5e54fb181957332e2a540af55ad5b0777f6f/css/snippet.css",
   //protocol+"//raw.githubusercontent.com/Thiht/markdown-viewer/master/chrome/lib/sss/sss.css",
   //protocol+"//raw.githubusercontent.com/Thiht/markdown-viewer/master/chrome/lib/sss/sss.print.css",
   // syntax highlighter
@@ -112,9 +113,11 @@ function do_render(){
             //
             //PRE.copyAllAttributes($(this));
         }
+        // setup snippit clipping
         if (PRE) {
             PRE.addClass('snippet');
             //PRE.prepend('<button class="btn" data-clipboard-snippet=""><img class="clippy" width="13" src="https://cdn.rawgit.com/rivy/js-user.markdown-render/master/assets/clippy.svg" alt="Copy to clipboard"></button>');
+            PRE.wrapAll('<div class="snippet-container"></div>');
         }
         //$(this).parent('pre').
     });
@@ -137,13 +140,13 @@ clipboardDemos.on('error', function(e) {
     showTooltip(e.trigger, fallbackMessage(e.action));
 });
 
-var snippets = document.querySelectorAll('.snippet');
+var snippets = document.querySelectorAll('.snippet-container');
 [].forEach.call(snippets, function(snippet) {
     snippet.firstChild.insertAdjacentHTML('beforebegin', '<button class="btn" data-clipboard-snippet><img class="clippy" width="14" src="https://cdn.rawgit.com/rivy/js-user.markdown-render/master/assets/clippy.svg" alt="Copy to clipboard"></button>');
 });
 var clipboardSnippets = new Clipboard('[data-clipboard-snippet]',{
     target: function(trigger) {
-        return trigger.nextElementSibling;
+        return trigger.nextElementSibling.firstElementChild;
     }
 });
 clipboardSnippets.on('success', function(e) {
