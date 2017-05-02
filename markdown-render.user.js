@@ -3,7 +3,7 @@
 // @namespace   com.houseofivy
 // @description renders markdown files
 //
-// @version     0.045
+// @version     0.047
 // @//updateURL   https://raw.githubusercontent.com/rivy/gms-markdown_viewer.custom-css/master/markdown_viewer.custom-css.user.js
 //
 // file extension: .m(arkdown|kdn?|d(o?wn)?)
@@ -102,16 +102,16 @@ function do_render(){
     });
     MathJax.Hub.Configured();
 
-    // hoist 'id' from CODE to PRE; merge 'class' and duplicate other attributes from CODE into PRE
     $('pre code').each(function(){
         console.log( $(this).attr('class') );
+        // hoist 'id' from CODE to PRE; merge 'class' and duplicate other attributes from CODE into PRE
         var CODE = $(this);
         var PRE = $(this).parent('pre');
         if ( PRE && CODE.attr('class') ) {
             PRE.attr('id', $(this).attr('id'));
             CODE.removeAttr('id');
             //
-            //PRE.copyAllAttributes($(this));
+            PRE.copyAllAttributes($(this));
         }
         // setup snippit clipping
         if (PRE) {
