@@ -3,7 +3,7 @@
 // @namespace   com.houseofivy
 // @description renders markdown files
 //
-// @version     0.049
+// @version     0.051
 // @//updateURL   https://raw.githubusercontent.com/rivy/gms-markdown_viewer.custom-css/master/markdown_viewer.custom-css.user.js
 //
 // file extension: .m(arkdown|kdn?|d(o?wn)?)
@@ -67,7 +67,7 @@ var optional_css = [
   protocol+"cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css",
   // basic
   protocol+"//cdn.rawgit.com/rivy/js-user.markdown-render/21e0a5f8043b4e07d537eaed448ba053b4a8bf10/css/s.css",
-  protocol+"//cdn.rawgit.com/rivy/js-user.markdown-render/95cac1d6f0b337de71be3cefde2ad03b26dc191f/css/snippet.css",
+  protocol+"//cdn.rawgit.com/rivy/js-user.markdown-render/03542f43a1c5adbaf30f6d4eb9901a4b87613d00/css/snippet.css",
   //protocol+"//raw.githubusercontent.com/Thiht/markdown-viewer/master/chrome/lib/sss/sss.css",
   //protocol+"//raw.githubusercontent.com/Thiht/markdown-viewer/master/chrome/lib/sss/sss.print.css",
   // syntax highlighter
