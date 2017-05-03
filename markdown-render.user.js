@@ -3,7 +3,7 @@
 // @namespace   com.houseofivy
 // @description renders markdown files
 //
-// @version     0.051
+// @version     0.053
 // @//updateURL   https://raw.githubusercontent.com/rivy/gms-markdown_viewer.custom-css/master/markdown_viewer.custom-css.user.js
 //
 // file extension: .m(arkdown|kdn?|d(o?wn)?)
@@ -82,6 +82,8 @@ var optional_css = [
 
 (function main(){
 
+console.log('document.compatMode = ' + document.compatMode);
+
 load_js_inorder( required_js, do_render );
 load_css( optional_css );
 
@@ -90,10 +92,8 @@ load_css( optional_css );
 // #### subs
 
 function do_render(){
-    let meta = '<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />';
     console.log('rendering');
     document.body.innerHTML = render_markdown( document.body.textContent );
-    console.log( 'document.compatMode = '+document.compatMode );
     MathJax.Hub.Config({
       tex2jax: {
         inlineMath: [ ['$\\phantom{}','\\phantom{}$'], ["\\(","\\)"] ],
@@ -105,19 +105,19 @@ function do_render(){
     $('pre code').each(function(){
         console.log( $(this).attr('class') );
         // hoist 'id' from CODE to PRE; merge 'class' and duplicate other attributes from CODE into PRE
-        var CODE = $(this);
-        var PRE = $(this).parent('pre');
-        if ( PRE && CODE.attr('class') ) {
-            PRE.attr('id', $(this).attr('id'));
-            CODE.removeAttr('id');
+        var $CODE = $(this);
+        var $PRE = $(this).parent('pre');
+        if ( $PRE && $CODE.attr('class') ) {
+            $PRE.attr('id', $(this).attr('id'));
+            $CODE.removeAttr('id');
             //
-            PRE.copyAllAttributes($(this));
+            $PRE.copyAllAttributes($(this));
         }
         // setup snippit clipping
-        if (PRE) {
-            PRE.addClass('snippet');
+        if ($PRE) {
+            $PRE.addClass('snippet');
             //PRE.prepend('<button class="btn" data-clipboard-snippet=""><img class="clippy" width="13" src="https://cdn.rawgit.com/rivy/js-user.markdown-render/master/assets/clippy.svg" alt="Copy to clipboard"></button>');
-            PRE.wrapAll('<div class="snippet-container"></div>');
+            $PRE.wrapAll('<div class="snippet-container"></div>');
         }
         //$(this).parent('pre').
     });
@@ -181,6 +181,7 @@ function fallbackMessage(action) {
     return actionMsg;
 }
     //var clipboard = new Clipboard('.clippy-btn');
+
     Prism.highlightAll();
 }
 
@@ -303,6 +304,7 @@ function p_highlight(text, lang) {
 
 var md;
 function render_markdown( text ){
+    //md = md || new markdownit( 'commonmark', {
     md = md || new markdownit({
       html: true,
       //linkify: true,
@@ -310,9 +312,9 @@ function render_markdown( text ){
       //highlight: highlight_code,
       });
     // plugins
+    md.use(markdownItAttrs);
     md.use(markdownitDeflist);
     md.use(markdownitFootnote);
-    md.use(markdownItAttrs);
 
     return md.render(text);
     }
