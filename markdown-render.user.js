@@ -3,7 +3,7 @@
 // @namespace   com.houseofivy
 // @description renders markdown files
 //
-// @version     0.053
+// @version     0.067
 // @//updateURL   https://raw.githubusercontent.com/rivy/gms-markdown_viewer.custom-css/master/markdown_viewer.custom-css.user.js
 //
 // file extension: .m(arkdown|kdn?|d(o?wn)?)
@@ -26,23 +26,24 @@
 
 var protocol = document.location.protocol; if (protocol === 'file:') { protocol = 'https:'; }
 var required_js = [
+  // ToDO: investigate RequireJS to async load but initialize dependent modules in correct order
   // NOTE: see library CDN ref @ https://cdnjs.com
   // clipboard support
   protocol+"//cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.6.1/clipboard.min.js",
 //  [
-  // syntax highlighter (with plugins)
-  protocol+"//cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/prism.min.js",
-  //protocol+"//cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/plugins/line-highlight/prism-line-highlight.min.js",
-  protocol+"//cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/plugins/line-numbers/prism-line-numbers.min.js",
+  // // syntax highlighter (with plugins)
+  // protocol+"//cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/prism.min.js",
+  // //protocol+"//cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/plugins/line-highlight/prism-line-highlight.min.js",
+  // protocol+"//cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/plugins/line-numbers/prism-line-numbers.min.js",
 //  ],
 //  protocol+"//cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/plugins/toolbar/prism-toolbar.min.js",
 //  protocol+"//cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/plugins/copy-to-clipboard/prism-copy-to-clipboard.min.js",
-  [
-  // syntax highlighter grammers (ToDO: change to lazy loading)
-  protocol+"//cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/components/prism-haskell.min.js",
-  protocol+"//cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/components/prism-perl.min.js",
-  protocol+"//cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/components/prism-python.min.js",
-  ],
+  // [
+  // // syntax highlighter grammers (ToDO: change to lazy loading)
+  // protocol+"//cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/components/prism-haskell.min.js",
+  // protocol+"//cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/components/prism-perl.min.js",
+  // protocol+"//cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/components/prism-python.min.js",
+  // ],
   // markdown conversion
   protocol+"//cdnjs.cloudflare.com/ajax/libs/markdown-it/8.3.1/markdown-it.min.js",
   [
@@ -57,25 +58,36 @@ var required_js = [
   protocol+"//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML&delayStartupUntil=configured",
   //protocol+"//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML",
   ],
-  // KaTeX
+  //// KaTeX
   //protocol+"//cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/katex.min.js",
   //protocol+"//cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/contrib/auto-render.min.js",
+  // CodeMirror
+  protocol+"//cdnjs.cloudflare.com/ajax/libs/codemirror/5.25.2/codemirror.min.js",
+//  [
+  // CodeMirror modes (aka languages)
+  protocol+"//cdnjs.cloudflare.com/ajax/libs/codemirror/5.25.2/mode/haskell/haskell.min.js",
+  protocol+"//cdnjs.cloudflare.com/ajax/libs/codemirror/5.25.2/mode/javascript/javascript.min.js",
+  protocol+"//cdnjs.cloudflare.com/ajax/libs/codemirror/5.25.2/mode/perl/perl.min.js",
+//  ],
   ];
 var optional_css = [
+  // ToDO: CSS order is significant ("later directives with same specificity wins"), so investigate RequireJS to async load but insert in-order
   // reset
   // see https://stackoverflow.com/questions/3388705/why-is-a-table-not-using-the-body-font-size-even-though-i-havent-set-the-table/3388766#3388766 @@ http://archive.is/wePmk
   protocol+"cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css",
   // basic
   protocol+"//cdn.rawgit.com/rivy/js-user.markdown-render/21e0a5f8043b4e07d537eaed448ba053b4a8bf10/css/s.css",
   protocol+"//cdn.rawgit.com/rivy/js-user.markdown-render/03542f43a1c5adbaf30f6d4eb9901a4b87613d00/css/snippet.css",
-  //protocol+"//raw.githubusercontent.com/Thiht/markdown-viewer/master/chrome/lib/sss/sss.css",
-  //protocol+"//raw.githubusercontent.com/Thiht/markdown-viewer/master/chrome/lib/sss/sss.print.css",
+//  protocol+"//raw.githubusercontent.com/Thiht/markdown-viewer/master/chrome/lib/sss/sss.css",
+//  protocol+"//raw.githubusercontent.com/Thiht/markdown-viewer/master/chrome/lib/sss/sss.print.css",
   // syntax highlighter
-  protocol+"//cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/themes/prism.min.css",
+  //protocol+"//cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/themes/prism.min.css",
   //protocol+"//cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/themes/prism-solarizedlight.min.css",
   //protocol+"//cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/plugins/line-highlight/prism-line-highlight.min.css",
-  protocol+"//cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/plugins/line-numbers/prism-line-numbers.min.css",
+  //protocol+"//cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/plugins/line-numbers/prism-line-numbers.min.css",
   //protocol+"//cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/plugins/toolbar/prism-toolbar.min.css",
+  protocol+"//cdnjs.cloudflare.com/ajax/libs/codemirror/5.25.2/codemirror.min.css",
+  //"http://codemirror.net/lib/codemirror.css",
   ];
 
 // #### main()
@@ -92,8 +104,105 @@ load_css( optional_css );
 // #### subs
 
 function do_render(){
-    console.log('rendering');
+    let _ME = 'do_render()';
+    console.log(_ME + ': rendering markdown');
     document.body.innerHTML = render_markdown( document.body.textContent );
+
+    console.log(_ME + ': initiating MathJax render');
+    trigger_render_MathJax();
+
+    console.log(_ME + ': package codeblocks');
+    package_codeblocks();
+
+    console.log(_ME + ': transform codeblocks');
+    // ToDO: discuss the need for '.CodeMirror-scroll { height: auto; }' on <https://discuss.codemirror.net>
+    //  ...  ? why; And is there a way to calculate the true height? ... (show `... .find('.CodeMirror-sizer').height()`, which fails if scrollbar is shown)
+    //  ...  without `.CodeMirror-gutters { height: auto !important }` the inner portion of the editor is over-sized and captures scroll-wheel movement (scrolling text off screen)
+    $('head').append('<style type="text/css">.CodeMirror, .CodeMirror-scroll { height: auto; } .CodeMirror-gutters {height: auto !important}</style>');
+    //$('head').append('<style type="text/css">.CodeMirror-gutters {height: auto !important}</style>');
+    transform_codeblocks_to_CodeMirror();
+
+    add_codeblock_snippet_support();
+}
+
+var css_class_button    = 'button';
+var css_class_codeblock = 'codeblock';
+var css_class_tooltip   = 'tooltipped';
+var css_class_tooltip__below = 'tooltipped-s'; // tooltipped-s == position tooltip below
+
+function add_codeblock_snippet_support(){
+    let _ME = 'add_codeblock_snippet_support()';
+
+    let css_class_snip_button = `${css_class_button}--snip`;                     // unique / identifying class name
+    let css_class_snip_button$ = `${css_class_snip_button} ${css_class_button}`; // unique / ID class must be leftmost in the string
+    let css_class_snip_button_tooltip$ = `${css_class_tooltip} ${css_class_tooltip__below}`;
+
+    let clipboard_src = 'https://cdn.rawgit.com/rivy/js-user.markdown-render/master/assets/clippy.svg';
+    let clipboard_alt = 'Copy to clipboard';
+
+    /* expected CSS */
+    $('head').append(
+        '<style type="text/css">' +
+        `.${css_class_button} { height: 2em; }` +
+        `.${css_class_codeblock} { position: relative; }` +
+        `.${css_class_codeblock} .${css_class_snip_button} { position: absolute; top: 0.25em; right: 0.25em; z-index: 101; opacity: 0; transition: opacity 0.3s ease-in-out; -webkit-transition: opacity 0.3s ease-in-out; }` + /* z-index is used within CodeMirror, use a larger index; heuristic == 10; ToDO: investigate via CodeMirror discourse */
+        `.${css_class_codeblock}:hover .${css_class_snip_button} { opacity: 1; }` + /* z-index is used within CodeMirror, use a larger index; heuristic == 10; ToDO: investigate via CodeMirror discourse */
+        '</style>'
+    );
+
+    let $codeblocks = $(`.${css_class_codeblock}`);
+    $codeblocks.each( function( index ){
+      console.log( _ME + ': index = ' + index );
+      let $img = $('<img />', { height:'100%', src: clipboard_src, alt: clipboard_alt} );
+      let $button = $('<button>', { 'class': css_class_snip_button$ } ).prepend( $img );
+      $(this).prepend( $button );
+      //$(this).find('.CodeMirror').get(0).CodeMirror.refresh();
+      });
+
+    //(function(){
+    let _selector = `.${css_class_snip_button}`;
+    console.log( '_selector = '+_selector );
+    let snippers = new Clipboard( _selector, {
+      text: function( trigger ) {
+      let $cm = $( trigger ).parent().find('.CodeMirror');
+      return $cm.get(0).CodeMirror.getDoc().getValue();
+      }
+    });
+    snippers.on('success', function(e) {
+        e.clearSelection();
+        showTooltip(e.trigger, 'Copied!');
+        });
+    snippers.on('error', function(e) {
+        showTooltip(e.trigger, fallbackMessage(e.action));
+        });
+
+    let buttons = document.querySelectorAll( _selector );
+    for (let i = 0; i < buttons.length; i++) {
+        buttons[i].addEventListener('mouseleave', function(e) {
+          $(e.currentTarget).removeClass( css_class_snip_button_tooltip$ );
+          e.currentTarget.removeAttribute('aria-label');
+        });
+    }
+    function showTooltip(elem, msg) {
+        $(elem).addClass( css_class_snip_button_tooltip$ );
+        elem.setAttribute('aria-label', msg);
+    }
+    function fallbackMessage(action) {
+        var actionMsg = '';
+        var actionKey = (action === 'cut' ? 'X' : 'C');
+        if (/iPhone|iPad/i.test(navigator.userAgent)) {
+            actionMsg = 'No support :(';
+        } else if (/Mac/i.test(navigator.userAgent)) {
+            actionMsg = 'Press ⌘-' + actionKey + ' to ' + action;
+        } else {
+            actionMsg = 'Press Ctrl-' + actionKey + ' to ' + action;
+        }
+        return actionMsg;
+    }
+    //})();
+}
+
+function trigger_render_MathJax(){
     MathJax.Hub.Config({
       tex2jax: {
         inlineMath: [ ['$\\phantom{}','\\phantom{}$'], ["\\(","\\)"] ],
@@ -101,115 +210,112 @@ function do_render(){
       }
     });
     MathJax.Hub.Configured();
+}
 
+function package_codeblocks(){
+    let _ME = 'package_codeblocks()';
     $('pre code').each(function(){
-        console.log( $(this).attr('class') );
-        // hoist 'id' from CODE to PRE; merge 'class' and duplicate other attributes from CODE into PRE
-        var $CODE = $(this);
-        var $PRE = $(this).parent('pre');
-        if ( $PRE && $CODE.attr('class') ) {
-            $PRE.attr('id', $(this).attr('id'));
-            $CODE.removeAttr('id');
-            //
-            $PRE.copyAllAttributes($(this));
-        }
-        // setup snippit clipping
-        if ($PRE) {
-            $PRE.addClass('snippet');
-            //PRE.prepend('<button class="btn" data-clipboard-snippet=""><img class="clippy" width="13" src="https://cdn.rawgit.com/rivy/js-user.markdown-render/master/assets/clippy.svg" alt="Copy to clipboard"></button>');
-            $PRE.wrapAll('<div class="snippet-container"></div>');
-        }
-        //$(this).parent('pre').
-    });
-
-    //var clipboard=new Clipboard('[data-clipboard-demo]');
-    //clipboard.on('success',function(e){e.clearSelection();console.info('Action:',e.action);console.info('Text:',e.text);console.info('Trigger:',e.trigger);showTooltip(e.trigger,'Copied!');});
-    //clipboard.on('error',function(e){console.error('Action:',e.action);console.error('Trigger:',e.trigger);showTooltip(e.trigger,fallbackMessage(e.action));});
-
-var clipboardDemos = new Clipboard('[data-clipboard-demo]');
-clipboardDemos.on('success', function(e) {
-    e.clearSelection();
-    console.info('Action:', e.action);
-    console.info('Text:', e.text);
-    console.info('Trigger:', e.trigger);
-    showTooltip(e.trigger, 'Copied!');
-});
-clipboardDemos.on('error', function(e) {
-    console.error('Action:', e.action);
-    console.error('Trigger:', e.trigger);
-    showTooltip(e.trigger, fallbackMessage(e.action));
-});
-
-var snippets = document.querySelectorAll('.snippet-container');
-[].forEach.call(snippets, function(snippet) {
-    snippet.firstChild.insertAdjacentHTML('beforebegin', '<button class="btn" data-clipboard-snippet><img class="clippy" width="14" src="https://cdn.rawgit.com/rivy/js-user.markdown-render/master/assets/clippy.svg" alt="Copy to clipboard"></button>');
-});
-var clipboardSnippets = new Clipboard('[data-clipboard-snippet]',{
-    target: function(trigger) {
-        return trigger.nextElementSibling.firstElementChild;
-    }
-});
-clipboardSnippets.on('success', function(e) {
-    e.clearSelection();
-    showTooltip(e.trigger, 'Copied!');
-});
-clipboardSnippets.on('error', function(e) {
-    showTooltip(e.trigger, fallbackMessage(e.action));
-});
-
-var btns = document.querySelectorAll('.btn');
-for (var i = 0; i < btns.length; i++) {
-    btns[i].addEventListener('mouseleave', function(e) {
-        e.currentTarget.setAttribute('class', 'btn');
-        e.currentTarget.removeAttribute('aria-label');
-    });
+        let $CODE = $(this);
+        let class_text = $CODE.attr('class') ? 'class = "'+$CODE.attr('class')+'"' : 'class not defined';
+        console.log(_ME + ': block found == CODE(' + class_text + ')');
+        // hoist 'id' and copy attributes from CODE to PRE
+        let $PRE = $CODE.parent('pre');
+        $PRE.hoistID($CODE);
+        $PRE.copyAllAttributes($CODE);
+        // create new DIV 'codeblock' and hoist id from PRE to DIV
+        let $DIV = $PRE.wrapAll('<div/>').parent('div');
+        $DIV.addClass(css_class_codeblock);
+        $DIV.hoistID($PRE);
+        $DIV.copyAllAttributes($PRE);
+        });
 }
-function showTooltip(elem, msg) {
-    elem.setAttribute('class', 'btn tooltipped tooltipped-s');
-    elem.setAttribute('aria-label', msg);
-}
-function fallbackMessage(action) {
-    var actionMsg = '';
-    var actionKey = (action === 'cut' ? 'X' : 'C');
-    if (/iPhone|iPad/i.test(navigator.userAgent)) {
-        actionMsg = 'No support :(';
-    } else if (/Mac/i.test(navigator.userAgent)) {
-        actionMsg = 'Press ⌘-' + actionKey + ' to ' + action;
-    } else {
-        actionMsg = 'Press Ctrl-' + actionKey + ' to ' + action;
-    }
-    return actionMsg;
-}
-    //var clipboard = new Clipboard('.clippy-btn');
 
-    Prism.highlightAll();
+function transform_codeblocks_to_CodeMirror(){
+// setup CodeMirror as container and syntax highlighter
+    let _ME = 'transform_codeblocks_to_CodeMirror()';
+    let $codeblock = $(`.${css_class_codeblock}`);
+    $codeblock.children('pre').children('code').each(function(){
+        let $CODE = $(this);
+        let class_text = $CODE.attr('class') ? 'class = "'+$CODE.attr('class')+'"' : 'class not defined';
+        console.log(_ME + ': block found == CODE(' + class_text + ')');
+        let $PRE = $CODE.parent('pre');
+        let $DIV = $PRE.parent('div');
+
+        let _linewrapping = $DIV.hasClass('line-wrapping') || $DIV.hasClass('line-wrap') || $DIV.hasClass('wrapLines') || $DIV.hasClass('wordwrap');
+        let _linenumbers = $DIV.hasClass('line-numbers') || $DIV.hasClass('numberLines');
+        let _gutters = _linenumbers ? ['CodeMirror-linenumbers'] : ['CodeMirror-gutter-extra'];
+        let attr_class = $DIV.attr('class') || '';
+        let language_match = attr_class.match(/(?:^|\s)language-(\S+)/) || [null, 'plain-text'];
+        let _mode = language_match[1];
+        console.log('_mode = ' + _mode);
+        let _value = $('<div/>').html($CODE.html()).text().trimRight();
+
+        // use the CodeMirror standard <textarea/> idiom ## (not strictly necessary, but may save coding aggravation)
+        $DIV.empty();
+        $DIV.append('<textarea/>');
+
+        let $element = $DIV.children('textarea'); $element.text(_value);
+        let cm = CodeMirror.fromTextArea( $element.get(0), {
+            //value: _value,
+            mode: _mode,
+            lineNumbers: _linenumbers,
+            lineWrapping: _linewrapping,
+            gutters: _gutters,
+            readOnly: true,
+            //scrollbarStyle: "null",
+            viewportMargin: Infinity,
+        });
+        console.log( 'sizer.height = ' + $element.find('.CodeMirror-sizer').height());
+        console.log( 'cm.getScrollerElement().clientHeight = ' + cm.getScrollerElement().clientHeight );
+        console.log( 'cm.getWrapperElement().offsetHeight ' + cm.getWrapperElement().offsetHeight );
+        console.log( 'scrollerElement.scrollHeight = ' + cm.getScrollerElement().scrollHeight );
+        console.log( 'doc.height = ' + cm.doc.height );
+        console.log( 'hscrollbar.height = ' + $element.find('.CodeMirror-hscrollbar').height());
+        //cm.setSize( null, $element.find('.CodeMirror-sizer').height());
+        //cm.setSize( null, 'auto');
+        //cm.setSize();
+        //cm.refresh();
+      });
 }
+
+/* ## jQuery graft-on functions */
 
 (function ($) {
     // ref: http://stackoverflow.com/questions/6753362/jquery-how-to-copy-all-the-attributes-of-one-element-and-apply-them-to-another/24626637#24626637 @@ http://archive.is/i92ld
-    // Define the function here
-    $.fn.copyAllAttributes = function(sourceElement) {
-        // 'that' contains a pointer to the destination element
-        var that = this;
+    $.fn.hoistID = function( from ) {
+        // from: source jQuery element
+        if ( $(from).attr('id') ) {
+            $(this).attr('id', $(from).attr('id'));
+            $(from).removeAttr('id');
+        }
+        return this;
+    };
+})(jQuery);
 
-        // Place holder for all attributes
-        var allAttributes = ($(sourceElement) && $(sourceElement).length > 0) ?
-            $(sourceElement).prop("attributes") : null;
+(function ($) {
+    // ref: http://stackoverflow.com/questions/6753362/jquery-how-to-copy-all-the-attributes-of-one-element-and-apply-them-to-another/24626637#24626637 @@ http://archive.is/i92ld
+    $.fn.copyAllAttributes = function( from ) {
+        // from: source jQuery element
+        let to = this;
+
+        // place holder for all attributes
+        var allAttributes = ($(from) && $(from).length > 0) ?
+            $(from).prop("attributes") : null;
 
         // Iterate through attributes and add
-        if (allAttributes && $(that) && $(that).length == 1) {
+        if (allAttributes && $(to) && $(to).length == 1) {
             $.each(allAttributes, function() {
                 // Ensure that class names are not copied but rather added
                 if (this.name == "class") {
-                    $(that).addClass(this.value);
+                    $(to).addClass(this.value);
                 } else if (this.name == "id") {
                     // skip id's
                 } else {
-                    that.attr(this.name, this.value);
+                    to.attr(this.name, this.value);
                 }
             });
         }
-        return that;
+        return to;
     };
 })(jQuery);
 
@@ -302,10 +408,9 @@ function p_highlight(text, lang) {
     }
 }
 
-var md;
 function render_markdown( text ){
     //md = md || new markdownit( 'commonmark', {
-    md = md || new markdownit({
+    let md = new markdownit({
       html: true,
       //linkify: true,
       typographer: true,
