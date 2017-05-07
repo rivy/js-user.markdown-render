@@ -3,7 +3,7 @@
 // @namespace   com.houseofivy
 // @description renders markdown files
 //
-// @version     0.069
+// @version     0.071
 // @//updateURL   https://raw.githubusercontent.com/rivy/gms-markdown_viewer.custom-css/master/markdown_viewer.custom-css.user.js
 //
 // file extension: .m(arkdown|kdn?|d(o?wn)?)
@@ -58,6 +58,7 @@ function load_css( uri, timeout ) {
  * @param {int}   : a timeout for download failure (default == 0 (aka, no timeout))
  * @returns {$.Deferred}
  * ref: (based on) https://stackoverflow.com/questions/9711160/jquery-load-scripts-in-order/19777866#19777866 @@ https://archive.is/yt1su
+ * ref: (based on) https://gist.github.com/rivy/5f1bd5225d4ee315a8d7f3c89986600f from https://gist.github.com/ngryman/7309432
  */
 // CSS has order dependence (for rules with equivalent specificity); this function places the CSS in the specified order, creating determinate content for the document
     timeout = ((timeout !== null) && (timeout >= 0)) ?  timeout : 2 * 1000/* ms */;
@@ -134,7 +135,9 @@ var optional_css = [
   // ToDO: CSS order is significant ("later directives with same specificity wins"), so investigate RequireJS to async load but insert in-order
   // reset
   // see https://stackoverflow.com/questions/3388705/why-is-a-table-not-using-the-body-font-size-even-though-i-havent-set-the-table/3388766#3388766 @@ http://archive.is/wePmk
-  protocol+"//cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css",
+//  protocol+"//cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css",
+  // ref: [normalize] http://necolas.github.io/normalize.css @@ http://archive.is/Fo0od ; info: http://nicolasgallagher.com/about-normalize-css @@ http://archive.is/RSXip ; repo: https://github.com/necolas/normalize.css
+  protocol+"//cdnjs.cloudflare.com/ajax/libs/normalize/7.0.0/normalize.min.css",
   // basic
   protocol+"//cdn.rawgit.com/rivy/js-user.markdown-render/21e0a5f8043b4e07d537eaed448ba053b4a8bf10/css/s.css",
   protocol+"//cdn.rawgit.com/rivy/js-user.markdown-render/03542f43a1c5adbaf30f6d4eb9901a4b87613d00/css/snippet.css",
