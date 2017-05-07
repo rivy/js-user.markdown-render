@@ -3,7 +3,7 @@
 // @namespace   com.houseofivy
 // @description renders markdown files
 //
-// @version     0.067
+// @version     0.069
 // @//updateURL   https://raw.githubusercontent.com/rivy/gms-markdown_viewer.custom-css/master/markdown_viewer.custom-css.user.js
 //
 // file extension: .m(arkdown|kdn?|d(o?wn)?)
@@ -21,6 +21,66 @@
 
 (function( /* USERjs, */ window, $ ){
 'use strict';
+
+function alt_loadCss(url) {
+    var link = document.createElement("link");
+    link.type = "text/css";
+    link.rel = "stylesheet";
+    link.href = url;
+    document.getElementsByTagName("head")[0].appendChild(link);
+}
+
+/**
+ * Load scripts in parallel keeping execution order.
+ * @param {array} An array of script urls. They will parsed in the order of the array.
+ * @returns {$.Deferred}
+ */
+function getScripts(scripts) {
+    var xhrs = scripts.map(function(url) {
+        return $.ajax({
+            url: url,
+            dataType: 'text',
+            cache: true
+        });
+    });
+
+    return $.when.apply($, xhrs).done(function() {
+        Array.prototype.forEach.call(arguments, function(res) {
+            eval.call(this, res[0]);
+        });
+    });
+}
+
+function load_css( uri, timeout ) {
+/**
+ * load CSS in parallel keeping order for document placement
+ * @param {array} : an array of script uris, loaded asynchronously, but placed into the file in the given order
+ * @param {int}   : a timeout for download failure (default == 0 (aka, no timeout))
+ * @returns {$.Deferred}
+ * ref: (based on) https://stackoverflow.com/questions/9711160/jquery-load-scripts-in-order/19777866#19777866 @@ https://archive.is/yt1su
+ */
+// CSS has order dependence (for rules with equivalent specificity); this function places the CSS in the specified order, creating determinate content for the document
+    timeout = ((timeout !== null) && (timeout >= 0)) ?  timeout : 2 * 1000/* ms */;
+    let _ME = 'get_css()';
+    let style_uris = Array.from( uri );
+    let requests = style_uris.map( function( style_uri ) {
+        console.log( `${_ME}: initiating AJAX download ("${style_uri}")` );
+        let jqXHR = $.ajax( style_uri, { cache: true, dataType: 'text', timeout: timeout } );
+        jqXHR.uri = style_uri;
+        return jqXHR;
+        });
+
+    return $.when.apply($, requests)
+        .done( function() {
+            Array.prototype.forEach.call( arguments, function( request /* :: [data, textStatus, jqXHR] */, index ) {
+                console.log( `${_ME}: done::${JSON.stringify(request)}:: (${request[2].status}) '${request[2].statusText}' for "${request[2].uri}"` );
+                let css = request[0];
+                $('<style type="text/css"/>').html(css).attr('_uri', request[2].uri).attr('_index', index).appendTo("head");
+                });})
+        //.fail( function() { Array.prototype.forEach.call( arguments, function( request /* :: [jqXHR, textStatus, errorThrown] */, index ) { console.log( `${_ME}: FAIL::${JSON.stringify(request)}::` ); throw new Error(`${_ME}: FAIL`); }); })
+        //.always( function() { Array.prototype.forEach.call( arguments, function( request /* :: [data | jqXHR, textStatus, jqXHR | errorThrown] */, index ) { console.log( `${_ME}: ALWAYS: '${request[1]}'` ); }); })
+        ;
+}
 
 // #### config
 
@@ -74,7 +134,7 @@ var optional_css = [
   // ToDO: CSS order is significant ("later directives with same specificity wins"), so investigate RequireJS to async load but insert in-order
   // reset
   // see https://stackoverflow.com/questions/3388705/why-is-a-table-not-using-the-body-font-size-even-though-i-havent-set-the-table/3388766#3388766 @@ http://archive.is/wePmk
-  protocol+"cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css",
+  protocol+"//cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css",
   // basic
   protocol+"//cdn.rawgit.com/rivy/js-user.markdown-render/21e0a5f8043b4e07d537eaed448ba053b4a8bf10/css/s.css",
   protocol+"//cdn.rawgit.com/rivy/js-user.markdown-render/03542f43a1c5adbaf30f6d4eb9901a4b87613d00/css/snippet.css",
@@ -96,8 +156,23 @@ var optional_css = [
 
 console.log('document.compatMode = ' + document.compatMode);
 
-load_js_inorder( required_js, do_render );
-load_css( optional_css );
+//$('<div/>', { id:'_message', class: 'message', text: 'TESTING!', style:'display:none'}).prependTo($('body'));
+
+let defer = $.when([])
+//defer
+    .then( ()=>{ return load_css( optional_css ); } )
+//    .then( ()=>{ load_css( optional_css ); } )
+    .then( ()=>{ load_js_inorder( required_js, do_render ); } )
+    .then( function(){ console.log( 'main(): promise chain completed' ); })
+    .done( function(){ console.log( 'main(): DONE ' ); } )
+    .catch( function(){ console.log( 'main(): CATCH ' ); } )
+    .always( function(){ console.log( 'main(): ALWAYS ' ); } )
+    ;
+
+//defer.resolve();
+
+//load_css( optional_css );
+//load_js_inorder( required_js, do_render );
 
 })();
 
@@ -319,6 +394,7 @@ function transform_codeblocks_to_CodeMirror(){
     };
 })(jQuery);
 
+/*
 function load_css( uri ) {
 var styles = Array.from(uri);
 styles.forEach( function( style ){
@@ -330,6 +406,7 @@ styles.forEach( function( style ){
        });
 });
 }
+*/
 
 function load_js_inorder( uri, callback, timeout ) {
 callback = callback || function(){};
