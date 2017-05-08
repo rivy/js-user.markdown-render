@@ -22,6 +22,23 @@
 (function( /* USERjs, */ window, $ ){
 'use strict';
 
+let messaging_id = '_messages';
+function add_messaging_area(){
+    if ($(`#${messaging_id}`).length < 1) { $('<div/>', { id: messaging_id, style:'border: red solid 2px; background: snow;'}).hide().prependTo($('body')); }
+}
+function warn( message ){ // ( {array} ) : {void}
+    let messages = $.isArray( message ) ? message : [ message ];
+    if ( $(`#${messaging_id}`).length < 1 ) { add_messaging_area(); }
+    messages.forEach( (message)=>{ $(`#${messaging_id}`).append($('<p/>', {text: 'warn: '+message})); } );
+    $(`#${messaging_id}`).show();
+}
+function error( message ){ // ( {array} ) : {void}
+    let messages = $.isArray( message ) ? message : [ message ];
+    if ( $(`#${messaging_id}`).length < 1 ) { add_messaging_area(); }
+    messages.forEach( (message)=>{ $(`#${messaging_id}`).append($('<p/>', {text: 'ERR!: '+message})); } );
+    $(`#${messaging_id}`).show();
+}
+
 function alt_loadCss(url) {
     var link = document.createElement("link");
     link.type = "text/css";
@@ -97,6 +114,7 @@ function load_css( uri, timeout ) { // ( {array}, {int} ) => {$.Deffered}
                 $('<style type="text/css" />').html(css).attr('_uri', request[2].uri).attr('_index', index).appendTo('head');
                 });})
         //.fail( function() { Array.prototype.forEach.call( arguments, function( request /* :: [jqXHR, textStatus, errorThrown] */, index ) { console.log( `${_ME}: FAIL::${JSON.stringify(request)}::` ); throw new Error(`${_ME}: FAIL`); }); })
+        .fail( function() { Array.prototype.forEach.call( arguments, function( request /* :: [jqXHR, textStatus, errorThrown] */, index ) { warn(`loading failed for '${request.uri}'`); console.log( `${_ME}: FAIL::${JSON.stringify(request)}::` ); throw new Error(`${_ME}: FAIL`); }); })
         //.always( function() { Array.prototype.forEach.call( arguments, function( request /* :: [data | jqXHR, textStatus, jqXHR | errorThrown] */, index ) { console.log( `${_ME}: ALWAYS: '${request[1]}'` ); }); })
         ;
 }
@@ -188,10 +206,7 @@ let defer = $.when([])  // `.when([])` resolves immediately
     .always( function(){ console.log( 'main(): ALWAYS ' ); } )
     ;
 
-//defer.resolve();
-
-//load_css( optional_css );
-//load_js_inorder( required_js, do_render );
+//warn('test');
 
 })();
 
