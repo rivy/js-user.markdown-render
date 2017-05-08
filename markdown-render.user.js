@@ -50,13 +50,13 @@ function assert(condition, message) {
     }
 }
 
-function alt_loadCss(url) {
-    var link = document.createElement("link");
-    link.type = "text/css";
-    link.rel = "stylesheet";
-    link.href = url;
-    document.getElementsByTagName("head")[0].appendChild(link);
-}
+// ToDO ...
+// function load_resources( uri, timeout, optional ) ... load CSS and JS resources (based on extension), async load all, then *in-order* $('<style/>')... or eval(...)
+// ... allows max asynch overlap of loads but preserves CSS order and JS initialization order
+// ... handle protocol missing ('https://' default)
+// function load_optional_resources( uri, timeout ) ... as load_resources() but no ERR!/throw (only warn) for missing resources
+// ... use load_resources( ..., optional=true )
+// ... ? needed or just use load_resources with 'optional' parameter
 
 /**
  * Load scripts in parallel keeping execution order.
@@ -237,6 +237,8 @@ function do_render(){
 
     console.log(_ME + ': package codeblocks');
     package_codeblocks();
+
+    // ToDO: preload_language_support() ... loads CodeMirror modes based on languages found in codeblocks /language-(\S+)/; async, simultaneous
 
     console.log(_ME + ': transform codeblocks');
     // ToDO: discuss the need for '.CodeMirror-scroll { height: auto; }' on <https://discuss.codemirror.net>
@@ -442,20 +444,6 @@ function transform_codeblocks_to_CodeMirror(){
         return to;
     };
 })(jQuery);
-
-/*
-function load_css( uri ) {
-var styles = $.isArray( uri ) ? uri : [ uri ];
-styles.forEach( function( style ){
-    console.log( 'load_css:style = ' + style );
-    $.get( style, function(css){
-       $('<style type="text/css"></style>')
-       .html(css)
-       .appendTo("head");
-       });
-});
-}
-*/
 
 function load_js_inorder( uri, callback, timeout ) {
 callback = callback || function(){};
