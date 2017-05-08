@@ -72,6 +72,7 @@ function get_raw_html( uri, timeout ){ // ( {array}, {int} ) : {$.Deffered}
 // Firefox misinterprets non-HTML (non .htm/.html extension) files as HTML if they contain initial HTML tags and irretrievably alters the text ... this replaces the body content with text equivalent to chrome's interpretation
 // NOTE: no perceptable speed difference when using this on a machine with an SSD ... test, looking at network timing/speed, esp. for regular HDs
 /* unneeded by chrome (also, blocked by cross-origin issue ... ; see below comments */
+// ToDO: comment / request fix on "support.mozilla.org" (simlar to: https://support.mozilla.org/en-US/questions/898460)
 let isFirefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
 let retVal = $.Deffered;
 if (isFirefox) {
