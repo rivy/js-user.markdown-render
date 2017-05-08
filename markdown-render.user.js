@@ -51,7 +51,7 @@ function getScripts(scripts) {
     });
 }
 
-function get_raw_html( uri, timeout ){
+function get_raw_html( uri, timeout ){ // ( {array}, {int} ) : {$.Deffered}
 // Firefox misinterprets non-HTML (non .htm/.html extension) files as HTML if they contain initial HTML tags and irretrievably alters the text ... this replaces the body content with text equivalent to chrome's interpretation
 // NOTE: no perceptable speed difference when using this on a machine with an SSD ... test, looking at network timing/speed, esp. for regular HDs
 /* unneeded by chrome (also, blocked by cross-origin issue ... ; see below comments */
@@ -69,7 +69,7 @@ retVal = $.ajax( uri, { cache: true, dataType: 'text', timeout: timeout } )
 return retVal;
 }
 
-function load_css( uri, timeout ) {
+function load_css( uri, timeout ) { // ( {array}, {int} ) => {$.Deffered}
 /**
  * load CSS in parallel keeping order for document placement
  * @param {array} : an array of script uris, loaded asynchronously, but placed into the file in the given order
@@ -94,7 +94,7 @@ function load_css( uri, timeout ) {
             Array.prototype.forEach.call( arguments, function( request /* :: [data, textStatus, jqXHR] */, index ) {
                 console.log( `${_ME}: done::${JSON.stringify(request)}:: (${request[2].status}) '${request[2].statusText}' for "${request[2].uri}"` );
                 let css = request[0];
-                $('<style type="text/css"/>').html(css).attr('_uri', request[2].uri).attr('_index', index).appendTo('head');
+                $('<style type="text/css" />').html(css).attr('_uri', request[2].uri).attr('_index', index).appendTo('head');
                 });})
         //.fail( function() { Array.prototype.forEach.call( arguments, function( request /* :: [jqXHR, textStatus, errorThrown] */, index ) { console.log( `${_ME}: FAIL::${JSON.stringify(request)}::` ); throw new Error(`${_ME}: FAIL`); }); })
         //.always( function() { Array.prototype.forEach.call( arguments, function( request /* :: [data | jqXHR, textStatus, jqXHR | errorThrown] */, index ) { console.log( `${_ME}: ALWAYS: '${request[1]}'` ); }); })
@@ -178,13 +178,9 @@ var optional_css = [
 
 console.log('document.compatMode = ' + document.compatMode);
 
-//$('<div/>', { id:'_message', class: 'message', text: 'TESTING!', style:'display:none'}).prependTo($('body'));
-
-let defer = $.when([])
-//defer
+let defer = $.when([])  // `.when([])` resolves immediately
     .then( ()=>{ return get_raw_html(); } )
     .then( ()=>{ return load_css( optional_css ); } )
-//    .then( ()=>{ load_css( optional_css ); } )
     .then( ()=>{ load_js_inorder( required_js, do_render ); } )
     .then( function(){ console.log( 'main(): promise chain completed' ); })
     .done( function(){ console.log( 'main(): DONE ' ); } )
@@ -204,7 +200,10 @@ let defer = $.when([])
 function do_render(){
     let _ME = 'do_render()';
     console.log(_ME + ': rendering markdown');
-    document.body.innerHTML = render_markdown( document.body.textContent );
+    //document.body.innerHTML = render_markdown( document.body.textContent );
+    let render = render_markdown( $('body pre').text() );
+    $('body pre').remove();
+    $('<div/>').html( render ).appendTo($('body'));
 
     console.log(_ME + ': initiating MathJax render');
     trigger_render_MathJax();
