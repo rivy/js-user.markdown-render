@@ -81,7 +81,7 @@ function load_css( uri, timeout ) {
 // CSS has order dependence (for rules with equivalent specificity); this function places the CSS in the specified order, creating determinate content for the document
     timeout = ((timeout !== null) && (timeout >= 0)) ?  timeout : 2 * 1000/* ms */;
     let _ME = 'get_css()';
-    let style_uris = Array.from( uri );
+    let style_uris = $.isArray( uri ) ? uri : [ uri ];
     let requests = style_uris.map( function( style_uri ) {
         console.log( `${_ME}: initiating AJAX download ("${style_uri}")` );
         let jqXHR = $.ajax( style_uri, { cache: true, dataType: 'text', timeout: timeout } );
@@ -419,7 +419,7 @@ function transform_codeblocks_to_CodeMirror(){
 
 /*
 function load_css( uri ) {
-var styles = Array.from(uri);
+var styles = $.isArray( uri ) ? uri : [ uri ];
 styles.forEach( function( style ){
     console.log( 'load_css:style = ' + style );
     $.get( style, function(css){
@@ -434,7 +434,7 @@ styles.forEach( function( style ){
 function load_js_inorder( uri, callback, timeout ) {
 callback = callback || function(){};
 timeout = timeout || ( 2 * 1000 );
-var scripts = Array.from(uri);
+var scripts = $.isArray( uri ) ? uri : [ uri ];
 if (scripts.length > 0) {
     var script = scripts.shift();
     console.log('load_js_inorder:script = ' + script);
@@ -458,7 +458,7 @@ function load_js( uri, callback, timeout ){
 callback = callback || function(){};
 timeout = timeout || ( 10 * 1000 );
 // jQuery
-var scripts = Array.from(uri);
+var scripts = $.isArray( uri ) ? uri : [ uri ];
 var progress = 0;
 scripts.forEach( function( script ){
     console.log( 'load_js:script = ' + script );
