@@ -79,6 +79,18 @@ function getScripts(scripts) {
     });
 }
 
+// ref: https://community.oracle.com/blogs/driscoll/2009/09/08/eval-javascript-global-context @@ http://archive.is/qy9fL
+var globalEval = function globalEval(src) {
+    if (window.execScript) {
+        window.execScript(src);
+        return;
+    }
+    var fn = function() {
+        window.eval.call(window,src);
+    };
+    fn();
+};
+
 function get_raw_html( uri, timeout ){ // ( {array}, {int} ) : {$.Deffered}
 // Firefox misinterprets non-HTML (non .htm/.html extension) files as HTML if they contain initial HTML tags and irretrievably alters the text ... this replaces the body content with text equivalent to chrome's interpretation
 // NOTE: no perceptable speed difference when using this on a machine with an SSD ... test, looking at network timing/speed, esp. for regular HDs
