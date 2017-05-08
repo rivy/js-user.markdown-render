@@ -3,7 +3,7 @@
 // @namespace   com.houseofivy
 // @description renders markdown files
 //
-// @version     0.073
+// @version     0.075
 // @//updateURL   https://raw.githubusercontent.com/rivy/gms-markdown_viewer.custom-css/master/markdown_viewer.custom-css.user.js
 //
 // file extension: .m(arkdown|kdn?|d(o?wn)?)
@@ -37,6 +37,17 @@ function error( message ){ // ( {array} ) : {void}
     if ( $(`#${messaging_id}`).length < 1 ) { add_messaging_area(); }
     messages.forEach( (message)=>{ $(`#${messaging_id}`).append($('<p/>', {text: 'ERR!: '+message})); } );
     $(`#${messaging_id}`).show();
+}
+function assert(condition, message) {
+// based on : http://stackoverflow.com/questions/15313418/javascript-assert/15313435#15313435 @@ http://archive.is/XPo6F
+    if (!condition) {
+        message = message || "Assertion failed";
+        error( message );
+        if (typeof Error !== "undefined") {
+            throw new Error(message);
+        }
+        throw message; // Fallback
+    }
 }
 
 function alt_loadCss(url) {
