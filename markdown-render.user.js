@@ -51,6 +51,24 @@ function getScripts(scripts) {
     });
 }
 
+function get_raw_html( uri, timeout ){
+// Firefox misinterprets non-HTML (non .htm/.html extension) files as HTML if they contain initial HTML tags and irretrievably alters the text ... this replaces the body content with text equivalent to chrome's interpretation
+// NOTE: no perceptable speed difference when using this on a machine with an SSD ... test, looking at network timing/speed, esp. for regular HDs
+/* unneeded by chrome (also, blocked by cross-origin issue ... ; see below comments */
+let isFirefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
+let retVal = $.Deffered;
+if (isFirefox) {
+uri = uri || document.location.href;
+timeout = (timeout !== null) && (timeout >= 0) ? timeout : 2 * 1000/* ms */;
+// ajax throws here for the "file:///" protocol => "VM4117:7 XMLHttpRequest cannot load file:///C:/Users/Roy/OneDrive/Projects/%23kb/%23pandoc/README.md. Cross origin requests are only supported for protocol schemes: http, data, chrome, chrome-extension, https."
+// ref: http://stackoverflow.com/questions/4819060/allow-google-chrome-to-use-xmlhttprequest-to-load-a-url-from-a-local-file/18137280#18137280 @@ http://archive.is/W7a9M
+retVal = $.ajax( uri, { cache: true, dataType: 'text', timeout: timeout } )
+        .done( function( data, statusText, jqXHR ) { $('body').empty(); $('<pre/>', { style: 'word-wrap: break-word; white-space: pre-wrap;' }).text(data).appendTo('body'); } )
+        ;
+}
+return retVal;
+}
+
 function load_css( uri, timeout ) {
 /**
  * load CSS in parallel keeping order for document placement
@@ -76,7 +94,7 @@ function load_css( uri, timeout ) {
             Array.prototype.forEach.call( arguments, function( request /* :: [data, textStatus, jqXHR] */, index ) {
                 console.log( `${_ME}: done::${JSON.stringify(request)}:: (${request[2].status}) '${request[2].statusText}' for "${request[2].uri}"` );
                 let css = request[0];
-                $('<style type="text/css"/>').html(css).attr('_uri', request[2].uri).attr('_index', index).appendTo("head");
+                $('<style type="text/css"/>').html(css).attr('_uri', request[2].uri).attr('_index', index).appendTo('head');
                 });})
         //.fail( function() { Array.prototype.forEach.call( arguments, function( request /* :: [jqXHR, textStatus, errorThrown] */, index ) { console.log( `${_ME}: FAIL::${JSON.stringify(request)}::` ); throw new Error(`${_ME}: FAIL`); }); })
         //.always( function() { Array.prototype.forEach.call( arguments, function( request /* :: [data | jqXHR, textStatus, jqXHR | errorThrown] */, index ) { console.log( `${_ME}: ALWAYS: '${request[1]}'` ); }); })
@@ -163,6 +181,7 @@ console.log('document.compatMode = ' + document.compatMode);
 
 let defer = $.when([])
 //defer
+    .then( ()=>{ return get_raw_html(); } )
     .then( ()=>{ return load_css( optional_css ); } )
 //    .then( ()=>{ load_css( optional_css ); } )
     .then( ()=>{ load_js_inorder( required_js, do_render ); } )
