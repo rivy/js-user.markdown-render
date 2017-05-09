@@ -61,8 +61,9 @@ function assert(condition, message) {
 /**
  * Load scripts in parallel keeping execution order.
  * @param {array} An array of script urls. They will parsed in the order of the array.
- * @returns {$.Deferred}
+ * @returns {jQuery.Deferred}
  */
+// ref: http://stackoverflow.com/questions/9711160/jquery-load-scripts-in-order/19777866#19777866 @@ http://archive.is/yt1su
 function getScripts(scripts) {
     var xhrs = scripts.map(function(url) {
         return $.ajax({
@@ -91,13 +92,13 @@ var globalEval = function globalEval(src) {
     fn();
 };
 
-function get_raw_html( uri, timeout ){ // ( {array}, {int} ) : {$.Deffered}
+function get_raw_html( uri, timeout ){ // ( {array}, {int} ) : {jQuery.Deferred}
 // Firefox misinterprets non-HTML (non .htm/.html extension) files as HTML if they contain initial HTML tags and irretrievably alters the text ... this replaces the body content with text equivalent to chrome's interpretation
 // NOTE: no perceptable speed difference when using this on a machine with an SSD ... test, looking at network timing/speed, esp. for regular HDs
 /* unneeded by chrome (also, blocked by cross-origin issue ... ; see below comments */
 // ToDO: comment / request fix on "support.mozilla.org" (simlar to: https://support.mozilla.org/en-US/questions/898460)
 let isFirefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
-let retVal = $.Deffered;
+let retVal = $.Deferred;
 if (isFirefox) {
 uri = uri || document.location.href;
 timeout = (timeout !== null) && (timeout >= 0) ? timeout : 2 * 1000/* ms */;
@@ -110,12 +111,12 @@ retVal = $.ajax( uri, { cache: true, dataType: 'text', timeout: timeout } )
 return retVal;
 }
 
-function load_asset( uri, timeout, optional ) { // ( {array} [, {int}timeout=0] [, {bool}optional=false] ) => {$.Deferred}
+function load_asset( uri, timeout, optional ) { // ( {array} [, {int}timeout=0] [, {bool}optional=false] ) => {jQuery.Deferred}
 /**
  * load assets in parallel, insert/initialize results *in order* within the document
  * @param {array} : an array of script uris, loaded asynchronously, but placed into the file in the given order
  * @param {int}   : a timeout for download failure (default == 0 (aka, no timeout))
- * @returns {$.Deferred}
+ * @returns {jQuery.Deferred}
  * ref: (based on) https://stackoverflow.com/questions/9711160/jquery-load-scripts-in-order/19777866#19777866 @@ https://archive.is/yt1su
  * ref: (based on) https://gist.github.com/rivy/5f1bd5225d4ee315a8d7f3c89986600f from https://gist.github.com/ngryman/7309432
  * ref: [jqXHR ~ .done/.fail/.always/.then argument documentation] http://api.jquery.com/jQuery.ajax/#jqXHR
@@ -144,12 +145,12 @@ function load_asset( uri, timeout, optional ) { // ( {array} [, {int}timeout=0] 
         ;
 }
 
-function load_css( uri, timeout ) { // ( {array}, {int} ) => {$.Deffered}
+function load_css( uri, timeout ) { // ( {array}, {int} ) => {jQuery.Deferred}
 /**
  * load CSS in parallel keeping order for document placement
  * @param {array} : an array of script uris, loaded asynchronously, but placed into the file in the given order
  * @param {int}   : a timeout for download failure (default == 0 (aka, no timeout))
- * @returns {$.Deferred}
+ * @returns {jQuery.Deferred}
  * ref: (based on) https://stackoverflow.com/questions/9711160/jquery-load-scripts-in-order/19777866#19777866 @@ https://archive.is/yt1su
  * ref: (based on) https://gist.github.com/rivy/5f1bd5225d4ee315a8d7f3c89986600f from https://gist.github.com/ngryman/7309432
  * ref: [jqXHR ~ .done/.fail/.always/.then argument documentation] http://api.jquery.com/jQuery.ajax/#jqXHR
