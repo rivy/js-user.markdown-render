@@ -3,7 +3,7 @@
 // @namespace   com.houseofivy
 // @description renders markdown files
 //
-// @version     0.083
+// @version     0.085
 // @//updateURL   https://raw.githubusercontent.com/rivy/gms-markdown_viewer.custom-css/master/markdown_viewer.custom-css.user.js
 //
 // file extension: .m(arkdown|kdn?|d(o?wn)?)
@@ -274,9 +274,8 @@ console.log('document.compatMode = ' + document.compatMode);
 
 let defer = $.when([])  // `.when([])` resolves immediately
     .then( ()=>{ return get_raw_html(); } )
-    .then( ()=>{ return load_asset( optional_css ); } )
-    .then( ()=>{ return load_asset( required_js ); } )
-    .then( ()=>{ return $.getScript( [ 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML&delayStartupUntil=configured' ] ); } )
+    .then( ()=>{ return load_asset( optional_css.concat( required_js ) ); } )
+//    .then( ()=>{ return $.getScript( [ 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML&delayStartupUntil=configured' ] ); } )
     .then( ()=>{ do_render(); } )
     .then( function(){ console.log( 'main(): promise chain completed' ); })
     .done( function(){ console.log( 'main(): DONE ' ); } )
@@ -348,7 +347,7 @@ function add_codeblock_snippet_support(){
     let $codeblocks = $(`.${css_class_codeblock}`);
     $codeblocks.each( function( index ){
       console.log( _ME + ': index = ' + index );
-      //let $img = $('<img />', { height:'100%', src: clipboard_src, alt: clipboard_alt} );
+      //let content = $('<img />', { height:'100%', src: clipboard_src, alt: clipboard_alt} );
       let content = 'Copy';
       let $button = $('<button>', { 'class': css_class_snip_button$ } ).prepend( content );
       $(this).prepend( $button );
