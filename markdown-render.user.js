@@ -3,7 +3,7 @@
 // @namespace   com.houseofivy
 // @description renders markdown files
 //
-// @version     0.079
+// @version     0.081
 // @//updateURL   https://raw.githubusercontent.com/rivy/gms-markdown_viewer.custom-css/master/markdown_viewer.custom-css.user.js
 //
 // file extension: .m(arkdown|kdn?|d(o?wn)?)
@@ -82,14 +82,16 @@ function getScripts(scripts) {
 
 // ref: https://community.oracle.com/blogs/driscoll/2009/09/08/eval-javascript-global-context @@ http://archive.is/qy9fL
 var globalEval = function globalEval(src) {
-    if (window.execScript) {
-        window.execScript(src);
-        return;
-    }
-    var fn = function() {
-        window.eval.call(window,src);
-    };
-    fn();
+    /* jshint ignore:start */
+    if (window.execScript) {
+        window.execScript(src);
+        return;
+    }
+    var fn = function() {
+        window.eval.call(window,src);
+    };
+    fn();
+    /* jshint ignore:end */
 };
 
 function get_raw_html( uri, timeout ){ // ( {array}, {int} ) : {jQuery.Deferred}
@@ -123,25 +125,38 @@ function load_asset( uri, timeout, optional ) { // ( {array} [, {int}timeout=0] 
  */
 // CSS has order dependence (for rules with equivalent specificity); this function places the CSS in the specified order, creating determinate content for the document
     timeout = ((timeout !== null) && (timeout >= 0)) ?  timeout : 2 * 1000/* ms */;
-    let _ME = 'get_css()';
-    let style_uris = $.isArray( uri ) ? uri : [ uri ];
-    let requests = style_uris.map( function( style_uri ) {
-        console.log( `${_ME}: initiating AJAX download ("${style_uri}")` );
-        let jqXHR = $.ajax( style_uri, { cache: true, dataType: 'text', timeout: timeout } );
-        jqXHR.uri = style_uri;
+    optional = (optional !== null) ? !!optional : false;
+    let _ME = 'load_asset()';
+    let asset_uris = $.isArray( uri ) ? uri : [ uri ];
+    let requests = asset_uris.map( function( asset_uri ) {
+        console.log( `${_ME}: initiating AJAX download of "${asset_uri}")` );
+        let jqXHR = $.ajax( asset_uri, { cache: true, dataType: 'text', timeout: timeout } );
+        jqXHR.uri = asset_uri;
+        let uri_path = new URL( asset_uri, 'https://' ).pathname;
+        let uri_filename = uri_path.replace(/^.*[\\\/]/, '');
+        let uri_extension = uri_filename.replace(/^.*(?=\.)/, '');
+        jqXHR.extension = uri_extension;
         return jqXHR;
         });
 
     return $.when.apply($, requests)
         .done( function() {
             Array.prototype.forEach.call( arguments, function( request /* :: [data, textStatus, jqXHR] */, index ) {
-                console.log( `${_ME}: done::${JSON.stringify(request)}:: (${request[2].status}) '${request[2].statusText}' for "${request[2].uri}"` );
-                let css = request[0];
-                $('<style type="text/css" />').html(css).attr('_uri', request[2].uri).attr('_index', index).appendTo('head');
+                let jqXHR = request[2];
+                let data = request[0];
+                console.log( `${_ME}: done::${JSON.stringify(request)}:: (${jqXHR.status}) '${jqXHR.statusText}' for "${jqXHR.uri}"` );
+                if (jqXHR.extension === '.css') {
+                    console.log( `insert style from "${jqXHR.uri}"` );
+                    $('<style type="text/css" />').html(data).attr('_uri', jqXHR.uri).attr('_index', index).appendTo('head');
+                    }
+                if (jqXHR.extension === '.js') {
+                    console.log( `eval() script from "${jqXHR.uri}"` );
+                    /* jshint ignore:start */
+                    window.eval.call( window, data );
+                    /* jshint ignore:end */
+                    }
                 });})
-        //.fail( function() { Array.prototype.forEach.call( arguments, function( request /* :: [jqXHR, textStatus, errorThrown] */, index ) { console.log( `${_ME}: FAIL::${JSON.stringify(request)}::` ); throw new Error(`${_ME}: FAIL`); }); })
-        .fail( function() { Array.prototype.forEach.call( arguments, function( request /* :: [jqXHR, textStatus, errorThrown] */, index ) { warn(`loading failed for '${request.uri}'`); console.log( `${_ME}: FAIL::${JSON.stringify(request)}::` ); throw new Error(`${_ME}: FAIL`); }); })
-        //.always( function() { Array.prototype.forEach.call( arguments, function( request /* :: [data | jqXHR, textStatus, jqXHR | errorThrown] */, index ) { console.log( `${_ME}: ALWAYS: '${request[1]}'` ); }); })
+        .fail( function() { Array.prototype.forEach.call( arguments, function( request /* :: [jqXHR, textStatus, errorThrown] */, index ) { warn(`loading failed for "${request.uri}"`); console.log( `${_ME}: warn: fail()::${JSON.stringify(request)}::` ); if (!optional) throw Error(`${_ME}: FAIL: "${request.uri}"`); }); })
         ;
 }
 
@@ -203,7 +218,7 @@ var required_js = [
   // ],
   // markdown conversion
   protocol+"//cdnjs.cloudflare.com/ajax/libs/markdown-it/8.3.1/markdown-it.min.js",
-  [
+//  [
   // note: (using rawgit ~ see https://github.com/rgrove/rawgit/blob/master/FAQ.md @@ http://archive.is/rMkAp)
   // markdown-it ~ definition lists
   protocol+"//cdn.rawgit.com/markdown-it/markdown-it-deflist/8f2414f23316a2ec1c54bf4631a294fb2ae57ddd/dist/markdown-it-deflist.min.js", // markdown-it-deflist-2.0.1
@@ -213,9 +228,9 @@ var required_js = [
   protocol+"//cdnjs.cloudflare.com/ajax/libs/markdown-it-footnote/3.0.1/markdown-it-footnote.min.js",
   // markdown-it ~ YAML :: ? ... see https://github.com/CaliStyle/markdown-it-meta
   // MathJax
-  protocol+"//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML&delayStartupUntil=configured",
+//  protocol+"//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML&delayStartupUntil=configured",
   //protocol+"//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML",
-  ],
+//  ],
   //// KaTeX
   //protocol+"//cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/katex.min.js",
   //protocol+"//cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/contrib/auto-render.min.js",
@@ -259,8 +274,10 @@ console.log('document.compatMode = ' + document.compatMode);
 
 let defer = $.when([])  // `.when([])` resolves immediately
     .then( ()=>{ return get_raw_html(); } )
-    .then( ()=>{ return load_css( optional_css ); } )
-    .then( ()=>{ load_js_inorder( required_js, do_render ); } )
+    .then( ()=>{ return load_asset( optional_css ); } )
+    .then( ()=>{ return load_asset( required_js ); } )
+    .then( ()=>{ return $.getScript( [ 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML&delayStartupUntil=configured' ] ); } )
+    .then( ()=>{ do_render(); } )
     .then( function(){ console.log( 'main(): promise chain completed' ); })
     .done( function(){ console.log( 'main(): DONE ' ); } )
     .catch( function(){ console.log( 'main(): CATCH ' ); } )
@@ -381,13 +398,16 @@ function add_codeblock_snippet_support(){
 }
 
 function trigger_render_MathJax(){
-    MathJax.Hub.Config({
+    if (window.MathJax === undefined) return;
+//    let MathJax_root_uri = 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1';
+    window.MathJax.Hub.Config({
+      //root: MathJax_root_uri,
       tex2jax: {
         inlineMath: [ ['$\\phantom{}','\\phantom{}$'], ["\\(","\\)"] ],
         processEnvironments: true,
       }
     });
-    MathJax.Hub.Configured();
+    window.MathJax.Hub.Configured();
 }
 
 function package_codeblocks(){
