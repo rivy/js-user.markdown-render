@@ -3,7 +3,7 @@
 // @namespace   com.houseofivy
 // @description renders markdown files
 //
-// @version     0.075
+// @version     0.077
 // @//updateURL   https://raw.githubusercontent.com/rivy/gms-markdown_viewer.custom-css/master/markdown_viewer.custom-css.user.js
 //
 // file extension: .m(arkdown|kdn?|d(o?wn)?)
@@ -404,6 +404,11 @@ function package_codeblocks(){
         });
 }
 
+function isDefined( variable ){
+    // ref: http://www.codereadability.com/how-to-check-for-undefined-in-javascript @@ http://archive.is/RDiQz
+    return (variable !== undefined);
+}
+
 function transform_codeblocks_to_CodeMirror(){
 // setup CodeMirror as container and syntax highlighter
     let _ME = 'transform_codeblocks_to_CodeMirror()';
@@ -415,9 +420,10 @@ function transform_codeblocks_to_CodeMirror(){
         let $PRE = $CODE.parent('pre');
         let $DIV = $PRE.parent('div');
 
-        let _linewrapping = $DIV.hasClass('line-wrapping') || $DIV.hasClass('line-wrap') || $DIV.hasClass('wrapLines') || $DIV.hasClass('wordwrap');
-        let _linenumbers = $DIV.hasClass('line-numbers') || $DIV.hasClass('numberLines');
-        let _gutters = _linenumbers ? ['CodeMirror-linenumbers'] : ['CodeMirror-gutter-extra'];
+        let _lineWrapping = $DIV.hasClass('line-wrapping') || $DIV.hasClass('line-wrap') || $DIV.hasClass('wrapLines') || $DIV.hasClass('wordwrap');
+        let _lineNumbers = $DIV.hasClass('line-numbers') || $DIV.hasClass('numberLines');
+        let _firstLineNumber = isDefined($DIV.attr('startFrom')) ? parseInt($DIV.attr('startFrom')) : 1; // NOTE: for conversion alternatives, see https://coderwall.com/p/5tlhmw/converting-strings-to-number-in-javascript-pitfalls @@ http://archive.is/1CH5w
+        let _gutters = _lineNumbers ? ['CodeMirror-linenumbers'] : ['CodeMirror-gutter-extra'];
         let attr_class = $DIV.attr('class') || '';
         let language_match = attr_class.match(/(?:^|\s)language-(\S+)/) || [null, 'plain-text'];
         let _mode = language_match[1];
@@ -432,8 +438,9 @@ function transform_codeblocks_to_CodeMirror(){
         let cm = CodeMirror.fromTextArea( $element.get(0), {
             //value: _value,
             mode: _mode,
-            lineNumbers: _linenumbers,
-            lineWrapping: _linewrapping,
+            lineNumbers: _lineNumbers,
+            lineWrapping: _lineWrapping,
+            firstLineNumber: _firstLineNumber,
             gutters: _gutters,
             readOnly: true,
             //scrollbarStyle: "null",
