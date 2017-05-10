@@ -3,7 +3,7 @@
 // @namespace   com.houseofivy
 // @description renders markdown files
 //
-// @version     0.081
+// @version     0.083
 // @//updateURL   https://raw.githubusercontent.com/rivy/gms-markdown_viewer.custom-css/master/markdown_viewer.custom-css.user.js
 //
 // file extension: .m(arkdown|kdn?|d(o?wn)?)
@@ -348,8 +348,9 @@ function add_codeblock_snippet_support(){
     let $codeblocks = $(`.${css_class_codeblock}`);
     $codeblocks.each( function( index ){
       console.log( _ME + ': index = ' + index );
-      let $img = $('<img />', { height:'100%', src: clipboard_src, alt: clipboard_alt} );
-      let $button = $('<button>', { 'class': css_class_snip_button$ } ).prepend( $img );
+      //let $img = $('<img />', { height:'100%', src: clipboard_src, alt: clipboard_alt} );
+      let content = 'Copy';
+      let $button = $('<button>', { 'class': css_class_snip_button$ } ).prepend( content );
       $(this).prepend( $button );
       //$(this).find('.CodeMirror').get(0).CodeMirror.refresh();
       });
