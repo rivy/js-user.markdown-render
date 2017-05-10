@@ -3,7 +3,7 @@
 // @namespace   com.houseofivy
 // @description renders markdown files
 //
-// @version     0.085
+// @version     0.089
 // @//updateURL   https://raw.githubusercontent.com/rivy/gms-markdown_viewer.custom-css/master/markdown_viewer.custom-css.user.js
 //
 // file extension: .m(arkdown|kdn?|d(o?wn)?)
@@ -128,13 +128,16 @@ function load_asset( uri, timeout, optional ) { // ( {array} [, {int}timeout=0] 
     optional = (optional !== null) ? !!optional : false;
     let _ME = 'load_asset()';
     let asset_uris = $.isArray( uri ) ? uri : [ uri ];
+    let default_protocol = (window.location.protocol === 'http:') ? 'http:' : 'https:'; // use 'https:' unless current page is using 'http:'
     let requests = asset_uris.map( function( asset_uri ) {
         console.log( `${_ME}: initiating AJAX download of "${asset_uri}")` );
-        let jqXHR = $.ajax( asset_uri, { cache: true, dataType: 'text', timeout: timeout } );
-        jqXHR.uri = asset_uri;
-        let uri_path = new URL( asset_uri, 'https://' ).pathname;
+        let uri = asset_uri.trim();
+        if ( /^[\/\\][\/\\]/.test(uri) ) { console.log('** here'); uri = default_protocol + uri; }
+        let uri_path = new URL( uri, window.location ).pathname;
         let uri_filename = uri_path.replace(/^.*[\\\/]/, '');
         let uri_extension = uri_filename.replace(/^.*(?=\.)/, '');
+        let jqXHR = $.ajax( uri, { cache: true, dataType: 'text', timeout: timeout } );
+        jqXHR.uri = uri;
         jqXHR.extension = uri_extension;
         return jqXHR;
         });
@@ -196,73 +199,72 @@ function load_css( uri, timeout ) { // ( {array}, {int} ) => {jQuery.Deferred}
 
 // #### config
 
-var protocol = document.location.protocol; if (protocol === 'file:') { protocol = 'https:'; }
 var required_js = [
   // ToDO: investigate RequireJS to async load but initialize dependent modules in correct order
   // NOTE: see library CDN ref @ https://cdnjs.com
   // clipboard support
-  protocol+"//cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.6.1/clipboard.min.js",
+  "//cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.6.1/clipboard.min.js",
 //  [
   // // syntax highlighter (with plugins)
-  // protocol+"//cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/prism.min.js",
-  // //protocol+"//cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/plugins/line-highlight/prism-line-highlight.min.js",
-  // protocol+"//cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/plugins/line-numbers/prism-line-numbers.min.js",
+  // "//cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/prism.min.js",
+  // //"//cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/plugins/line-highlight/prism-line-highlight.min.js",
+  // "//cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/plugins/line-numbers/prism-line-numbers.min.js",
 //  ],
-//  protocol+"//cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/plugins/toolbar/prism-toolbar.min.js",
-//  protocol+"//cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/plugins/copy-to-clipboard/prism-copy-to-clipboard.min.js",
+//  "//cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/plugins/toolbar/prism-toolbar.min.js",
+//  "//cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/plugins/copy-to-clipboard/prism-copy-to-clipboard.min.js",
   // [
   // // syntax highlighter grammers (ToDO: change to lazy loading)
-  // protocol+"//cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/components/prism-haskell.min.js",
-  // protocol+"//cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/components/prism-perl.min.js",
-  // protocol+"//cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/components/prism-python.min.js",
+  // "//cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/components/prism-haskell.min.js",
+  // "//cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/components/prism-perl.min.js",
+  // "//cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/components/prism-python.min.js",
   // ],
   // markdown conversion
-  protocol+"//cdnjs.cloudflare.com/ajax/libs/markdown-it/8.3.1/markdown-it.min.js",
+  "//cdnjs.cloudflare.com/ajax/libs/markdown-it/8.3.1/markdown-it.min.js",
 //  [
   // note: (using rawgit ~ see https://github.com/rgrove/rawgit/blob/master/FAQ.md @@ http://archive.is/rMkAp)
   // markdown-it ~ definition lists
-  protocol+"//cdn.rawgit.com/markdown-it/markdown-it-deflist/8f2414f23316a2ec1c54bf4631a294fb2ae57ddd/dist/markdown-it-deflist.min.js", // markdown-it-deflist-2.0.1
+  "//cdn.rawgit.com/markdown-it/markdown-it-deflist/8f2414f23316a2ec1c54bf4631a294fb2ae57ddd/dist/markdown-it-deflist.min.js", // markdown-it-deflist-2.0.1
   // markdown-it ~ attributes (pandoc compatible)
-  protocol+"//cdn.rawgit.com/arve0/markdown-it-attrs/ce98279c9d3ad32bc0f94a9c1ab1206e6a9abaa8/markdown-it-attrs.browser.js", // markdown-it-attrs-0.8.0
+  "//cdn.rawgit.com/arve0/markdown-it-attrs/ce98279c9d3ad32bc0f94a9c1ab1206e6a9abaa8/markdown-it-attrs.browser.js", // markdown-it-attrs-0.8.0
   // markdown-it ~ footnotes
-  protocol+"//cdnjs.cloudflare.com/ajax/libs/markdown-it-footnote/3.0.1/markdown-it-footnote.min.js",
+  "//cdnjs.cloudflare.com/ajax/libs/markdown-it-footnote/3.0.1/markdown-it-footnote.min.js",
   // markdown-it ~ YAML :: ? ... see https://github.com/CaliStyle/markdown-it-meta
   // MathJax
-//  protocol+"//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML&delayStartupUntil=configured",
-  //protocol+"//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML",
+//  "//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML&delayStartupUntil=configured",
+  //"//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML",
 //  ],
   //// KaTeX
-  //protocol+"//cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/katex.min.js",
-  //protocol+"//cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/contrib/auto-render.min.js",
+  //"//cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/katex.min.js",
+  //"//cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/contrib/auto-render.min.js",
   // CodeMirror
-  protocol+"//cdnjs.cloudflare.com/ajax/libs/codemirror/5.25.2/codemirror.min.js",
+  "//cdnjs.cloudflare.com/ajax/libs/codemirror/5.25.2/codemirror.min.js",
 //  [
   // CodeMirror modes (aka languages)
-  protocol+"//cdnjs.cloudflare.com/ajax/libs/codemirror/5.25.2/mode/haskell/haskell.min.js",
-  protocol+"//cdnjs.cloudflare.com/ajax/libs/codemirror/5.25.2/mode/javascript/javascript.min.js",
-  protocol+"//cdnjs.cloudflare.com/ajax/libs/codemirror/5.25.2/mode/perl/perl.min.js",
+  "//cdnjs.cloudflare.com/ajax/libs/codemirror/5.25.2/mode/haskell/haskell.min.js",
+  "//cdnjs.cloudflare.com/ajax/libs/codemirror/5.25.2/mode/javascript/javascript.min.js",
+  "//cdnjs.cloudflare.com/ajax/libs/codemirror/5.25.2/mode/perl/perl.min.js",
 //  ],
   ];
 var optional_css = [
   // ToDO: CSS order is significant ("later directives with same specificity wins"), so investigate RequireJS to async load but insert in-order
   // reset
   // see https://stackoverflow.com/questions/3388705/why-is-a-table-not-using-the-body-font-size-even-though-i-havent-set-the-table/3388766#3388766 @@ http://archive.is/wePmk
-  protocol+"//cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css",
+  "//cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css",
   // ref: [normalize] http://necolas.github.io/normalize.css @@ http://archive.is/Fo0od ; info: http://nicolasgallagher.com/about-normalize-css @@ http://archive.is/RSXip ; repo: https://github.com/necolas/normalize.css
-//  protocol+"//cdnjs.cloudflare.com/ajax/libs/normalize/7.0.0/normalize.min.css",
+//  "//cdnjs.cloudflare.com/ajax/libs/normalize/7.0.0/normalize.min.css",
   // basic
-  protocol+"//cdn.rawgit.com/rivy/js-user.markdown-render/21e0a5f8043b4e07d537eaed448ba053b4a8bf10/css/s.css",
-//  protocol+"//raw.githubusercontent.com/Thiht/markdown-viewer/master/chrome/lib/sss/sss.css",
-//  protocol+"//raw.githubusercontent.com/Thiht/markdown-viewer/master/chrome/lib/sss/sss.print.css",
+  "//cdn.rawgit.com/rivy/js-user.markdown-render/21e0a5f8043b4e07d537eaed448ba053b4a8bf10/css/s.css",
+//  "//raw.githubusercontent.com/Thiht/markdown-viewer/master/chrome/lib/sss/sss.css",
+//  "//raw.githubusercontent.com/Thiht/markdown-viewer/master/chrome/lib/sss/sss.print.css",
   // tooltip CSS
-  protocol+"//cdn.rawgit.com/rivy/js-user.markdown-render/03542f43a1c5adbaf30f6d4eb9901a4b87613d00/css/snippet.css",
+  "//cdn.rawgit.com/rivy/js-user.markdown-render/03542f43a1c5adbaf30f6d4eb9901a4b87613d00/css/snippet.css",
   // syntax highlighter
-  //protocol+"//cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/themes/prism.min.css",
-  //protocol+"//cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/themes/prism-solarizedlight.min.css",
-  //protocol+"//cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/plugins/line-highlight/prism-line-highlight.min.css",
-  //protocol+"//cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/plugins/line-numbers/prism-line-numbers.min.css",
-  //protocol+"//cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/plugins/toolbar/prism-toolbar.min.css",
-  protocol+"//cdnjs.cloudflare.com/ajax/libs/codemirror/5.25.2/codemirror.min.css",
+  //"//cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/themes/prism.min.css",
+  //"//cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/themes/prism-solarizedlight.min.css",
+  //"//cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/plugins/line-highlight/prism-line-highlight.min.css",
+  //"//cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/plugins/line-numbers/prism-line-numbers.min.css",
+  //"//cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/plugins/toolbar/prism-toolbar.min.css",
+  "//cdnjs.cloudflare.com/ajax/libs/codemirror/5.25.2/codemirror.min.css",
   //"http://codemirror.net/lib/codemirror.css",
   ];
 
