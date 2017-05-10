@@ -211,6 +211,7 @@ var required_js = [
   protocol+"//cdn.rawgit.com/arve0/markdown-it-attrs/ce98279c9d3ad32bc0f94a9c1ab1206e6a9abaa8/markdown-it-attrs.browser.js", // markdown-it-attrs-0.8.0
   // markdown-it ~ footnotes
   protocol+"//cdnjs.cloudflare.com/ajax/libs/markdown-it-footnote/3.0.1/markdown-it-footnote.min.js",
+  // markdown-it ~ YAML :: ? ... see https://github.com/CaliStyle/markdown-it-meta
   // MathJax
   protocol+"//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML&delayStartupUntil=configured",
   //protocol+"//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML",
@@ -286,7 +287,7 @@ function do_render(){
     console.log(_ME + ': package codeblocks');
     package_codeblocks();
 
-    // ToDO: preload_language_support() ... loads CodeMirror modes based on languages found in codeblocks /language-(\S+)/; async, simultaneous
+    // ToDO: preload_language_support() ... loads CodeMirror modes based on languages found in codeblocks and inline code ~ /language-(\S+)/; async, simultaneous
 
     console.log(_ME + ': transform codeblocks');
     // ToDO: discuss the need for '.CodeMirror-scroll { height: auto; }' on <https://discuss.codemirror.net>
@@ -297,6 +298,8 @@ function do_render(){
     transform_codeblocks_to_CodeMirror();
 
     add_codeblock_snippet_support();
+
+    // ToDO: highlight_inline_code() ~ use CodeMirror modes to highlight syntax within inline code marked with a language
 }
 
 var css_class_button    = 'button';
