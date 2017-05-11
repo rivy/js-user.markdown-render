@@ -3,7 +3,7 @@
 // @namespace   com.houseofivy
 // @description renders markdown files
 //
-// @version     0.093
+// @version     0.095
 // @//updateURL   https://raw.githubusercontent.com/rivy/gms-markdown_viewer.custom-css/master/markdown_viewer.custom-css.user.js
 //
 // file extension: .m(arkdown|kdn?|d(o?wn)?)
@@ -18,8 +18,6 @@
 //
 // @grant       none
 // ==/UserScript==
-
-// ToDO: explore KaTeX instead of MathJax after ['quirks' mode should work]<https://github.com/Khan/KaTeX/pull/608> is resolved
 
 (function( /* USERjs, */ window, $ ){
 'use strict';
@@ -478,7 +476,17 @@ function write_code_datalang(){
         if ( ! language_match ) { language_match = attr_class.match(/^\s*(\S+)/); }
         if ( ! language_match ) { return; }
         console.log(`found CODE with class='${attr_class}', language='${language_match[1]}'`);
-        $CODE.attr('data-lang', language_match[1]);
+        let CM_mode = CodeMirror.findModeByName( language_match[1] ) ||
+            (function(mode){
+                 mode = mode.toLowerCase();
+                 for (var i = 0; i < CodeMirror.modeInfo.length; i++) {
+                 var info = CodeMirror.modeInfo[i];
+                 if (info.mode.toLowerCase() == mode) return info;
+                 }
+           })( language_match[1] ) || CodeMirror.findModeByName( 'Plain Text' )
+           ;
+        if ( CM_mode === 'null' ) { return; }
+        $CODE.attr('data-lang', CM_mode.mode);
         });
 }
 
