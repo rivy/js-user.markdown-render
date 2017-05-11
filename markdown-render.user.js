@@ -3,7 +3,7 @@
 // @namespace   com.houseofivy
 // @description renders markdown files
 //
-// @version     0.089
+// @version     0.093
 // @//updateURL   https://raw.githubusercontent.com/rivy/gms-markdown_viewer.custom-css/master/markdown_viewer.custom-css.user.js
 //
 // file extension: .m(arkdown|kdn?|d(o?wn)?)
@@ -132,7 +132,7 @@ function load_asset( uri, timeout, optional ) { // ( {array} [, {int}timeout=0] 
     let requests = asset_uris.map( function( asset_uri ) {
         console.log( `${_ME}: initiating AJAX download of "${asset_uri}")` );
         let uri = asset_uri.trim();
-        if ( /^[\/\\][\/\\]/.test(uri) ) { console.log('** here'); uri = default_protocol + uri; }
+        if ( /^[\/\\][\/\\]/.test(uri) ) { uri = default_protocol + uri; }
         let uri_path = new URL( uri, window.location ).pathname;
         let uri_filename = uri_path.replace(/^.*[\\\/]/, '');
         let uri_extension = uri_filename.replace(/^.*(?=\.)/, '');
@@ -147,7 +147,7 @@ function load_asset( uri, timeout, optional ) { // ( {array} [, {int}timeout=0] 
             Array.prototype.forEach.call( arguments, function( request /* :: [data, textStatus, jqXHR] */, index ) {
                 let jqXHR = request[2];
                 let data = request[0];
-                console.log( `${_ME}: done::${JSON.stringify(request)}:: (${jqXHR.status}) '${jqXHR.statusText}' for "${jqXHR.uri}"` );
+                //console.log( `${_ME}: done::${JSON.stringify(request)}:: (${jqXHR.status}) '${jqXHR.statusText}' for "${jqXHR.uri}"` );
                 if (jqXHR.extension === '.css') {
                     console.log( `insert style from "${jqXHR.uri}"` );
                     $('<style type="text/css" />').html(data).attr('_uri', jqXHR.uri).attr('_index', index).appendTo('head');
@@ -238,11 +238,14 @@ var required_js = [
   //"//cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/contrib/auto-render.min.js",
   // CodeMirror
   "//cdnjs.cloudflare.com/ajax/libs/codemirror/5.25.2/codemirror.min.js",
+  "//cdnjs.cloudflare.com/ajax/libs/codemirror/5.25.2/mode/meta.min.js",
+  "//cdnjs.cloudflare.com/ajax/libs/codemirror/5.25.2/addon/runmode/runmode.min.js",
+  "//cdnjs.cloudflare.com/ajax/libs/codemirror/5.25.2/addon/runmode/colorize.min.js",
 //  [
   // CodeMirror modes (aka languages)
-  "//cdnjs.cloudflare.com/ajax/libs/codemirror/5.25.2/mode/haskell/haskell.min.js",
-  "//cdnjs.cloudflare.com/ajax/libs/codemirror/5.25.2/mode/javascript/javascript.min.js",
-  "//cdnjs.cloudflare.com/ajax/libs/codemirror/5.25.2/mode/perl/perl.min.js",
+//  "//cdnjs.cloudflare.com/ajax/libs/codemirror/5.25.2/mode/haskell/haskell.min.js",
+//  "//cdnjs.cloudflare.com/ajax/libs/codemirror/5.25.2/mode/javascript/javascript.min.js",
+//  "//cdnjs.cloudflare.com/ajax/libs/codemirror/5.25.2/mode/perl/perl.min.js",
 //  ],
   ];
 var optional_css = [
@@ -274,11 +277,16 @@ var optional_css = [
 
 console.log('document.compatMode = ' + document.compatMode);
 
-let defer = $.when([])  // `.when([])` resolves immediately
+$.when([])  // `.when([])` resolves immediately
     .then( ()=>{ return get_raw_html(); } )
     .then( ()=>{ return load_asset( optional_css.concat( required_js ) ); } )
-//    .then( ()=>{ return $.getScript( [ 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML&delayStartupUntil=configured' ] ); } )
-    .then( ()=>{ do_render(); } )
+    .then( ()=>{ return $.when(
+                   do_render(),
+                   $.getScript( [ 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML&delayStartupUntil=configured' ] ).then( trigger_render_MathJax ).then( ()=>{console.log('MathJax triggered');} ) // ToDO: discuss the MathJax requirement for `$.getScript( ... )` instead of being able to `eval( ... )` with a MathJax root config on <https://github.com/mathjax/MathJax/issues>
+                   );
+               }
+         )
+//    .then( ()=>{ return $.getScript( [ 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML&delayStartupUntil=configured' ] ); } ) // ToDO: discuss the MathJax requirement for `$.getScript( ... )` instead of being able to `eval( ... )` with a MathJax root config on <https://github.com/mathjax/MathJax/issues>
     .then( function(){ console.log( 'main(): promise chain completed' ); })
     .done( function(){ console.log( 'main(): DONE ' ); } )
     .catch( function(){ console.log( 'main(): CATCH ' ); } )
@@ -291,7 +299,7 @@ let defer = $.when([])  // `.when([])` resolves immediately
 
 // #### subs
 
-function do_render(){
+function do_render() { // () : {jQuery.Deferred}
     let _ME = 'do_render()';
     console.log(_ME + ': rendering markdown');
     //document.body.innerHTML = render_markdown( document.body.textContent );
@@ -299,25 +307,53 @@ function do_render(){
     $('body pre').remove();
     $('<div/>').html( render ).appendTo($('body'));
 
-    console.log(_ME + ': initiating MathJax render');
-    trigger_render_MathJax();
+    console.log(_ME + ': write data-lang for CODE');
+    write_code_datalang();
 
     console.log(_ME + ': package codeblocks');
     package_codeblocks();
 
     // ToDO: preload_language_support() ... loads CodeMirror modes based on languages found in codeblocks and inline code ~ /language-(\S+)/; async, simultaneous
+    // note: CodeMirror seems to prefer attr `data-lang='...'` (likely for embedded spaces)
+    let CodeMirror_mode_js_map = new Map();
+//    $('code [class*="language-"]').each( function( index ) {
+    $('code').each( function( index ) {
+        let $CODE = $(this);
+        let attr_class = $CODE.attr('class') || '';
+        let language_match = attr_class.match(/(?:^|\s)language-(\S+)/); // [null, 'Plain Text'];
+        if ( ! language_match ) { return; }
+        console.log(`found CODE with class='${attr_class}', language='${language_match[1]}'`);
+        CodeMirror.modeURL = "//cdnjs.cloudflare.com/ajax/libs/codemirror/5.25.2/mode/%N/%N.min.js";
+        let CM_mode = CodeMirror.findModeByName( language_match[1] ) ||
+            (function(mode){
+                 mode = mode.toLowerCase();
+                 for (var i = 0; i < CodeMirror.modeInfo.length; i++) {
+                 var info = CodeMirror.modeInfo[i];
+                 if (info.mode.toLowerCase() == mode) return info;
+                 }
+           })( language_match[1] )// || CodeMirror.findModeByName( 'Plain Text' )
+           ;
+        if ( !CM_mode ) { warn(`unknown code language ('language_match[1]')`); return; }
+        let CM_mode_uri = CodeMirror.modeURL.replace(/%N/g, CM_mode.mode);
+        console.log(`found CodeMirror.mode='${CM_mode.mode}' for language='${language_match[1]}'; URL = '${CM_mode_uri}'`);
+        CodeMirror_mode_js_map.set( CM_mode_uri, (CodeMirror_mode_js_map.get( CM_mode_uri ) || 0) + 1 );
+//        CodeMirror_mode_js_map.set( CM_mode_uri, true );
+    });
 
-    console.log(_ME + ': transform codeblocks');
-    // ToDO: discuss the need for '.CodeMirror-scroll { height: auto; }' on <https://discuss.codemirror.net>
-    //  ...  ? why; And is there a way to calculate the true height? ... (show `... .find('.CodeMirror-sizer').height()`, which fails if scrollbar is shown)
-    //  ...  without `.CodeMirror-gutters { height: auto !important }` the inner portion of the editor is over-sized and captures scroll-wheel movement (scrolling text off screen)
-    $('head').append('<style type="text/css">.CodeMirror, .CodeMirror-scroll { height: auto; } .CodeMirror-gutters {height: auto !important}</style>');
-    //$('head').append('<style type="text/css">.CodeMirror-gutters {height: auto !important}</style>');
-    transform_codeblocks_to_CodeMirror();
-
-    add_codeblock_snippet_support();
-
-    // ToDO: highlight_inline_code() ~ use CodeMirror modes to highlight syntax within inline code marked with a language
+    return $.when([])
+        .then( ()=>{ return load_asset( Array.from(CodeMirror_mode_js_map.keys()), undefined, true ); } )
+        .then( ()=>{
+            console.log(_ME + ': transform codeblocks');
+            // ToDO: discuss the need for '.CodeMirror-scroll { height: auto; }' on <https://discuss.codemirror.net>
+            //  ...  ? why; And is there a way to calculate the true height? ... (show `... .find('.CodeMirror-sizer').height()`, which fails if scrollbar is shown)
+            //  ...  without `.CodeMirror-gutters { height: auto !important }` the inner portion of the editor is over-sized and captures scroll-wheel movement (scrolling text off screen)
+            $('head').append('<style type="text/css">.CodeMirror, .CodeMirror-scroll { height: auto; } .CodeMirror-gutters {height: auto !important}</style>');
+            //$('head').append('<style type="text/css">.CodeMirror-gutters {height: auto !important}</style>');
+            transform_codeblocks_to_CodeMirror();
+            add_codeblock_snippet_support();
+            // ToDO: highlight_inline_code() ~ use CodeMirror modes to highlight syntax within inline code marked with a language
+            highlight_code();
+            });
 }
 
 var css_class_button    = 'button';
@@ -348,7 +384,7 @@ function add_codeblock_snippet_support(){
 
     let $codeblocks = $(`.${css_class_codeblock}`);
     $codeblocks.each( function( index ){
-      console.log( _ME + ': index = ' + index );
+      ///console.log( _ME + ': index = ' + index );
       //let content = $('<img />', { height:'100%', src: clipboard_src, alt: clipboard_alt} );
       let content = 'Copy';
       let $button = $('<button>', { 'class': css_class_snip_button$ } ).prepend( content );
@@ -358,7 +394,7 @@ function add_codeblock_snippet_support(){
 
     //(function(){
     let _selector = `.${css_class_snip_button}`;
-    console.log( '_selector = '+_selector );
+    ///console.log( '_selector = '+_selector );
     let snippers = new Clipboard( _selector, {
       text: function( trigger ) {
       let $cm = $( trigger ).parent().find('.CodeMirror');
@@ -430,6 +466,35 @@ function package_codeblocks(){
         });
 }
 
+function write_code_datalang(){
+    let _ME = 'rewrite_code_language()';
+    $('code').each(function(){
+        let $CODE = $(this);
+        if ($CODE.attr('data-lang') !== undefined) { return; }
+        let attr_class = $CODE.attr('class') || '';
+        let language_match = attr_class.match(/(?:^|\s)language-(\S+)/); // || [null, 'Plain Text'];
+        if ( ! language_match ) { language_match = attr_class.match(/^\s*(\S+)/); }
+        if ( ! language_match ) { return; }
+        console.log(`found CODE with class='${attr_class}', language='${language_match[1]}'`);
+        $CODE.attr('data-lang', language_match[1]);
+        });
+}
+
+function highlight_code(){
+    let _ME = 'highlight_code()';
+    $('code[data-lang]').each(function(){
+        let $CODE = $(this);
+        if ($CODE.attr('data-lang') !== undefined) { return; }
+        let attr_class = $CODE.attr('class') || '';
+        let language_match = attr_class.match(/(?:^|\s)language-(\S+)/); // || [null, 'Plain Text'];
+        if ( ! language_match ) { language_match = attr_class.match(/^\s*(\S+)/); }
+        if ( ! language_match ) { return; }
+        console.log(`found CODE with class='${attr_class}', language='${language_match[1]}'`);
+        $CODE.attr('data-lang', language_match[1]);
+        });
+    CodeMirror.colorize( $('code[data-lang]') );
+}
+
 function isDefined( variable ){
     // ref: http://www.codereadability.com/how-to-check-for-undefined-in-javascript @@ http://archive.is/RDiQz
     return (variable !== undefined);
@@ -472,12 +537,12 @@ function transform_codeblocks_to_CodeMirror(){
             //scrollbarStyle: "null",
             viewportMargin: Infinity,
         });
-        console.log( 'sizer.height = ' + $element.find('.CodeMirror-sizer').height());
-        console.log( 'cm.getScrollerElement().clientHeight = ' + cm.getScrollerElement().clientHeight );
-        console.log( 'cm.getWrapperElement().offsetHeight ' + cm.getWrapperElement().offsetHeight );
-        console.log( 'scrollerElement.scrollHeight = ' + cm.getScrollerElement().scrollHeight );
-        console.log( 'doc.height = ' + cm.doc.height );
-        console.log( 'hscrollbar.height = ' + $element.find('.CodeMirror-hscrollbar').height());
+        ///console.log( 'sizer.height = ' + $element.find('.CodeMirror-sizer').height());
+        ///console.log( 'cm.getScrollerElement().clientHeight = ' + cm.getScrollerElement().clientHeight );
+        ///console.log( 'cm.getWrapperElement().offsetHeight ' + cm.getWrapperElement().offsetHeight );
+        ///console.log( 'scrollerElement.scrollHeight = ' + cm.getScrollerElement().scrollHeight );
+        ///console.log( 'doc.height = ' + cm.doc.height );
+        ///console.log( 'hscrollbar.height = ' + $element.find('.CodeMirror-hscrollbar').height());
         //cm.setSize( null, $element.find('.CodeMirror-sizer').height());
         //cm.setSize( null, 'auto');
         //cm.setSize();
@@ -567,7 +632,7 @@ scripts.forEach( function( script ){
 });
 }
 
-function highlight_code ( s, lang ) {
+function o_highlight_code ( s, lang ) {
     console.log('here#1: '+lang);
     // //let grammer = Prism.languages[lang];
     // // let grammer = get_prism_grammer(lang);
