@@ -19,6 +19,8 @@
 // @grant       none
 // ==/UserScript==
 
+// ToDO: explore KaTeX instead of MathJax after ['quirks' mode should work]<https://github.com/Khan/KaTeX/pull/608> is resolved
+
 (function( /* USERjs, */ window, $ ){
 'use strict';
 
