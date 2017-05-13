@@ -1,5 +1,38 @@
 ## plans
 
+### MathJax can't handle single `$` signal characters
+
+Currently, because *MathJax* can't handle single `$` signal characters,`$\phantom{}` ... `\phantom{}$` are used as a *hack-ish* method of implementing inline LaTeX that works for both `pandoc` and markdown. It is possible that KaTeX may offer a more compatible solution when the no `quirks` mode issue is resolved.
+
+* see
+
+### Printing Fidelity / Issues
+
+#### `@page` CSS
+
+Currently, [2017-05], headers and footers of printed media are not malleable. The CSS3 `@page` class may allow furture customization for improved book-like output.
+
+#### improve print fidelity for CodeMirror
+
+* current printing leaves fairly large un-even gaps around code, especially code containing a scrollbar
+  - currently using JavaScript to using CM.refresh() which reduces some of the issue
+    - ? a CSS issue, related to the need to set additional CSS beyond the declared `.CodeMirror, .CodeMirror-scroll { height: auto; } .CodeMirror-gutters {height: auto !important}`
+  - ? dynamically change to/from word-wrapping
+  - see <https://github.com/codemirror/CodeMirror/issues/3123> and re-open / discuss
+
+ref: http://stackoverflow.com/questions/3339789/onbeforeprint-and-onafterprint-equivalent-for-non-ie-browsers/15662720#15662720 @@ http://archive.is/y6aoM
+ref: https://www.tjvantoll.com/2012/06/15/detecting-print-requests-with-javascript @@ http://archive.is/FXABE
+
+### CodeMirror mode loading change
+
+* possible optimization
+
+see "mode/loadmode.js" from CodeMirror
+
+Defines a CodeMirror.requireMode(modename, callback) function that will try to load a given mode and call the callback when it succeeded. You'll have to set CodeMirror.modeURL to a string that mode paths can be constructed from, for example "mode/%N/%N.js"—the %N's will be replaced with the mode name. Also defines CodeMirror.autoLoadMode(instance, mode), which will ensure the given mode is loaded and cause the given editor instance to refresh its mode when the loading succeeded. See the demo."
+
+* use something similar to this to load and refresh the individual CodeMirror editors (keeping track of previously loaded languages); this will prevent delaying the render until the CodeMirror modes are loaded
+
 ### code display implementation
 
 see CodeMirror implementation with a JSFiddle-style theme @ <https://jsfiddle.net/rivy/r8emrr46/18>
@@ -17,7 +50,7 @@ FontAwesome (see http://fontawesome.io/get-started) may be useful for iconograph
 
 Both PrismJS and CodeMirror require loading of language files which are not automatically loaded. Some of the most common ones can be using the jQuery method. But a more dynamic method loading the needed languages on the fly might be better. RequireJS (see <http://requirejs.org/docs/api.html>) may be helpful with this instead of refactoring / adding code to the current jQuery `load...` methods.
 
-### investigate 
+### investigate
 
 #### "markdown-it-decorate"
 
@@ -49,7 +82,7 @@ For parsing "em-dash", "en-dashes", ellipses, and "plus-minus" symbols...
 
 info / repo @ <https://github.com/edemaine/markdown-it-replacements>
 
-The main script file is written in coffee script... not sure how that effects direct loading within a UserScript. 
+The main script file is written in coffee script... not sure how that effects direct loading within a UserScript.
 
 #### show "rendering" text
 
