@@ -3,7 +3,7 @@
 // @namespace   com.houseofivy
 // @description renders markdown files
 //
-// @version     0.099
+// @version     0.101
 // @//updateURL   https://raw.githubusercontent.com/rivy/gms-markdown_viewer.custom-css/master/markdown_viewer.custom-css.user.js
 //
 // file extension: .m(arkdown|kdn?|d(o?wn)?)
@@ -297,7 +297,7 @@ var optional_css = [
 //  "//raw.githubusercontent.com/Thiht/markdown-viewer/master/chrome/lib/sss/sss.print.css",
   // tooltip CSS
 //  "//cdn.rawgit.com/rivy/js-user.markdown-render/03542f43a1c5adbaf30f6d4eb9901a4b87613d00/css/snippet.css",
-  "//cdn.rawgit.com/rivy/js-user.markdown-render/f619fe46e64e758c26bb5bbe4ed7004fcb04de62/css/tooltips.css",
+  "//cdn.rawgit.com/rivy/js-user.markdown-render/0cbb0ad3be100ecf9b5cd9e6421f7811c9621e4e/css/tooltips.css",
   // syntax highlighter
   //"//cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/themes/prism.min.css",
   //"//cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/themes/prism-solarizedlight.min.css",
@@ -396,7 +396,7 @@ function do_render() { // () : {jQuery.Deferred}
 var css_class_button    = 'button';
 var css_class_codeblock = 'codeblock';
 var css_class_tooltip   = 'tooltipped';
-var css_class_tooltip__below = 'tooltipped-s'; // tooltipped-s == position tooltip below
+var css_class_tooltip__below = 'tooltipped--s'; // tooltipped--s == position tooltip below
 
 function add_codeblock_snippet_support(){
     let _ME = 'add_codeblock_snippet_support()';
