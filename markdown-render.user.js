@@ -3,7 +3,7 @@
 // @namespace   com.houseofivy
 // @description renders markdown files
 //
-// @version     0.095
+// @version     0.097
 // @//updateURL   https://raw.githubusercontent.com/rivy/gms-markdown_viewer.custom-css/master/markdown_viewer.custom-css.user.js
 //
 // file extension: .m(arkdown|kdn?|d(o?wn)?)
@@ -21,6 +21,42 @@
 
 (function( /* USERjs, */ window, $ ){
 'use strict';
+
+var print_form = false; // minimize refresh/setSize on Chrome which may call these multiple times when printing
+var beforePrint = function() {
+//    let $cm = $('body').find('.CodeMirror');
+//    $cm.each( ()=>{ $(this).get(0).CodeMirror.refresh(); });
+    // ? turn on/off word-wrap?
+    if ( ! print_form ) {
+       let $cb = $('.codeblock');
+       $cb.each(function(index){
+          let cm = $(this).find('.CodeMirror').get(0);
+          //cm.setOption('lineWrapping', true); // *useless*; worsens padding issues and *doesn't* trigger lineWrapping
+          cm.CodeMirror.setSize();
+          //cm.CodeMirror.refresh();
+          });
+       print_form = true;
+       }
+};
+var afterPrint = function() {
+    if ( print_form ) {
+       let $cb = $('.codeblock');
+       $cb.each(function(index){ $(this).find('.CodeMirror').get(0).CodeMirror.setSize(); });
+       print_form = false;
+       }
+};
+if (window.matchMedia) {
+    var mediaQueryList = window.matchMedia('print');
+    mediaQueryList.addListener(function(mql) {
+       if (mql.matches) {
+            beforePrint();
+        } else {
+           afterPrint();
+        }
+    });
+}
+$(window).on('beforeprint', beforePrint);
+$(window).on('afterprint', afterPrint);
 
 let messaging_id = '_messages';
 function add_messaging_area(){
@@ -198,7 +234,7 @@ function load_css( uri, timeout ) { // ( {array}, {int} ) => {jQuery.Deferred}
 }
 
 // #### config
-
+var CM_base_url = '//cdnjs.cloudflare.com/ajax/libs/codemirror/5.25.0/';
 var required_js = [
   // ToDO: investigate RequireJS to async load but initialize dependent modules in correct order
   // NOTE: see library CDN ref @ https://cdnjs.com
@@ -237,15 +273,15 @@ var required_js = [
   //"//cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/katex.min.js",
   //"//cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/contrib/auto-render.min.js",
   // CodeMirror
-  "//cdnjs.cloudflare.com/ajax/libs/codemirror/5.25.2/codemirror.min.js",
-  "//cdnjs.cloudflare.com/ajax/libs/codemirror/5.25.2/mode/meta.min.js",
-  "//cdnjs.cloudflare.com/ajax/libs/codemirror/5.25.2/addon/runmode/runmode.min.js",
-  "//cdnjs.cloudflare.com/ajax/libs/codemirror/5.25.2/addon/runmode/colorize.min.js",
+  CM_base_url+ "codemirror.min.js",
+  CM_base_url+ "mode/meta.min.js",
+  CM_base_url+ "addon/runmode/runmode.min.js",
+  CM_base_url+ "addon/runmode/colorize.min.js",
 //  [
   // CodeMirror modes (aka languages)
-//  "//cdnjs.cloudflare.com/ajax/libs/codemirror/5.25.2/mode/haskell/haskell.min.js",
-//  "//cdnjs.cloudflare.com/ajax/libs/codemirror/5.25.2/mode/javascript/javascript.min.js",
-//  "//cdnjs.cloudflare.com/ajax/libs/codemirror/5.25.2/mode/perl/perl.min.js",
+//  CM_base_url+ "mode/haskell/haskell.min.js",
+//  CM_base_url+ "mode/javascript/javascript.min.js",
+//  CM_base_url+ "mode/perl/perl.min.js",
 //  ],
   ];
 var optional_css = [
@@ -267,7 +303,7 @@ var optional_css = [
   //"//cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/plugins/line-highlight/prism-line-highlight.min.css",
   //"//cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/plugins/line-numbers/prism-line-numbers.min.css",
   //"//cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/plugins/toolbar/prism-toolbar.min.css",
-  "//cdnjs.cloudflare.com/ajax/libs/codemirror/5.25.2/codemirror.min.css",
+  CM_base_url+ "codemirror.min.css",
   //"http://codemirror.net/lib/codemirror.css",
   ];
 
@@ -323,7 +359,7 @@ function do_render() { // () : {jQuery.Deferred}
         let language_match = attr_class.match(/(?:^|\s)language-(\S+)/); // [null, 'Plain Text'];
         if ( ! language_match ) { return; }
         console.log(`found CODE with class='${attr_class}', language='${language_match[1]}'`);
-        CodeMirror.modeURL = "//cdnjs.cloudflare.com/ajax/libs/codemirror/5.25.2/mode/%N/%N.min.js";
+        CodeMirror.modeURL = CM_base_url+ "mode/%N/%N.min.js";
         let CM_mode = CodeMirror.findModeByName( language_match[1] ) ||
             (function(mode){
                  mode = mode.toLowerCase();
@@ -347,8 +383,8 @@ function do_render() { // () : {jQuery.Deferred}
             // ToDO: discuss the need for '.CodeMirror-scroll { height: auto; }' on <https://discuss.codemirror.net>
             //  ...  ? why; And is there a way to calculate the true height? ... (show `... .find('.CodeMirror-sizer').height()`, which fails if scrollbar is shown)
             //  ...  without `.CodeMirror-gutters { height: auto !important }` the inner portion of the editor is over-sized and captures scroll-wheel movement (scrolling text off screen)
-            $('head').append('<style type="text/css">.CodeMirror, .CodeMirror-scroll { height: auto; } .CodeMirror-gutters {height: auto !important}</style>');
-            //$('head').append('<style type="text/css">.CodeMirror-gutters {height: auto !important}</style>');
+            ///$('head').append('<style type="text/css">.CodeMirror, .CodeMirror-scroll { height: auto; } .CodeMirror-gutters {height: auto !important}</style>');
+            $('head').append('<style type="text/css">.CodeMirror, .CodeMirror-scroll { height: auto; }</style>');
             transform_codeblocks_to_CodeMirror();
             add_codeblock_snippet_support();
             // ToDO: highlight_inline_code() ~ use CodeMirror modes to highlight syntax within inline code marked with a language
@@ -537,14 +573,13 @@ function transform_codeblocks_to_CodeMirror(){
 
         let $element = $DIV.children('textarea'); $element.text(_value);
         let cm = CodeMirror.fromTextArea( $element.get(0), {
-            //value: _value,
             mode: _mode,
             lineNumbers: _lineNumbers,
             lineWrapping: _lineWrapping,
             firstLineNumber: _firstLineNumber,
             gutters: _gutters,
+            //
             readOnly: true,
-            //scrollbarStyle: "null",
             viewportMargin: Infinity,
         });
         ///console.log( 'sizer.height = ' + $element.find('.CodeMirror-sizer').height());
