@@ -1,5 +1,14 @@
 ## plans
 
+### `lang='en'` attribute
+
+* needed for automatic CSS hypenation
+* allow changing ? via meta tag hoisted to head or body?
+
+ref: https://www.w3.org/International/questions/qa-html-language-declarations
+ref: http://blog.adrianroselli.com/2015/01/on-use-of-lang-attribute.html @@ http://archive.is/H0ExZ (older, better typeography) + http://archive.is/chYjS
+
+
 ### MathJax can't handle single `$` signal characters
 
 Currently, because *MathJax* can't handle single `$` signal characters,`$\phantom{}` ... `\phantom{}$` are used as a *hack-ish* method of implementing inline LaTeX that works for both `pandoc` and markdown. It is possible that KaTeX may offer a more compatible solution when the no `quirks` mode issue is resolved.
