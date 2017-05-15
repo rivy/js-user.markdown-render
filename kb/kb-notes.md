@@ -1,5 +1,14 @@
 ## plans
 
+## rename tooltip CSS
+
+* change to use top/bottom/right/left terms (eg, tooltipped--tr, etc)
+* top/bottom/left/right is in line with the usual HTML terminology
+
+### improve print output on Firefox
+
+* ? does the beforePrint() funtion actually get called before Firefox reads/renders the printed page?
+
 ### `lang='en'` attribute
 
 * needed for automatic CSS hypenation
