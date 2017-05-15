@@ -3,7 +3,7 @@
 // @namespace   com.houseofivy
 // @description renders markdown files
 //
-// @version     0.101
+// @version     0.103
 // @//updateURL   https://raw.githubusercontent.com/rivy/gms-markdown_viewer.custom-css/master/markdown_viewer.custom-css.user.js
 //
 // file extension: .m(arkdown|kdn?|d(o?wn)?)
@@ -24,16 +24,17 @@
 
 var print_form = false; // minimize refresh/setSize on Chrome which may call these multiple times when printing
 var beforePrint = function() {
-//    let $cm = $('body').find('.CodeMirror');
-//    $cm.each( ()=>{ $(this).get(0).CodeMirror.refresh(); });
-    // ? turn on/off word-wrap?
     if ( ! print_form ) {
        let $cb = $('.codeblock');
        $cb.each(function(index){
-          let cm = $(this).find('.CodeMirror').get(0);
-          //cm.setOption('lineWrapping', true); // *useless*; worsens padding issues and *doesn't* trigger lineWrapping
-          cm.CodeMirror.setSize();
-          //cm.CodeMirror.refresh();
+          let $CB = $(this);
+          let cm = $CB.find('.CodeMirror').get(0).CodeMirror;
+          cm.setOption('lineWrapping', true);
+          cm.refresh();
+          let height = $CB.find('.CodeMirror-sizer').height();
+          ///console.log(`beforePrint(): height = ${height}`);
+          cm.setSize( null, height );
+          cm.refresh();
           });
        print_form = true;
        }
@@ -41,8 +42,17 @@ var beforePrint = function() {
 var afterPrint = function() {
     if ( print_form ) {
        let $cb = $('.codeblock');
-       $cb.each(function(index){ $(this).find('.CodeMirror').get(0).CodeMirror.setSize(); });
-       print_form = false;
+       $cb.each(function(index){
+          let $CB = $(this);
+          let cm = $CB.find('.CodeMirror').get(0).CodeMirror;
+          let _lineWrapping = $CB.hasClass('line-wrapping') || $CB.hasClass('line-wrap') || $CB.hasClass('wrapLines') || $CB.hasClass('wordwrap');
+          cm.setOption('lineWrapping', _lineWrapping);
+          cm.refresh();
+          let height = $CB.find('.CodeMirror-sizer').height();
+          ///console.log(`beforePrint(): height = ${height}`);
+          cm.setSize( null, height );
+          cm.refresh();
+          });
        }
 };
 if (window.matchMedia) {
