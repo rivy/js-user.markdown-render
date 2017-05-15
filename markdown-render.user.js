@@ -3,7 +3,7 @@
 // @namespace   com.houseofivy
 // @description renders markdown files
 //
-// @version     0.109
+// @version     0.111
 // @//updateURL   https://raw.githubusercontent.com/rivy/gms-markdown_viewer.custom-css/master/markdown_viewer.custom-css.user.js
 //
 // file extension: .m(arkdown|kdn?|d(o?wn)?)
@@ -303,9 +303,9 @@ var optional_css = [
 //  "//cdnjs.cloudflare.com/ajax/libs/normalize/7.0.0/normalize.min.css",
   // basic
 //  "//cdn.rawgit.com/rivy/js-user.markdown-render/21e0a5f8043b4e07d537eaed448ba053b4a8bf10/css/s.css",
-  "//cdn.rawgit.com/rivy/js-user.markdown-render/b5be37e0f69e2f6c3cba28e49dfd28b8607caedc/css/_default.css",
-  "//cdn.rawgit.com/rivy/js-user.markdown-render/b5be37e0f69e2f6c3cba28e49dfd28b8607caedc/css/_fontface.css",
-//  "//cdn.rawgit.com/rivy/js-user.markdown-render/656c01d3ccc1ed694fa6fde2aabc9cafaddc6eff/css/base.css",
+  "//cdn.rawgit.com/rivy/js-user.markdown-render/14f9d5b8e723a268c80ae89c8a44ebf2265765a2/css/_default.css",
+  "//cdn.rawgit.com/rivy/js-user.markdown-render/14f9d5b8e723a268c80ae89c8a44ebf2265765a2/css/_fontface.css",
+  "//cdn.rawgit.com/rivy/js-user.markdown-render/14f9d5b8e723a268c80ae89c8a44ebf2265765a2/css/base.css",
 //  "//raw.githubusercontent.com/Thiht/markdown-viewer/master/chrome/lib/sss/sss.css",
 //  "//raw.githubusercontent.com/Thiht/markdown-viewer/master/chrome/lib/sss/sss.print.css",
   // tooltip CSS
