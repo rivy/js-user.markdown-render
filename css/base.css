@@ -1,47 +1,19 @@
-/* #### */
+/* ## baseline CSS */
 
-body { font-family: Lora, "Noto Serif", "DejaVu Serif", Palatino, serif; font-size: 1.2rem; line-height: 1.5em; }
-/*body { max-width: 90%; padding-left: 5%;}*/
-
-h1, h2, h3, h4, h5, h6 { font-family: "Fira Sans", "Open Sans", "DejaVu Sans", Calibri, Arial, sans-serif; }
-h1, h2 { font-weight: 400; }
-h3, h4 { font-weight: 300; }
-h5, h6 { font-weight: 200; }
-h1 { font-size: 2.5rem; margin-block-start: 0.67em; margin-block-end: 0.67em; }
-h2 { font-size: 2rem; margin-block-start: 0.83em; margin-block-end: 0.83em; }
-h3 { font-size: 1.75rem; margin-block-start: 1em; margin-block-end: 1em; }
-h4 { font-size: 1.5rem; margin-block-start: 1.33em; margin-block-end: 1.33em; }
-h5 { font-size: 1.25rem; margin-block-start: 1.67em; margin-block-end: 1.67em; }
-h6 { font-size: 1.25rem; margin-block-start: 2.33em; margin-block-end: 2.33em; }
-
-/* listing { margin-block-start: 1rem; margin-block-end: 1rem; } */
-p { margin-block-start: 1rem; margin-block-end: 1rem; }
-
-/*
-// // see jsfiddle @ http://jsfiddle.net/5HQ7p
-// h1:after { content:' '; display:block; border:1px dashed #505050; border-radius:2px; -webkit-border-radius:2px; -moz-border-radius:2px; }
-*/
-/*
-h1.bordered-b { border-bottom: 0.05em solid lightgrey; border-radius: 0.01em; }
-*/
-h6 { color: grey }
-pre { border-left: 0.25em solid green; border-left-color: rgba(0,128,0,0.8); padding: 0 0.5em; }
-code { font-family: "Inconsolata", "Fira Mono", "Open Sans Mono", "Anonymous Pro", "Consolas", "Lucida Console", monospace; font-size: 80%;
-code { background: /* #EEE */ gainsboro; padding: 0.1em 0.25em; }
-/*code { border: 0.01em solid teal; border-color: rgba(0,128,0,0.5); border-radius: 0.1em; }*/
-/*pre code { padding: 0; border: none; background: none; font-size: 75%; line-height: 1.5; }*/
-sup code { padding: 0; background: none; font-size: 75%; border: none; }
-table { width: auto; }
-
-blockquote {
-  border-left: 0.25em solid /* #EEE */ gainsboro;
-  margin: 0;
-  padding: 0 0.5em;
-}
+body { font-family: Merriweather, Lora, "Noto Serif", "DejaVu Serif", Palatino, serif; font-size: 1.2rem; line-height: 1.4em; }
+body { text-rendering: optimizeLegibility; -webkit-font-feature-settings: "kern"; -moz-font-feature-settings: "kern"; font-feature-settings: "kern"; }
+h1, h2, h3, h4, h5, h6 { font-family: "Fira Sans Condensed", "Merriweather Sans", "Fira Sans", "Open Sans", "DejaVu Sans", Calibri, Arial, sans-serif; }
+/* h1, h2, h3, h4, h5, h6 { font-family: "Merriweather Sans", "Fira Sans", "Open Sans", "DejaVu Sans", Calibri, Arial, sans-serif; letter-spacing: -0.05em; } */ /* ref: [Condensing a font with CSS](http://stackoverflow.com/questions/13786971/make-a-font-more-condensed-with-css) @@ <http://archive.is/BJDxg>; */
+h1 { font-size: 2.5em; margin-block-start: 0.67em; margin-block-end: 0.67em; line-height: 1.1em; }
+h2 { font-size: 2em; margin-block-start: 0.83em; margin-block-end: 0.83em; line-height: 1.1em; }
+h3 { font-size: 1.75em; margin-block-start: 1em; margin-block-end: 1em; line-height: 1.1em; }
+h4 { font-size: 1.5em; margin-block-start: 1.33em; margin-block-end: 1.33em; line-height: 1.1em; }
+h5 { font-size: 1.25em; margin-block-start: 1.67em; margin-block-end: 1.67em; line-height: 1.1em; }
+h6 { font-size: 1.25em; margin-block-start: 2.33em; margin-block-end: 2.33em; line-height: 1.1em; }
 
 table {
   border-collapse: collapse;
-  font-size: 100%;
+  font-size: 1em;
 }
 table + table {
   margin-top: 1em;
@@ -61,8 +33,75 @@ caption {
   padding: 0 0.7em;
   border-collapse: collapse;
 }
-hr {
-  background: /* #EEE */ gainsboro;
-  border: 0;
-  height: /* 1px */ 0.05em;
+
+blockquote {
+  font-size: 0.9em;
+  border-left: 0.25em solid /* #EEE */ gainsboro;
+  border-radius: 0.1em;
+  /*margin: 0;*/
+  margin-left: 1em;
+  padding: 0 0.5em;
+  padding-left: 1em;
 }
+
+:link, :visited { text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+pre, code, .codeblock { font-family: /*Inconsolata,*/ "Fira Code", "Open Sans Mono", "Anonymous Pro", "Consolas", "Lucida Console", monospace; font-size: 1em; line-height: 1.3em; }
+code { background: gainsboro; background: rgba(238,238,238,0.8); padding: 0 0.2em; }
+code { border-radius: 0.1em; }
+
+/* ## page / media settings */
+@media all {
+    body { margin: auto; }
+}
+/* ref: [Practical Typography ~ Page Margins](http://practicaltypography.com/page-margins.html) @@ <http://archive.is/sOEL6> */
+/* ref: http://bradfrost.com/blog/post/7-habits-of-highly-effective-media-queries @@ http://archive.is/cv0mA */
+@media screen and (max-width: 24rem) {
+    body { width: 96%; }
+}
+@media screen and (min-width: 24rem) {
+    body { width: 90%; }
+}
+@media screen and (min-width: 46.8rem) {
+    body { width: 85%; }
+}
+@media screen and (min-width: 50rem) {
+    body { width: 75%; }
+}
+@media screen and (min-width: 60rem) {
+    body { width: 70%; }
+}
+@media print {
+    body { font-size: 0.8em; /*width: 75%; margin-left: 15%; margin-top:10%; margin-bottom: 10%;*/ }
+}
+
+body { hyphens: auto; }
+pre, code { hyphens: none; }
+
+blockquote { page-break-inside: avoid; }
+table { page-break-inside:avoid; }
+tr    { page-break-inside:avoid; page-break-after:auto }
+.codeblock { page-break-inside: avoid; }
+.no-page-break-inside { page-break-inside: avoid; }
+
+/* ## .CodeMirror */
+/* ### CodeMirror CSS uses '.CodeMirror pre', use same here for specificity */
+.CodeMirror, .CodeMirror pre { font-family: inherit; font-size: 1em; line-height: 1.3em; }
+/*.CodeMirror, .CodeMirror pre { font-variant-ligatures: none; -webkit-font-variant-ligatures: none; }*/
+.CodeMirror, .CodeMirror pre { font-variant-ligatures: contextual; -webkit-font-variant-ligatures: contextual; }
+.CodeMirror {
+  border: 1px solid gainsboro;
+  border-radius: 0.2em;
+  /* border-radius: 5px; */
+}
+.CodeMirror-gutter-extra {
+  min-width: 2em;
+  background: whitesmoke/* f5f5f5 */
+  ;
+  /* #f7f7f7 default border color for CodeMirror */
+}
+
+/* ## additional customization classes */
+.bordered-b { border-bottom: 0.05em solid lightgrey; border-radius: 0.01em; }
+div.table-width-100percent table { width: 100%; } /* hack until attributes can be applied to tables ## create an issue for markdown-it-attrs */
