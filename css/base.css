@@ -4,7 +4,6 @@ body { font-family: Lora, "Noto Serif", "DejaVu Serif", Palatino, serif; font-si
 /*body { max-width: 90%; padding-left: 5%;}*/
 
 h1, h2, h3, h4, h5, h6 { font-family: "Fira Sans", "Open Sans", "DejaVu Sans", Calibri, Arial, sans-serif; }
-h1, h2, h3, h4, h5, h6 { font-family: "Fira Sans", "Open Sans", "DejaVu Sans", Calibri, Arial, sans-serif; }
 h1, h2 { font-weight: 400; }
 h3, h4 { font-weight: 300; }
 h5, h6 { font-weight: 200; }
@@ -15,7 +14,7 @@ h4 { font-size: 1.5rem; margin-block-start: 1.33em; margin-block-end: 1.33em; }
 h5 { font-size: 1.25rem; margin-block-start: 1.67em; margin-block-end: 1.67em; }
 h6 { font-size: 1.25rem; margin-block-start: 2.33em; margin-block-end: 2.33em; }
 
-listing { margin-block-start: 1rem; margin-block-end: 1rem; }
+/* listing { margin-block-start: 1rem; margin-block-end: 1rem; } */
 p { margin-block-start: 1rem; margin-block-end: 1rem; }
 
 /*
@@ -27,10 +26,10 @@ h1.bordered-b { border-bottom: 0.05em solid lightgrey; border-radius: 0.01em; }
 */
 h6 { color: grey }
 pre { border-left: 0.25em solid green; border-left-color: rgba(0,128,0,0.8); padding: 0 0.5em; }
-pre, code { font-family: "Fira Mono", "Open Sans Mono", "Anonymous Pro", "Consolas", "Lucida Console", monospace; font-size: 80%;
+code { font-family: "Inconsolata", "Fira Mono", "Open Sans Mono", "Anonymous Pro", "Consolas", "Lucida Console", monospace; font-size: 80%;
 code { background: /* #EEE */ gainsboro; padding: 0.1em 0.25em; }
-code { border: 0.01em solid teal; border-color: rgba(0,128,0,0.5); border-radius: 0.1em; }
-pre code { padding: 0; border: none; background: none; font-size: 75%; line-height: 1.5; }
+/*code { border: 0.01em solid teal; border-color: rgba(0,128,0,0.5); border-radius: 0.1em; }*/
+/*pre code { padding: 0; border: none; background: none; font-size: 75%; line-height: 1.5; }*/
 sup code { padding: 0; background: none; font-size: 75%; border: none; }
 table { width: auto; }
 
