@@ -3,7 +3,7 @@
 // @namespace   com.houseofivy
 // @description renders markdown files
 //
-// @version     0.105
+// @version     0.107
 // @//updateURL   https://raw.githubusercontent.com/rivy/gms-markdown_viewer.custom-css/master/markdown_viewer.custom-css.user.js
 //
 // file extension: .m(arkdown|kdn?|d(o?wn)?)
@@ -296,13 +296,15 @@ var required_js = [
   ];
 var optional_css = [
   // ToDO: CSS order is significant ("later directives with same specificity wins"), so investigate RequireJS to async load but insert in-order
-  // reset
-  // see https://stackoverflow.com/questions/3388705/why-is-a-table-not-using-the-body-font-size-even-though-i-havent-set-the-table/3388766#3388766 @@ http://archive.is/wePmk
+  // reset ~ see http://meyerweb.com/eric/tools/css/reset @@ http://archive.is/XvC4w
+  // ... see https://stackoverflow.com/questions/3388705/why-is-a-table-not-using-the-body-font-size-even-though-i-havent-set-the-table/3388766#3388766 @@ http://archive.is/wePmk
   "//cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css",
   // ref: [normalize] http://necolas.github.io/normalize.css @@ http://archive.is/Fo0od ; info: http://nicolasgallagher.com/about-normalize-css @@ http://archive.is/RSXip ; repo: https://github.com/necolas/normalize.css
 //  "//cdnjs.cloudflare.com/ajax/libs/normalize/7.0.0/normalize.min.css",
   // basic
-  "//cdn.rawgit.com/rivy/js-user.markdown-render/21e0a5f8043b4e07d537eaed448ba053b4a8bf10/css/s.css",
+//  "//cdn.rawgit.com/rivy/js-user.markdown-render/21e0a5f8043b4e07d537eaed448ba053b4a8bf10/css/s.css",
+  "//cdn.rawgit.com/rivy/js-user.markdown-render/656c01d3ccc1ed694fa6fde2aabc9cafaddc6eff/css/_default.css",
+//  "//cdn.rawgit.com/rivy/js-user.markdown-render/656c01d3ccc1ed694fa6fde2aabc9cafaddc6eff/css/base.css",
 //  "//raw.githubusercontent.com/Thiht/markdown-viewer/master/chrome/lib/sss/sss.css",
 //  "//raw.githubusercontent.com/Thiht/markdown-viewer/master/chrome/lib/sss/sss.print.css",
   // tooltip CSS
