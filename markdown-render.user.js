@@ -326,6 +326,7 @@ console.log('document.compatMode = ' + document.compatMode);
 
 $.when([])  // `.when([])` resolves immediately
     .then( ()=>{ return get_raw_html(); } )
+    .then( ()=>{ return $('html').attr('lang','en'); } ) // ref: http://blog.adrianroselli.com/2015/01/on-use-of-lang-attribute.html @@ http://archive.is/H0ExZ (older, better typeography) + http://archive.is/chYjS
     .then( ()=>{ return load_asset( optional_css.concat( required_js ) ); } )
     .then( ()=>{ return $.when(
                    do_render(),
