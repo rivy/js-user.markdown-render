@@ -5,7 +5,15 @@
 * change to use top/bottom/right/left terms (eg, tooltipped--tr, etc)
 * top/bottom/left/right is in line with the usual HTML terminology
 
-### improve print output on Firefox
+### improve printing
+
+#### save initial size
+
+* since there is no obvious way to calculate height (including the height of a possible scollbar), save it for printing and then reuse the saved number in afterPrint()
+
+* discuss whether there is a way to calculate it correctly (including dealing with whether the scroll bar is on/off) on the CodeMirror discussion / issue website
+
+#### output on Firefox
 
 * ? does the beforePrint() funtion actually get called before Firefox reads/renders the printed page?
 
