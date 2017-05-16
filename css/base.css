@@ -87,9 +87,10 @@ tr    { page-break-inside:avoid; page-break-after:auto }
 
 /* ## .CodeMirror */
 /* ### CodeMirror CSS uses '.CodeMirror pre', use same here for specificity */
-.CodeMirror, .CodeMirror pre { font-family: inherit; font-size: 1em; line-height: 1.3em; }
-/*.CodeMirror, .CodeMirror pre { font-variant-ligatures: none; -webkit-font-variant-ligatures: none; }*/
-.CodeMirror, .CodeMirror pre { font-variant-ligatures: contextual; -webkit-font-variant-ligatures: contextual; }
+.CodeMirror, .CodeMirror pre { font-family: /*Inconsolata,*/ "Fira Code", "Open Sans Mono", "Anonymous Pro", "Consolas", "Lucida Console", monospace; font-size: 1em; line-height: 1.3em; }
+/*.CodeMirror, .CodeMirror pre { font-family: inherit; font-size: 1em; line-height: 1.3em; }*/
+.CodeMirror, .CodeMirror pre { font-variant-ligatures: none; -webkit-font-variant-ligatures: none; }
+/*.CodeMirror, .CodeMirror pre { font-variant-ligatures: contextual; -webkit-font-variant-ligatures: contextual; }*/
 .CodeMirror {
   border: 1px solid gainsboro;
   border-radius: 0.2em;
