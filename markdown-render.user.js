@@ -3,7 +3,7 @@
 // @namespace   com.houseofivy
 // @description renders markdown files
 //
-// @version     0.111
+// @version     0.113
 // @//updateURL   https://raw.githubusercontent.com/rivy/gms-markdown_viewer.custom-css/master/markdown_viewer.custom-css.user.js
 //
 // file extension: .m(arkdown|kdn?|d(o?wn)?)
@@ -190,7 +190,8 @@ function load_asset( uri, timeout, optional ) { // ( {array} [, {int}timeout=0] 
 
     return $.when.apply($, requests)
         .done( function() {
-            Array.prototype.forEach.call( arguments, function( request /* :: [data, textStatus, jqXHR] */, index ) {
+            let args = $.isArray( arguments[0] ) ? arguments : [ arguments ];
+            Array.prototype.forEach.call( args, function( request /* :: [data, textStatus, jqXHR] */, index ) {
                 let jqXHR = request[2];
                 let data = request[0];
                 //console.log( `${_ME}: done::${JSON.stringify(request)}:: (${jqXHR.status}) '${jqXHR.statusText}' for "${jqXHR.uri}"` );
