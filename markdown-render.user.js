@@ -3,7 +3,7 @@
 // @namespace   com.houseofivy
 // @description renders markdown files
 //
-// @version     0.113
+// @version     0.115
 // @//updateURL   https://raw.githubusercontent.com/rivy/gms-markdown_viewer.custom-css/master/markdown_viewer.custom-css.user.js
 //
 // file extension: .m(arkdown|kdn?|d(o?wn)?)
@@ -174,14 +174,15 @@ function load_asset( uri, timeout, optional ) { // ( {array} [, {int}timeout=0] 
     optional = (optional !== null) ? !!optional : false;
     let _ME = 'load_asset()';
     let asset_uris = $.isArray( uri ) ? uri : [ uri ];
+    ///console.log( `asset_uris = ${JSON.stringify( asset_uris )}`);
     let default_protocol = (window.location.protocol === 'http:') ? 'http:' : 'https:'; // use 'https:' unless current page is using 'http:'
     let requests = asset_uris.map( function( asset_uri ) {
-        console.log( `${_ME}: initiating AJAX download of "${asset_uri}")` );
         let uri = asset_uri.trim();
         if ( /^[\/\\][\/\\]/.test(uri) ) { uri = default_protocol + uri; }
         let uri_path = new URL( uri, window.location ).pathname;
         let uri_filename = uri_path.replace(/^.*[\\\/]/, '');
         let uri_extension = uri_filename.replace(/^.*(?=\.)/, '');
+        console.log( `${_ME}: initiating AJAX download of "${uri}")` );
         let jqXHR = $.ajax( uri, { cache: true, dataType: 'text', timeout: timeout } );
         jqXHR.uri = uri;
         jqXHR.extension = uri_extension;
@@ -194,7 +195,7 @@ function load_asset( uri, timeout, optional ) { // ( {array} [, {int}timeout=0] 
             Array.prototype.forEach.call( args, function( request /* :: [data, textStatus, jqXHR] */, index ) {
                 let jqXHR = request[2];
                 let data = request[0];
-                //console.log( `${_ME}: done::${JSON.stringify(request)}:: (${jqXHR.status}) '${jqXHR.statusText}' for "${jqXHR.uri}"` );
+                ///console.log( `${_ME}: done::${JSON.stringify(request)}:: (${jqXHR.status}) '${jqXHR.statusText}' for "${jqXHR.uri}"` );
                 if (jqXHR.extension === '.css') {
                     console.log( `insert style from "${jqXHR.uri}"` );
                     $('<style type="text/css" />').html(data).attr('_uri', jqXHR.uri).attr('_index', index).appendTo('head');
