@@ -3,7 +3,7 @@
 // @namespace   com.houseofivy
 // @description renders markdown files
 //
-// @version     0.115
+// @version     0.117
 // @//updateURL   https://raw.githubusercontent.com/rivy/gms-markdown_viewer.custom-css/master/markdown_viewer.custom-css.user.js
 //
 // file extension: .m(arkdown|kdn?|d(o?wn)?)
@@ -247,6 +247,7 @@ function load_css( uri, timeout ) { // ( {array}, {int} ) => {jQuery.Deferred}
 
 // #### config
 var CM_base_url = '//cdnjs.cloudflare.com/ajax/libs/codemirror/5.25.0/';
+var CSS_base_url = '//cdn.rawgit.com/rivy/js-user.markdown-render/09103ed9b09e632fb3f4369c9da79c83e38138bf/css/';
 var required_js = [
   // ToDO: investigate RequireJS to async load but initialize dependent modules in correct order
   // NOTE: see library CDN ref @ https://cdnjs.com
@@ -285,10 +286,10 @@ var required_js = [
   //"//cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/katex.min.js",
   //"//cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/contrib/auto-render.min.js",
   // CodeMirror
-  CM_base_url+ "codemirror.min.js",
-  CM_base_url+ "mode/meta.min.js",
-  CM_base_url+ "addon/runmode/runmode.min.js",
-  CM_base_url+ "addon/runmode/colorize.min.js",
+  CM_base_url + "codemirror.min.js",
+  CM_base_url + "mode/meta.min.js",
+  CM_base_url + "addon/runmode/runmode.min.js",
+  CM_base_url + "addon/runmode/colorize.min.js",
 //  [
   // CodeMirror modes (aka languages)
 //  CM_base_url+ "mode/haskell/haskell.min.js",
@@ -305,9 +306,9 @@ var optional_css = [
 //  "//cdnjs.cloudflare.com/ajax/libs/normalize/7.0.0/normalize.min.css",
   // basic
 //  "//cdn.rawgit.com/rivy/js-user.markdown-render/21e0a5f8043b4e07d537eaed448ba053b4a8bf10/css/s.css",
-  "//cdn.rawgit.com/rivy/js-user.markdown-render/14f9d5b8e723a268c80ae89c8a44ebf2265765a2/css/_default.css",
-  "//cdn.rawgit.com/rivy/js-user.markdown-render/14f9d5b8e723a268c80ae89c8a44ebf2265765a2/css/_fontface.css",
-  "//cdn.rawgit.com/rivy/js-user.markdown-render/14f9d5b8e723a268c80ae89c8a44ebf2265765a2/css/base.css",
+  CSS_base_url + "_default.css",
+  CSS_base_url + "_fontface.css",
+  CSS_base_url + "base.css",
 //  "//raw.githubusercontent.com/Thiht/markdown-viewer/master/chrome/lib/sss/sss.css",
 //  "//raw.githubusercontent.com/Thiht/markdown-viewer/master/chrome/lib/sss/sss.print.css",
   // tooltip CSS
@@ -319,8 +320,10 @@ var optional_css = [
   //"//cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/plugins/line-highlight/prism-line-highlight.min.css",
   //"//cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/plugins/line-numbers/prism-line-numbers.min.css",
   //"//cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/plugins/toolbar/prism-toolbar.min.css",
-  CM_base_url+ "codemirror.min.css",
+  CM_base_url + "codemirror.min.css",
   //"http://codemirror.net/lib/codemirror.css",
+  // overrides (* last in order to lexically override prior CSS without requiring increased CSS specificity)
+  CSS_base_url + "!override.css",
   ];
 
 // #### main()
@@ -429,7 +432,7 @@ function add_codeblock_snippet_support(){
         '<style type="text/css">' +
         `.${css_class_button} { height: 2em; }` +
         `.${css_class_codeblock} { position: relative; }` +
-        `.${css_class_codeblock} { page-break-inside: avoid; }` +
+        //`.${css_class_codeblock} { page-break-inside: avoid; }` +
         `.${css_class_codeblock} .${css_class_snip_button} { position: absolute; top: 0.25em; right: 0.25em; z-index: 101; opacity: 0; transition: opacity 0.3s ease-in-out; -webkit-transition: opacity 0.3s ease-in-out; }` + /* z-index is used within CodeMirror, use a larger index; heuristic == 10; ToDO: investigate via CodeMirror discourse */
         `.${css_class_codeblock}:hover .${css_class_snip_button} { opacity: 1; }` + /* z-index is used within CodeMirror, use a larger index; heuristic == 10; ToDO: investigate via CodeMirror discourse */
         '</style>'
