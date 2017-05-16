@@ -1,0 +1,24 @@
+/* ## override CSS */
+
+/* note: include this CSS as the last lexically in order to override without having to use increased CSS specificity */
+
+/* ### .CodeMirror */
+.CodeMirror {
+  border: 1px solid gainsboro;
+  border-radius: 0.2em;
+  /* border-radius: 5px; */
+}
+.CodeMirror-gutter-extra {
+  min-width: 2em;
+  background: whitesmoke/* f5f5f5 */
+  ;
+  /* #f7f7f7 default border color for CodeMirror */
+}
+
+/*  CodeMirror CSS uses '.CodeMirror pre', use same here for specificity */
+/*.CodeMirror, .CodeMirror pre { font-family: "Fira Code", "Open Sans Mono", "Anonymous Pro", "Consolas", "Lucida Console", monospace;*/
+/*.CodeMirror, .CodeMirror pre { font-size: 1em; line-height: 1.3em; }*/
+/*.CodeMirror, .CodeMirror pre { font-family: inherit; font-size: 1em; line-height: 1.3em; }*/
+.CodeMirror { font: inherit; }
+.CodeMirror, .CodeMirror pre { font-variant-ligatures: none; -webkit-font-variant-ligatures: none; }
+/*.CodeMirror, .CodeMirror pre { font-variant-ligatures: contextual; -webkit-font-variant-ligatures: contextual; }*/

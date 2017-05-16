@@ -85,24 +85,6 @@ tr    { page-break-inside:avoid; page-break-after:auto }
 .codeblock { page-break-inside: avoid; }
 .no-page-break-inside { page-break-inside: avoid; }
 
-/* ## .CodeMirror */
-/* ### CodeMirror CSS uses '.CodeMirror pre', use same here for specificity */
-.CodeMirror, .CodeMirror pre { font-family: /*Inconsolata,*/ "Fira Code", "Open Sans Mono", "Anonymous Pro", "Consolas", "Lucida Console", monospace; font-size: 1em; line-height: 1.3em; }
-/*.CodeMirror, .CodeMirror pre { font-family: inherit; font-size: 1em; line-height: 1.3em; }*/
-.CodeMirror, .CodeMirror pre { font-variant-ligatures: none; -webkit-font-variant-ligatures: none; }
-/*.CodeMirror, .CodeMirror pre { font-variant-ligatures: contextual; -webkit-font-variant-ligatures: contextual; }*/
-.CodeMirror {
-  border: 1px solid gainsboro;
-  border-radius: 0.2em;
-  /* border-radius: 5px; */
-}
-.CodeMirror-gutter-extra {
-  min-width: 2em;
-  background: whitesmoke/* f5f5f5 */
-  ;
-  /* #f7f7f7 default border color for CodeMirror */
-}
-
 /* ## additional customization classes */
 .bordered-b { border-bottom: 0.05em solid lightgrey; border-radius: 0.01em; }
 div.table-width-100percent table { width: 100%; } /* hack until attributes can be applied to tables ## create an issue for markdown-it-attrs */
