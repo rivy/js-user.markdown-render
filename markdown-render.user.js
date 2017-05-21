@@ -387,35 +387,40 @@ function do_render() { // () : {jQuery.Deferred}
     console.log(_ME + ': package codeblocks');
     package_codeblocks();
 
-    // ToDO: preload_language_support() ... loads CodeMirror modes based on languages found in codeblocks and inline code ~ /language-(\S+)/; async, simultaneous
-    // note: CodeMirror seems to prefer attr `data-lang='...'` (likely for embedded spaces)
+    // find any needed CodeMirror modes (for later preload)
     let CodeMirror_mode_js_map = new Map();
 //    $('code [class*="language-"]').each( function( index ) {
     $('code').each( function( index ) {
         let $CODE = $(this);
-        let attr_class = $CODE.attr('class') || '';
-        let language_match = attr_class.match(/(?:^|\s)language-(\S+)/); // [null, 'Plain Text'];
-        if ( ! language_match ) { return; }
-        console.log(`found CODE with class='${attr_class}', language='${language_match[1]}'`);
-        CodeMirror.modeURL = CM_base_url+ "mode/%N/%N.min.js";
-        let CM_mode = CodeMirror.findModeByName( language_match[1] ) ||
-            (function(mode){
-                 mode = mode.toLowerCase();
-                 for (var i = 0; i < CodeMirror.modeInfo.length; i++) {
-                 var info = CodeMirror.modeInfo[i];
-                 if (info.mode.toLowerCase() == mode) return info;
-                 }
-           })( language_match[1] )// || CodeMirror.findModeByName( 'Plain Text' )
-           ;
-        if ( !CM_mode ) { warn(`unknown code language ('language_match[1]')`); return; }
-        let CM_mode_uri = CodeMirror.modeURL.replace(/%N/g, CM_mode.mode);
-        console.log(`found CodeMirror.mode='${CM_mode.mode}' for language='${language_match[1]}'; URL = '${CM_mode_uri}'`);
+        let name = get_language_name( $CODE );
+        let mime = get_language_mime( $CODE );
+        if ((name === mime) && (name === undefined)) { return; }
+        let CM_mode = find_CM_mode( mime ) || find_CM_mode( name );
+        if ( ! CM_mode ) { warn(`unknown code language ('${name}'; mime:'${mime}')`); return; }
+        if ( CM_mode.mode === 'null' ) { return; }
+        let CM_mode_template = CM_base_url + "mode/%N/%N.min.js";
+        let CM_mode_uri = CM_mode_template.replace(/%N/g, CM_mode.mode);
+        ///console.log(`found CodeMirror.mode='${CM_mode.mode}' for language='${name}'; URL = '${CM_mode_uri}'`);
         CodeMirror_mode_js_map.set( CM_mode_uri, (CodeMirror_mode_js_map.get( CM_mode_uri ) || 0) + 1 );
 //        CodeMirror_mode_js_map.set( CM_mode_uri, true );
-    });
+        });
+
+    // find any needed CodeMirror themes (for later preload)
+    let CodeMirror_theme_css_map = new Map();
+    $('code').each( function( index ) {
+        let $CODE = $(this);
+        let theme = get_theme( $CODE );
+        if ((theme === undefined) || (theme === 'default')) { return; }
+        let CM_theme_template = CM_base_url + "theme/%N.min.css";
+        let CM_theme_uri = CM_theme_template.replace(/%N/g, (theme.split(/[\s.]+/))[0]);
+        console.log(`found needed theme='${theme}'; URL = '${CM_theme_uri}'`);
+        CodeMirror_theme_css_map.set( CM_theme_uri, (CodeMirror_theme_css_map.get( theme ) || 0) + 1 );
+        });
+
+    let assets = Array.from(CodeMirror_theme_css_map.keys()).concat(Array.from(CodeMirror_mode_js_map.keys()));
 
     return $.when([])
-        .then( ()=>{ return load_asset( Array.from(CodeMirror_mode_js_map.keys()), undefined, true ); } )
+        .then( ()=>{ return load_asset( assets, undefined, true ); } )
         .then( ()=>{
             console.log(_ME + ': transform codeblocks');
             // ToDO: discuss the need for '.CodeMirror-scroll { height: auto; }' on <https://discuss.codemirror.net>
