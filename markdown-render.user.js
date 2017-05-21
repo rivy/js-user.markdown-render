@@ -375,9 +375,11 @@ function do_render() { // () : {jQuery.Deferred}
     let _ME = 'do_render()';
     console.log(_ME + ': rendering markdown');
     //document.body.innerHTML = render_markdown( document.body.textContent );
-    let render = render_markdown( $('body pre').text() );
+    let original = $('body pre').text();
+    let render = render_markdown( original );
     $('body pre').remove();
-    $('<div/>').html( render ).appendTo($('body'));
+    $('<div style="display:none"/>').html( $('<pre/>').html( original ) ).attr('id', '_src').appendTo('body');
+    $('<div/>').html( render ).appendTo('body');
 
     console.log(_ME + ': write data-lang for CODE');
     write_code_datalang();
