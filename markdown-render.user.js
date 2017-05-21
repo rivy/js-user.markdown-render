@@ -24,6 +24,7 @@
 
 var print_form = false; // minimize refresh/setSize on Chrome which may call these multiple times when printing
 var beforePrint = function() {
+    ///console.log(`beforePrint()`);
     if ( ! print_form ) {
        let $cb = $('.codeblock');
        $cb.each(function(index){
@@ -31,15 +32,14 @@ var beforePrint = function() {
           let cm = $CB.find('.CodeMirror').get(0).CodeMirror;
           cm.setOption('lineWrapping', true);
           cm.refresh();
-          let height = $CB.find('.CodeMirror-sizer').height();
-          ///console.log(`beforePrint(): height = ${height}`);
+          let height = $CB.find('.CodeMirror-lines').outerHeight();
           cm.setSize( null, height );
-          cm.refresh();
           });
        print_form = true;
        }
 };
 var afterPrint = function() {
+    ///console.log(`afterPrint()`);
     if ( print_form ) {
        let $cb = $('.codeblock');
        $cb.each(function(index){
@@ -49,11 +49,10 @@ var afterPrint = function() {
           cm.setOption('lineWrapping', _lineWrapping);
           cm.refresh();
           let height = $CB.find('.CodeMirror-sizer').height();
-          ///console.log(`beforePrint(): height = ${height}`);
-          cm.setSize( null, height );
-          cm.refresh();
+          cm.setSize( null, 'auto' );
           });
        }
+    print_form = false;
 };
 if (window.matchMedia) {
     var mediaQueryList = window.matchMedia('print');
@@ -235,7 +234,7 @@ function load_css( uri, timeout ) { // ( {array}, {int} ) => {jQuery.Deferred}
     return $.when.apply($, requests)
         .done( function() {
             Array.prototype.forEach.call( arguments, function( request /* :: [data, textStatus, jqXHR] */, index ) {
-                console.log( `${_ME}: done::${JSON.stringify(request)}:: (${request[2].status}) '${request[2].statusText}' for "${request[2].uri}"` );
+                ///console.log( `${_ME}: done::${JSON.stringify(request)}:: (${request[2].status}) '${request[2].statusText}' for "${request[2].uri}"` );
                 let css = request[0];
                 $('<style type="text/css" />').html(css).attr('_uri', request[2].uri).attr('_index', index).appendTo('head');
                 });})
