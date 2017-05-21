@@ -69,7 +69,15 @@ $(window).on('afterprint', afterPrint);
 
 let messaging_id = '_messages';
 function add_messaging_area(){
-    if ($(`#${messaging_id}`).length < 1) { $('<div/>', { id: messaging_id, style:'border: red solid 2px; background: snow;'}).hide().prependTo($('body')); }
+    if ($(`#${messaging_id}`).length < 1) {
+        // basic CSS
+        $('<style>').text(
+            `#${messaging_id} { border: red solid 2px; margin: 0; padding: 0 0.5em; }` +
+            `#${messaging_id} p { margin: 0.5em 0; font-family: monospace }` +
+            '').appendTo('head');
+        // node
+        $('<div/>', { id: messaging_id }).hide().prependTo($('body'));
+        }
 }
 function warn( message ){ // ( {array} ) : {void}
     let messages = $.isArray( message ) ? message : [ message ];
@@ -206,7 +214,16 @@ function load_asset( uri, timeout, optional ) { // ( {array} [, {int}timeout=0] 
                     /* jshint ignore:end */
                     }
                 });})
-        .fail( function() { Array.prototype.forEach.call( arguments, function( request /* :: [jqXHR, textStatus, errorThrown] */, index ) { warn(`loading failed for "${request.uri}"`); console.log( `${_ME}: warn: fail()::${JSON.stringify(request)}::` ); if (!optional) throw Error(`${_ME}: FAIL: "${request.uri}"`); }); })
+        .fail( function() { Array.prototype.forEach.call( arguments, function( request /* :: [jqXHR, textStatus, errorThrown] */, index ) {
+            let message = `failed to load ${optional ? '( optional ) ' : ''}asset "${request.uri}"`;
+            if (optional) {
+                console.log( _ME+`: warn: ${message}`);
+              } else {
+                console.log( `${_ME}: ERR!: ${message} ::${JSON.stringify(request)}::` );
+                error( message + '; render halted' );
+                throw Error(`${_ME}: ERR!: ${message}`);
+                }
+            });})
         ;
 }
 
