@@ -3,7 +3,7 @@
 // @namespace   com.houseofivy
 // @description renders markdown files
 //
-// @version     0.123
+// @version     0.125
 // @//updateURL   https://raw.githubusercontent.com/rivy/gms-markdown_viewer.custom-css/master/markdown_viewer.custom-css.user.js
 //
 // file extension: .m(arkdown|kdn?|d(o?wn)?)
@@ -122,7 +122,7 @@ function load_raw_text( uri, timeout ){ // ( {array}, {int} ) : {jQuery.Deferred
     return retVal;
 }
 
-function load_asset( uris, timeout, optional ) { // ( {array} [, {int}timeout=0] [, {bool}optional=false] ) => {jQuery.Deferred}
+function load_assets( uris, timeout, optional ) { // ( {array} [, {int}timeout=0] [, {bool}optional=false] ) => {jQuery.Deferred}
 /**
  * load assets in parallel, insert/initialize results *in order* within the document (creating determinate content from async downloads)
  * @param {array} : an array of script uris, loaded asynchronously, but placed into the file in the given order
@@ -136,7 +136,7 @@ function load_asset( uris, timeout, optional ) { // ( {array} [, {int}timeout=0]
 // NOTE: this function is needed b/c CSS and JS have order dependence (for rules with equivalent specificity and initialization dependencies, respectively)
     timeout = ((timeout !== null) && (timeout >= 0)) ?  timeout : 2 * 1000/* ms */;
     optional = (optional !== null) ? !!optional : false;
-    let _ME = 'load_asset()';
+    let _ME = 'load_assets()';
     let asset_uris = $.isArray( uris ) ? uris : [ uris ];
     ///console.log( `asset_uris = ${JSON.stringify( asset_uris )}`);
     let default_protocol = (window.location.protocol === 'http:') ? 'http:' : 'https:'; // use 'https:' unless current page is using 'http:'
@@ -245,7 +245,7 @@ console.log('document.compatMode = ' + document.compatMode);
 $.when([])  // `.when([])` resolves immediately
     .then( ()=>{ return load_raw_text(); } )
     .then( ()=>{ return $('html').attr('lang','en'); } ) // ref: http://blog.adrianroselli.com/2015/01/on-use-of-lang-attribute.html @@ http://archive.is/H0ExZ (older, better typography) + http://archive.is/chYjS
-    .then( ()=>{ return load_asset( assets_css.concat( assets_js ) ); } )
+    .then( ()=>{ return load_assets( assets_css.concat( assets_js ) ); } )
     .then( ()=>{ return $.when(
                    do_render() ,
                    $.getScript( [ 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML&delayStartupUntil=configured' ] ).then( trigger_render_MathJax ).then( ()=>{console.log('MathJax triggered');} ) , // ToDO: discuss the MathJax requirement for `$.getScript( ... )` instead of being able to `eval( ... )` with a MathJax root config on <https://github.com/mathjax/MathJax/issues>
@@ -310,7 +310,7 @@ function do_render() { // () : {jQuery.Deferred}
     let assets = Array.from(CodeMirror_theme_css_map.keys()).concat(Array.from(CodeMirror_mode_js_map.keys()));
 
     return $.when([])
-        .then( ()=>{ return load_asset( assets, undefined, true ); } )
+        .then( ()=>{ return load_assets( assets, undefined, true ); } )
         .then( ()=>{
             console.log(_ME + ': transform codeblocks');
             // required CSS
