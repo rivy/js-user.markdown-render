@@ -686,8 +686,8 @@ timeout = timeout || ( 2 * 1000 );
 var scripts = $.isArray( uri ) ? uri : [ uri ];
 if (scripts.length > 0) {
     var script = scripts.shift();
-    console.log('load_js_inorder:script = ' + script);
-    console.log('load_js_inorder:scripts[' + scripts.length + '] = ' + scripts);
+    ///console.log('load_js_inorder:script = ' + script);
+    ///console.log('load_js_inorder:scripts[' + scripts.length + '] = ' + scripts);
     var true_callback;
     if (scripts.length === 0) { true_callback = callback; } else { true_callback = function(){ load_js_inorder( scripts, callback, timeout ); }; }
     if ( $.isArray(script) ) { load_js( script, true_callback, timeout ); }
