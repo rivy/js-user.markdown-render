@@ -306,6 +306,7 @@ var required_js = [
   CM_base_url + "mode/meta.min.js",
   CM_base_url + "addon/runmode/runmode.min.js",
   CM_base_url + "addon/runmode/colorize.min.js",
+  CM_base_url + "addon/selection/mark-selection.js",
 //  [
   // CodeMirror modes (aka languages)
 //  CM_base_url+ "mode/haskell/haskell.min.js",
@@ -381,8 +382,8 @@ function do_render() { // () : {jQuery.Deferred}
     $('<div style="display:none"/>').html( $('<pre/>').html( original ) ).attr('id', '_src').appendTo('body');
     $('<div/>').html( render ).appendTo('body');
 
-    console.log(_ME + ': write data-lang for CODE');
-    write_code_datalang();
+    console.log(_ME + ': write data for CODE');
+    set_code_data();
 
     console.log(_ME + ': package codeblocks');
     package_codeblocks();
@@ -430,7 +431,8 @@ function do_render() { // () : {jQuery.Deferred}
             //$('head').append('<style type="text/css">.CodeMirror, .CodeMirror-scroll { height: auto; }</style>');
             transform_codeblocks_to_CodeMirror();
             add_codeblock_snippet_support();
-            // ToDO: highlight_inline_code() ~ use CodeMirror modes to highlight syntax within inline code marked with a language
+            // highlight_code() ~ highlight inline code (tagged with a language) using CodeMirror modes
+            // NOTE: all <code> within CODEBLOCKS have at this point been removed by conversion to CodeMirror components; only inline-type <code> elements remain
             highlight_code();
             });
 }
@@ -546,53 +548,108 @@ function package_codeblocks(){
         });
 }
 
-function write_code_datalang(){
-    let _ME = 'rewrite_code_language()';
+function find_CM_mode( name ){
+    return CodeMirror.findModeByMIME( name ) || CodeMirror.findModeByName( name ) ||
+        (function(mode){
+            mode = mode.toLowerCase();
+            for (var i = 0; i < CodeMirror.modeInfo.length; i++) {
+                var info = CodeMirror.modeInfo[i];
+                if (info.mode.toLowerCase() == mode) return info;
+            }
+        })( name )
+        ;
+}
+
+function get_language_name( $node ){
+    let _ME = 'get_language_name()';
+    let attr_class = $node.attr('class') || '';
+    let match = dequote( $node.attr('data-lang') || ( attr_class.match(/(?:^|\s)language-(\S+)/) || attr_class.match(/^\s*(\S+)/) || [null, undefined] )[1] );
+    return match;
+}
+
+function get_language_mime( $node ){
+    let _ME = 'get_language_mime()';
+    let mime = dequote( $node.attr('data-mime')  );
+    if ( mime !== undefined ) { return mime; }
+    let name = get_language_name( $node );
+    if ( name === undefined ) { return undefined; }
+    let CM_mode = find_CM_mode( name ) || CodeMirror.findModeByName( 'Plain Text' );
+    return dequote( CM_mode.mime );
+}
+
+function get_theme( $node ){
+    let _ME = 'get_theme()';
+    return dequote( $node.attr('data-theme') || $node.css('--theme') || 'default' ).trim();
+}
+
+function set_code_data(){
+    let _ME = 'set_code_data()';
     $('code').each(function(){
+        // add a 'data-lang' and 'data-mime' attributes, if needed and possible
         let $CODE = $(this);
-        if ($CODE.attr('data-lang') !== undefined) { return; }
-        let attr_class = $CODE.attr('class') || '';
-        let language_match = attr_class.match(/(?:^|\s)language-(\S+)/); // || [null, 'Plain Text'];
-        if ( ! language_match ) { language_match = attr_class.match(/^\s*(\S+)/); }
-        if ( ! language_match ) { return; }
-        console.log(`found CODE with class='${attr_class}', language='${language_match[1]}'`);
-        let CM_mode = CodeMirror.findModeByName( language_match[1] ) ||
-            (function(mode){
-                 mode = mode.toLowerCase();
-                 for (var i = 0; i < CodeMirror.modeInfo.length; i++) {
-                 var info = CodeMirror.modeInfo[i];
-                 if (info.mode.toLowerCase() == mode) return info;
-                 }
-           })( language_match[1] ) || CodeMirror.findModeByName( 'Plain Text' )
-           ;
-        if ( CM_mode === 'null' ) { return; }
-        $CODE.attr('data-lang', CM_mode.mode);
+        $CODE.attr('data-lang', get_language_name( $CODE ) || null );
+        $CODE.attr('data-mime', get_language_mime( $CODE ) || null );
         });
 }
 
 function highlight_code(){
     let _ME = 'highlight_code()';
-    $('code[data-lang]').each(function(){
+    let $code_with_language = $('code[data-lang]');
+    CodeMirror.colorize( $code_with_language );
+    // add CodeMirror theme, if defined
+    let index = 0;
+    $code_with_language.each( function(){
         let $CODE = $(this);
-        if ($CODE.attr('data-lang') !== undefined) { return; }
-        let attr_class = $CODE.attr('class') || '';
-        let language_match = attr_class.match(/(?:^|\s)language-(\S+)/); // || [null, 'Plain Text'];
-        if ( ! language_match ) { language_match = attr_class.match(/^\s*(\S+)/); }
-        if ( ! language_match ) { return; }
-        console.log(`found CODE with class='${attr_class}', language='${language_match[1]}'`);
-        $CODE.attr('data-lang', language_match[1]);
+        let theme = get_theme( $CODE );
+        ///console.log(_ME + `: theme = ${theme}` );
+        if ( theme !== 'default' ) {
+            $CODE.removeClass('cm-s-default');
+            let theme_classes = theme.split(/[\s.]+/);
+            theme_classes = theme_classes.map( (element)=>{ return ( 'cm-s-' + element ).trim(); } );
+            $CODE.addClass( theme_classes.join(' ') );
+            // note: color / background for themes is defined by 'cm-s-theme.CodeMirror ...', but assigning a CodeMirror class pulls in other, inappropriate, CSS
+            // add .CodeMirror (but only temporarily)
+            let had_class_CM = $CODE.hasClass('CodeMirror');
+            $CODE.addClass('CodeMirror');
+            let background_color = $CODE.css('background-color');
+            let color = $CODE.css('color');
+            if (! had_class_CM ) $CODE.removeClass('CodeMirror');
+            let css_class = ['code'].concat(theme_classes).join('.');
+            ///console.log( _ME+`: background_color = ${background_color}`);
+            ///console.log( _ME+`: color = ${color}`);
+            ///console.log( _ME+`: css_class = ${css_class}`);
+            let id = '_'+css_class;
+            let $CSS = $(`#${id}`).length || $('<style type="text/css" />').html(`${css_class} { background-color: ${background_color}; color: ${color} }`).attr('id',id).appendTo('head');
+            }
         });
-    CodeMirror.colorize( $('code[data-lang]') );
 }
 
 function isDefined( variable ){
     // ref: http://www.codereadability.com/how-to-check-for-undefined-in-javascript @@ http://archive.is/RDiQz
+    ///return (typeof variable !== undefined);
     return (variable !== undefined);
+}
+
+function dequote( s ){
+    // remove any surrounding quotes (including any outer surrounding whitespace)
+    if (( s === undefined ) || ( s === null )) { return s; }
+    let retval = s.trim();
+    let quotes = /["']/;
+    let match = retval.charAt(0).match( quotes );
+    if ( match && ( match[0].charAt[0] === retval.charAt[ retval.length ] ) ) { retval = retval.slice(1, -1); }
+    return match ? retval : s;
 }
 
 function transform_codeblocks_to_CodeMirror(){
 // setup CodeMirror as container and syntax highlighter
     let _ME = 'transform_codeblocks_to_CodeMirror()';
+    /* expected CSS for *mark-selection* */
+    $('head').append(
+        '<style type="text/css">' +
+        '.CodeMirror-selected  { background-color: blue !important; }' +
+        //'.CodeMirror-selectedtext { color: white; }' +
+        '</style>'
+    );
     let $codeblock = $(`.${css_class_codeblock}`);
     $codeblock.children('pre').children('code').each(function(){
         let $CODE = $(this);
@@ -600,15 +657,18 @@ function transform_codeblocks_to_CodeMirror(){
         console.log(_ME + ': block found == CODE(' + class_text + ')');
         let $PRE = $CODE.parent('pre');
         let $DIV = $PRE.parent('div');
+        let $codeblock = $DIV;
+        console.log(_ME + ': codeblock(' + $codeblock.attr('class') + ')');
 
         let _lineWrapping = $DIV.hasClass('line-wrapping') || $DIV.hasClass('line-wrap') || $DIV.hasClass('wrapLines') || $DIV.hasClass('wordwrap');
         let _lineNumbers = $DIV.hasClass('line-numbers') || $DIV.hasClass('numberLines');
         let _firstLineNumber = isDefined($DIV.attr('startFrom')) ? parseInt($DIV.attr('startFrom')) : 1; // NOTE: for conversion alternatives, see https://coderwall.com/p/5tlhmw/converting-strings-to-number-in-javascript-pitfalls @@ http://archive.is/1CH5w
         let _gutters = _lineNumbers ? ['CodeMirror-linenumbers'] : ['CodeMirror-gutter-extra'];
-        let attr_class = $DIV.attr('class') || '';
-        let language_match = attr_class.match(/(?:^|\s)language-(\S+)/) || [null, 'plain-text'];
-        let _mode = language_match[1];
+        let _mode = dequote( $DIV.attr('data-mime') || 'text/plain' );
         console.log('_mode = ' + _mode);
+        let _theme = dequote($codeblock.css('--theme') || 'default').trim();
+        console.log('_theme = ' + _theme);
+
         let _value = $('<div/>').html($CODE.html()).text().trimRight();
 
         // use the CodeMirror standard <textarea/> idiom ## (not strictly necessary, but may save coding aggravation)
@@ -622,10 +682,14 @@ function transform_codeblocks_to_CodeMirror(){
             lineWrapping: _lineWrapping,
             firstLineNumber: _firstLineNumber,
             gutters: _gutters,
+            theme: _theme,
+            //
+            styleSelectedText: true,
             //
             readOnly: true,
             viewportMargin: Infinity,
         });
+
         ///console.log( 'sizer.height = ' + $element.find('.CodeMirror-sizer').height());
         ///console.log( 'cm.getScrollerElement().clientHeight = ' + cm.getScrollerElement().clientHeight );
         ///console.log( 'cm.getWrapperElement().offsetHeight ' + cm.getWrapperElement().offsetHeight );
@@ -636,6 +700,16 @@ function transform_codeblocks_to_CodeMirror(){
         //cm.setSize( null, 'auto');
         //cm.setSize();
         //cm.refresh();
+
+        // zebra-fy
+        //let BACK_CLASS = 'CodeMirror-activeline-background';
+        let BACK_CLASS = 'codeblock-line';
+        let lineCount = cm.lineCount();
+        for (let i = 1; i <= lineCount; i++) {
+            let suffix = '-odd';
+            if ((i % 2) === 0) { suffix = '-even'; }
+            cm.addLineClass( (i-1), 'background', BACK_CLASS+suffix );
+            }
       });
 }
 
