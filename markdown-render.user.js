@@ -3,7 +3,7 @@
 // @namespace   com.houseofivy
 // @description renders markdown files
 //
-// @version     0.121
+// @version     0.123
 // @//updateURL   https://raw.githubusercontent.com/rivy/gms-markdown_viewer.custom-css/master/markdown_viewer.custom-css.user.js
 //
 // file extension: .m(arkdown|kdn?|d(o?wn)?)
@@ -103,84 +103,41 @@ function assert(condition, message) {
     }
 }
 
-// ToDO ...
-// function load_resources( uri, timeout, optional ) ... load CSS and JS resources (based on extension), async load all, then *in-order* $('<style/>')... or eval(...)
-// ... allows max asynch overlap of loads but preserves CSS order and JS initialization order
-// ... handle protocol missing ('https://' default)
-// function load_optional_resources( uri, timeout ) ... as load_resources() but no ERR!/throw (only warn) for missing resources
-// ... use load_resources( ..., optional=true )
-// ... ? needed or just use load_resources with 'optional' parameter
+function load_raw_text( uri, timeout ){ // ( {array}, {int} ) : {jQuery.Deferred}
+    // Firefox misinterprets non-HTML (non .htm/.html extension) files as HTML if they contain initial HTML tags and irretrievably alters the text ... this replaces the body content with text equivalent to chrome's interpretation
+    // NOTE: no perceptable speed difference when using this on a high-end machine (via both SSD or HD)
+    //   ... *unneeded by chrome* (also, blocked by cross-origin issue ... ; see below comments) */
+    // ToDO: comment / request fix on "support.mozilla.org" (simlar to: https://support.mozilla.org/en-US/questions/898460)
+    let isFirefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
+    let retVal = $.Deferred;
+    if (isFirefox) {
+        uri = uri || document.location.href;
+        timeout = (timeout !== null) && (timeout >= 0) ? timeout : 2 * 1000/* ms */;
+        // 'chrome'-only: ajax throws here for the "file:///" protocol => "VM4117:7 XMLHttpRequest cannot load file:///C:/Users/Roy/OneDrive/Projects/%23kb/%23pandoc/README.md. Cross origin requests are only supported for protocol schemes: http, data, chrome, chrome-extension, https."
+        // ref: http://stackoverflow.com/questions/4819060/allow-google-chrome-to-use-xmlhttprequest-to-load-a-url-from-a-local-file/18137280#18137280 @@ http://archive.is/W7a9M
+        retVal = $.ajax( uri, { cache: true, dataType: 'text', timeout: timeout } )
+            .done( function( data, statusText, jqXHR ) { $('body').empty(); $('<pre/>', { style: 'word-wrap: break-word; white-space: pre-wrap;' }).text(data).appendTo('body'); } )
+            ;
+        }
+    return retVal;
+}
 
+function load_asset( uris, timeout, optional ) { // ( {array} [, {int}timeout=0] [, {bool}optional=false] ) => {jQuery.Deferred}
 /**
- * Load scripts in parallel keeping execution order.
- * @param {array} An array of script urls. They will parsed in the order of the array.
- * @returns {jQuery.Deferred}
- */
-// ref: http://stackoverflow.com/questions/9711160/jquery-load-scripts-in-order/19777866#19777866 @@ http://archive.is/yt1su
-function getScripts(scripts) {
-    var xhrs = scripts.map(function(url) {
-        return $.ajax({
-            url: url,
-            dataType: 'text',
-            cache: true
-        });
-    });
-
-    return $.when.apply($, xhrs).done(function() {
-        Array.prototype.forEach.call(arguments, function(res) {
-            eval.call(this, res[0]);
-        });
-    });
-}
-
-// ref: https://community.oracle.com/blogs/driscoll/2009/09/08/eval-javascript-global-context @@ http://archive.is/qy9fL
-var globalEval = function globalEval(src) {
-    /* jshint ignore:start */
-    if (window.execScript) {
-        window.execScript(src);
-        return;
-    }
-    var fn = function() {
-        window.eval.call(window,src);
-    };
-    fn();
-    /* jshint ignore:end */
-};
-
-function get_raw_html( uri, timeout ){ // ( {array}, {int} ) : {jQuery.Deferred}
-// Firefox misinterprets non-HTML (non .htm/.html extension) files as HTML if they contain initial HTML tags and irretrievably alters the text ... this replaces the body content with text equivalent to chrome's interpretation
-// NOTE: no perceptable speed difference when using this on a machine with an SSD ... test, looking at network timing/speed, esp. for regular HDs
-/* unneeded by chrome (also, blocked by cross-origin issue ... ; see below comments */
-// ToDO: comment / request fix on "support.mozilla.org" (simlar to: https://support.mozilla.org/en-US/questions/898460)
-let isFirefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
-let retVal = $.Deferred;
-if (isFirefox) {
-uri = uri || document.location.href;
-timeout = (timeout !== null) && (timeout >= 0) ? timeout : 2 * 1000/* ms */;
-// ajax throws here for the "file:///" protocol => "VM4117:7 XMLHttpRequest cannot load file:///C:/Users/Roy/OneDrive/Projects/%23kb/%23pandoc/README.md. Cross origin requests are only supported for protocol schemes: http, data, chrome, chrome-extension, https."
-// ref: http://stackoverflow.com/questions/4819060/allow-google-chrome-to-use-xmlhttprequest-to-load-a-url-from-a-local-file/18137280#18137280 @@ http://archive.is/W7a9M
-retVal = $.ajax( uri, { cache: true, dataType: 'text', timeout: timeout } )
-        .done( function( data, statusText, jqXHR ) { $('body').empty(); $('<pre/>', { style: 'word-wrap: break-word; white-space: pre-wrap;' }).text(data).appendTo('body'); } )
-        ;
-}
-return retVal;
-}
-
-function load_asset( uri, timeout, optional ) { // ( {array} [, {int}timeout=0] [, {bool}optional=false] ) => {jQuery.Deferred}
-/**
- * load assets in parallel, insert/initialize results *in order* within the document
+ * load assets in parallel, insert/initialize results *in order* within the document (creating determinate content from async downloads)
  * @param {array} : an array of script uris, loaded asynchronously, but placed into the file in the given order
  * @param {int}   : a timeout for download failure (default == 0 (aka, no timeout))
  * @returns {jQuery.Deferred}
  * ref: (based on) https://stackoverflow.com/questions/9711160/jquery-load-scripts-in-order/19777866#19777866 @@ https://archive.is/yt1su
  * ref: (based on) https://gist.github.com/rivy/5f1bd5225d4ee315a8d7f3c89986600f from https://gist.github.com/ngryman/7309432
+ * ref: https://community.oracle.com/blogs/driscoll/2009/09/08/eval-javascript-global-context @@ http://archive.is/qy9fL
  * ref: [jqXHR ~ .done/.fail/.always/.then argument documentation] http://api.jquery.com/jQuery.ajax/#jqXHR
  */
-// CSS has order dependence (for rules with equivalent specificity); this function places the CSS in the specified order, creating determinate content for the document
+// NOTE: this function is needed b/c CSS and JS have order dependence (for rules with equivalent specificity and initialization dependencies, respectively)
     timeout = ((timeout !== null) && (timeout >= 0)) ?  timeout : 2 * 1000/* ms */;
     optional = (optional !== null) ? !!optional : false;
     let _ME = 'load_asset()';
-    let asset_uris = $.isArray( uri ) ? uri : [ uri ];
+    let asset_uris = $.isArray( uris ) ? uris : [ uris ];
     ///console.log( `asset_uris = ${JSON.stringify( asset_uris )}`);
     let default_protocol = (window.location.protocol === 'http:') ? 'http:' : 'https:'; // use 'https:' unless current page is using 'http:'
     let requests = asset_uris.map( function( asset_uri ) {
@@ -227,119 +184,55 @@ function load_asset( uri, timeout, optional ) { // ( {array} [, {int}timeout=0] 
         ;
 }
 
-function load_css( uri, timeout ) { // ( {array}, {int} ) => {jQuery.Deferred}
-/**
- * load CSS in parallel keeping order for document placement
- * @param {array} : an array of script uris, loaded asynchronously, but placed into the file in the given order
- * @param {int}   : a timeout for download failure (default == 0 (aka, no timeout))
- * @returns {jQuery.Deferred}
- * ref: (based on) https://stackoverflow.com/questions/9711160/jquery-load-scripts-in-order/19777866#19777866 @@ https://archive.is/yt1su
- * ref: (based on) https://gist.github.com/rivy/5f1bd5225d4ee315a8d7f3c89986600f from https://gist.github.com/ngryman/7309432
- * ref: [jqXHR ~ .done/.fail/.always/.then argument documentation] http://api.jquery.com/jQuery.ajax/#jqXHR
- */
-// CSS has order dependence (for rules with equivalent specificity); this function places the CSS in the specified order, creating determinate content for the document
-    timeout = ((timeout !== null) && (timeout >= 0)) ?  timeout : 2 * 1000/* ms */;
-    let _ME = 'get_css()';
-    let style_uris = $.isArray( uri ) ? uri : [ uri ];
-    let requests = style_uris.map( function( style_uri ) {
-        console.log( `${_ME}: initiating AJAX download ("${style_uri}")` );
-        let jqXHR = $.ajax( style_uri, { cache: true, dataType: 'text', timeout: timeout } );
-        jqXHR.uri = style_uri;
-        return jqXHR;
-        });
-
-    return $.when.apply($, requests)
-        .done( function() {
-            Array.prototype.forEach.call( arguments, function( request /* :: [data, textStatus, jqXHR] */, index ) {
-                ///console.log( `${_ME}: done::${JSON.stringify(request)}:: (${request[2].status}) '${request[2].statusText}' for "${request[2].uri}"` );
-                let css = request[0];
-                $('<style type="text/css" />').html(css).attr('_uri', request[2].uri).attr('_index', index).appendTo('head');
-                });})
-        //.fail( function() { Array.prototype.forEach.call( arguments, function( request /* :: [jqXHR, textStatus, errorThrown] */, index ) { console.log( `${_ME}: FAIL::${JSON.stringify(request)}::` ); throw new Error(`${_ME}: FAIL`); }); })
-        .fail( function() { Array.prototype.forEach.call( arguments, function( request /* :: [jqXHR, textStatus, errorThrown] */, index ) { warn(`loading failed for '${request.uri}'`); console.log( `${_ME}: FAIL::${JSON.stringify(request)}::` ); throw new Error(`${_ME}: FAIL`); }); })
-        //.always( function() { Array.prototype.forEach.call( arguments, function( request /* :: [data | jqXHR, textStatus, jqXHR | errorThrown] */, index ) { console.log( `${_ME}: ALWAYS: '${request[1]}'` ); }); })
-        ;
-}
-
 // #### config
-var CM_base_url = '//cdnjs.cloudflare.com/ajax/libs/codemirror/5.25.0/';
+// note: using cloudflare (primary) and rawgit CDNs ~ for rawgit, (see https://github.com/rgrove/rawgit/blob/master/FAQ.md @@ http://archive.is/rMkAp)
+// note: see CDN ref @ https://cdnjs.com
+var CDN_base_url = '//cdnjs.cloudflare.com/ajax/libs/';
+var CM_base_url = CDN_base_url + 'codemirror/5.25.0/';
 var CSS_base_url = '//cdn.rawgit.com/rivy/js-user.markdown-render/09103ed9b09e632fb3f4369c9da79c83e38138bf/css/';
-var required_js = [
-  // ToDO: investigate RequireJS to async load but initialize dependent modules in correct order
-  // NOTE: see library CDN ref @ https://cdnjs.com
+var assets_js = [
   // clipboard support
-  "//cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.6.1/clipboard.min.js",
-//  [
-  // // syntax highlighter (with plugins)
-  // "//cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/prism.min.js",
-  // //"//cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/plugins/line-highlight/prism-line-highlight.min.js",
-  // "//cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/plugins/line-numbers/prism-line-numbers.min.js",
-//  ],
-//  "//cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/plugins/toolbar/prism-toolbar.min.js",
-//  "//cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/plugins/copy-to-clipboard/prism-copy-to-clipboard.min.js",
-  // [
-  // // syntax highlighter grammers (ToDO: change to lazy loading)
-  // "//cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/components/prism-haskell.min.js",
-  // "//cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/components/prism-perl.min.js",
-  // "//cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/components/prism-python.min.js",
-  // ],
+  CDN_base_url + "clipboard.js/1.6.1/clipboard.min.js",
   // markdown conversion
-  "//cdnjs.cloudflare.com/ajax/libs/markdown-it/8.3.1/markdown-it.min.js",
-//  [
-  // note: (using rawgit ~ see https://github.com/rgrove/rawgit/blob/master/FAQ.md @@ http://archive.is/rMkAp)
+  CDN_base_url + "markdown-it/8.3.1/markdown-it.min.js",
   // markdown-it ~ definition lists
   "//cdn.rawgit.com/markdown-it/markdown-it-deflist/8f2414f23316a2ec1c54bf4631a294fb2ae57ddd/dist/markdown-it-deflist.min.js", // markdown-it-deflist-2.0.1
   // markdown-it ~ attributes (pandoc compatible)
   "//cdn.rawgit.com/arve0/markdown-it-attrs/ce98279c9d3ad32bc0f94a9c1ab1206e6a9abaa8/markdown-it-attrs.browser.js", // markdown-it-attrs-0.8.0
   // markdown-it ~ footnotes
-  "//cdnjs.cloudflare.com/ajax/libs/markdown-it-footnote/3.0.1/markdown-it-footnote.min.js",
+  CDN_base_url + "markdown-it-footnote/3.0.1/markdown-it-footnote.min.js",
   // markdown-it ~ YAML :: ? ... see https://github.com/CaliStyle/markdown-it-meta
-  // MathJax
-//  "//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML&delayStartupUntil=configured",
-  //"//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML",
-//  ],
-  //// KaTeX
-  //"//cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/katex.min.js",
-  //"//cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/contrib/auto-render.min.js",
-  // CodeMirror
+  // CodeMirror / highlighting
   CM_base_url + "codemirror.min.js",
   CM_base_url + "mode/meta.min.js",
   CM_base_url + "addon/runmode/runmode.min.js",
   CM_base_url + "addon/runmode/colorize.min.js",
   CM_base_url + "addon/selection/mark-selection.js",
-//  [
-  // CodeMirror modes (aka languages)
-//  CM_base_url+ "mode/haskell/haskell.min.js",
-//  CM_base_url+ "mode/javascript/javascript.min.js",
-//  CM_base_url+ "mode/perl/perl.min.js",
+  // MathJax
+//  CDN_base_url + "mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML&delayStartupUntil=configured",
+  //CDN_base_url + "mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML",
 //  ],
+  //// KaTeX
+  //CDN_base_url + "KaTeX/0.7.1/katex.min.js",
+  //CDN_base_url + "KaTeX/0.7.1/contrib/auto-render.min.js",
   ];
-var optional_css = [
-  // ToDO: CSS order is significant ("later directives with same specificity wins"), so investigate RequireJS to async load but insert in-order
+var assets_css = [
   // reset ~ see http://meyerweb.com/eric/tools/css/reset @@ http://archive.is/XvC4w
   // ... see https://stackoverflow.com/questions/3388705/why-is-a-table-not-using-the-body-font-size-even-though-i-havent-set-the-table/3388766#3388766 @@ http://archive.is/wePmk
-  "//cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css",
-  // ref: [normalize] http://necolas.github.io/normalize.css @@ http://archive.is/Fo0od ; info: http://nicolasgallagher.com/about-normalize-css @@ http://archive.is/RSXip ; repo: https://github.com/necolas/normalize.css
+  CDN_base_url + "meyer-reset/2.0/reset.min.css",
+//  // ref: [normalize] http://necolas.github.io/normalize.css @@ http://archive.is/Fo0od ; info: http://nicolasgallagher.com/about-normalize-css @@ http://archive.is/RSXip ; repo: https://github.com/necolas/normalize.css
 //  "//cdnjs.cloudflare.com/ajax/libs/normalize/7.0.0/normalize.min.css",
   // basic
-//  "//cdn.rawgit.com/rivy/js-user.markdown-render/21e0a5f8043b4e07d537eaed448ba053b4a8bf10/css/s.css",
   CSS_base_url + "_default.css",
   CSS_base_url + "_fontface.css",
   CSS_base_url + "base.css",
 //  "//raw.githubusercontent.com/Thiht/markdown-viewer/master/chrome/lib/sss/sss.css",
 //  "//raw.githubusercontent.com/Thiht/markdown-viewer/master/chrome/lib/sss/sss.print.css",
   // tooltip CSS
-//  "//cdn.rawgit.com/rivy/js-user.markdown-render/03542f43a1c5adbaf30f6d4eb9901a4b87613d00/css/snippet.css",
-  "//cdn.rawgit.com/rivy/js-user.markdown-render/0cbb0ad3be100ecf9b5cd9e6421f7811c9621e4e/css/tooltips.css",
+  CSS_base_url + "tooltips.css",
   // syntax highlighter
-  //"//cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/themes/prism.min.css",
-  //"//cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/themes/prism-solarizedlight.min.css",
-  //"//cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/plugins/line-highlight/prism-line-highlight.min.css",
-  //"//cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/plugins/line-numbers/prism-line-numbers.min.css",
-  //"//cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/plugins/toolbar/prism-toolbar.min.css",
   CM_base_url + "codemirror.min.css",
-  //"http://codemirror.net/lib/codemirror.css",
-  // overrides (* last in order to lexically override prior CSS without requiring increased CSS specificity)
+  // overrides (* last in order to override prior CSS, without requiring increased CSS specificity)
   CSS_base_url + "!override.css",
   ];
 
@@ -350,24 +243,21 @@ var optional_css = [
 console.log('document.compatMode = ' + document.compatMode);
 
 $.when([])  // `.when([])` resolves immediately
-    .then( ()=>{ return get_raw_html(); } )
-    .then( ()=>{ return $('html').attr('lang','en'); } ) // ref: http://blog.adrianroselli.com/2015/01/on-use-of-lang-attribute.html @@ http://archive.is/H0ExZ (older, better typeography) + http://archive.is/chYjS
-    .then( ()=>{ return load_asset( optional_css.concat( required_js ) ); } )
+    .then( ()=>{ return load_raw_text(); } )
+    .then( ()=>{ return $('html').attr('lang','en'); } ) // ref: http://blog.adrianroselli.com/2015/01/on-use-of-lang-attribute.html @@ http://archive.is/H0ExZ (older, better typography) + http://archive.is/chYjS
+    .then( ()=>{ return load_asset( assets_css.concat( assets_js ) ); } )
     .then( ()=>{ return $.when(
-                   do_render(),
-                   $.getScript( [ 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML&delayStartupUntil=configured' ] ).then( trigger_render_MathJax ).then( ()=>{console.log('MathJax triggered');} ) // ToDO: discuss the MathJax requirement for `$.getScript( ... )` instead of being able to `eval( ... )` with a MathJax root config on <https://github.com/mathjax/MathJax/issues>
+                   do_render() ,
+                   $.getScript( [ 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML&delayStartupUntil=configured' ] ).then( trigger_render_MathJax ).then( ()=>{console.log('MathJax triggered');} ) , // ToDO: discuss the MathJax requirement for `$.getScript( ... )` instead of being able to `eval( ... )` with a MathJax root config on <https://github.com/mathjax/MathJax/issues>
+                   $.when([]) // placeholder at end-of-list (only syntactic sugar)
                    );
                }
          )
-//    .then( ()=>{ return $.getScript( [ 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML&delayStartupUntil=configured' ] ); } ) // ToDO: discuss the MathJax requirement for `$.getScript( ... )` instead of being able to `eval( ... )` with a MathJax root config on <https://github.com/mathjax/MathJax/issues>
     .then( function(){ console.log( 'main(): promise chain completed' ); })
     .done( function(){ console.log( 'main(): DONE ' ); } )
     .catch( function(){ console.log( 'main(): CATCH ' ); } )
     .always( function(){ console.log( 'main(): ALWAYS ' ); } )
     ;
-
-//warn('test');
-
 })();
 
 // #### subs
@@ -375,11 +265,10 @@ $.when([])  // `.when([])` resolves immediately
 function do_render() { // () : {jQuery.Deferred}
     let _ME = 'do_render()';
     console.log(_ME + ': rendering markdown');
-    //document.body.innerHTML = render_markdown( document.body.textContent );
     let original = $('body pre').text();
     let render = render_markdown( original );
     $('body pre').remove();
-    $('<div style="display:none"/>').html( $('<pre/>').html( original ) ).attr('id', '_src').appendTo('body');
+    $('<div style="display:none"/>').html( $('<pre/>').text( original ) ).attr('id', '_src').appendTo('body');
     $('<div/>').html( render ).appendTo('body');
 
     console.log(_ME + ': write data for CODE');
@@ -388,7 +277,7 @@ function do_render() { // () : {jQuery.Deferred}
     console.log(_ME + ': package codeblocks');
     package_codeblocks();
 
-    // find any needed CodeMirror modes (for later preload)
+    // find any needed CodeMirror modes (for lazy loading)
     let CodeMirror_mode_js_map = new Map();
 //    $('code [class*="language-"]').each( function( index ) {
     $('code').each( function( index ) {
@@ -406,7 +295,7 @@ function do_render() { // () : {jQuery.Deferred}
 //        CodeMirror_mode_js_map.set( CM_mode_uri, true );
         });
 
-    // find any needed CodeMirror themes (for later preload)
+    // find any needed CodeMirror themes (for lazy loading)
     let CodeMirror_theme_css_map = new Map();
     $('code').each( function( index ) {
         let $CODE = $(this);
@@ -424,16 +313,19 @@ function do_render() { // () : {jQuery.Deferred}
         .then( ()=>{ return load_asset( assets, undefined, true ); } )
         .then( ()=>{
             console.log(_ME + ': transform codeblocks');
+            // required CSS
             // ToDO: discuss the need for '.CodeMirror-scroll { height: auto; }' on <https://discuss.codemirror.net>
             //  ...  ? why; And is there a way to calculate the true height? ... (show `... .find('.CodeMirror-sizer').height()`, which fails if scrollbar is shown)
             //  ...  without `.CodeMirror-gutters { height: auto !important }` the inner portion of the editor is over-sized and captures scroll-wheel movement (scrolling text off screen)
             $('head').append('<style type="text/css">.CodeMirror, .CodeMirror-scroll { height: auto; } .CodeMirror-gutters {height: auto !important}</style>');
             //$('head').append('<style type="text/css">.CodeMirror, .CodeMirror-scroll { height: auto; }</style>');
+
             transform_codeblocks_to_CodeMirror();
+            // NOTE: all <code> within CODEBLOCKS have, at this point, been removed by conversion to CodeMirror components; only inline-type <code> elements remain
+
             add_codeblock_snippet_support();
-            // highlight_code() ~ highlight inline code (tagged with a language) using CodeMirror modes
-            // NOTE: all <code> within CODEBLOCKS have at this point been removed by conversion to CodeMirror components; only inline-type <code> elements remain
-            highlight_code();
+
+            highlight_code();  // highlight <code/> elements, as needed (only those tagged with a language)
             });
 }
 
@@ -593,6 +485,7 @@ function set_code_data(){
 }
 
 function highlight_code(){
+    // highlight all <code/> elements which are tagged with a language
     let _ME = 'highlight_code()';
     let $code_with_language = $('code[data-lang]');
     CodeMirror.colorize( $code_with_language );
@@ -753,83 +646,6 @@ function transform_codeblocks_to_CodeMirror(){
         return to;
     };
 })(jQuery);
-
-function load_js_inorder( uri, callback, timeout ) {
-callback = callback || function(){};
-timeout = timeout || ( 2 * 1000 );
-var scripts = $.isArray( uri ) ? uri : [ uri ];
-if (scripts.length > 0) {
-    var script = scripts.shift();
-    ///console.log('load_js_inorder:script = ' + script);
-    ///console.log('load_js_inorder:scripts[' + scripts.length + '] = ' + scripts);
-    var true_callback;
-    if (scripts.length === 0) { true_callback = callback; } else { true_callback = function(){ load_js_inorder( scripts, callback, timeout ); }; }
-    if ( $.isArray(script) ) { load_js( script, true_callback, timeout ); }
-    else {
-      $.ajax( script, { cache: true, dataType: 'script', timeout: timeout } )
-       .done( function() {
-          console.log('ajax:load:success:' + script);
-          true_callback();
-          })
-       .fail( () => { console.log('$:getScript:FAIL: ' + script); } )
-      ;
-    }
-} else { callback(); }
-}
-
-function load_js( uri, callback, timeout ){
-callback = callback || function(){};
-timeout = timeout || ( 10 * 1000 );
-// jQuery
-var scripts = $.isArray( uri ) ? uri : [ uri ];
-var progress = 0;
-scripts.forEach( function( script ){
-    console.log( 'load_js:script = ' + script );
-    $.ajax( script, { cache: true, dataType: 'script', timeout: timeout } )
-     .done( function() {
-        console.log('ajax:load:success:[' + progress + ']' + script);
-        if (++progress == scripts.length) callback();
-        })
-     .fail( () => { console.log('$:getScript:FAIL: ' + script); } )
-    ;
-});
-}
-
-function o_highlight_code ( s, lang ) {
-    console.log('here#1: '+lang);
-    // //let grammer = Prism.languages[lang];
-    // // let grammer = get_prism_grammer(lang);
-    // const prismLang = Prism.languages[lang];
-    // if (grammer) {
-    //     console.log('here#2: '+ lang);
-    //     try {
-    //         return Prism.highlight(s, grammer).value;
-    //     } catch (__) {}
-    // }
-    var grammer = Prism.languages[lang];
-    if (grammer) {
-        console.log('here#2: '+ lang);
-        return Prism.highlight( s, grammer);
-    }
-}
-
-function get_prism_grammer(lang, callback){
-    var grammer = Prism.languages[lang];
-//    if (grammer !== undefined) {
-//       }
-    return grammer;
-}
-
-const DEFAULTS = {
-    plugins: [],
-    init: () => {}
-};
-function p_highlight(text, lang) {
-    const prismLang = Prism.languages[lang];
-    if (prismLang) {
-        return Prism.highlightElement(text, prismLang);
-    }
-}
 
 function render_markdown( text ){
     //md = md || new markdownit( 'commonmark', {
