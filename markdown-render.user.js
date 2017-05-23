@@ -3,7 +3,7 @@
 // @namespace   com.houseofivy
 // @description renders markdown files
 //
-// @version     0.125
+// @version     0.127
 // @//updateURL   https://raw.githubusercontent.com/rivy/gms-markdown_viewer.custom-css/master/markdown_viewer.custom-css.user.js
 //
 // file extension: .m(arkdown|kdn?|d(o?wn)?)
@@ -22,169 +22,8 @@
 (function( /* USERjs, */ window, $ ){
 'use strict';
 
-var print_form = false; // minimize refresh/setSize on Chrome which may call these multiple times when printing
-var beforePrint = function() {
-    ///console.log(`beforePrint()`);
-    if ( ! print_form ) {
-       let $cb = $('.codeblock');
-       $cb.each(function(index){
-          let $CB = $(this);
-          let cm = $CB.find('.CodeMirror').get(0).CodeMirror;
-          cm.setOption('lineWrapping', true);
-          cm.refresh();
-          let height = $CB.find('.CodeMirror-lines').outerHeight();
-          cm.setSize( null, height );
-          });
-       print_form = true;
-       }
-};
-var afterPrint = function() {
-    ///console.log(`afterPrint()`);
-    if ( print_form ) {
-       let $cb = $('.codeblock');
-       $cb.each(function(index){
-          let $CB = $(this);
-          let cm = $CB.find('.CodeMirror').get(0).CodeMirror;
-          let _lineWrapping = $CB.hasClass('line-wrapping') || $CB.hasClass('line-wrap') || $CB.hasClass('wrapLines') || $CB.hasClass('wordwrap');
-          cm.setOption('lineWrapping', _lineWrapping);
-          cm.refresh();
-          let height = $CB.find('.CodeMirror-sizer').height();
-          cm.setSize( null, 'auto' );
-          });
-       }
-    print_form = false;
-};
-if (window.matchMedia) {
-    var mediaQueryList = window.matchMedia('print');
-    mediaQueryList.addListener(function(mql) {
-       if (mql.matches) {
-            beforePrint();
-        } else {
-           afterPrint();
-        }
-    });
-}
-$(window).on('beforeprint', beforePrint);
-$(window).on('afterprint', afterPrint);
-
-let messaging_id = '_messages';
-function add_messaging_area(){
-    if ($(`#${messaging_id}`).length < 1) {
-        // basic CSS
-        $('<style>').text(
-            `#${messaging_id} { border: red solid 2px; margin: 0; padding: 0 0.5em; }` +
-            `#${messaging_id} p { margin: 0.5em 0; font-family: monospace }` +
-            '').appendTo('head');
-        // node
-        $('<div/>', { id: messaging_id }).hide().prependTo($('body'));
-        }
-}
-function warn( message ){ // ( {array} ) : {void}
-    let messages = $.isArray( message ) ? message : [ message ];
-    if ( $(`#${messaging_id}`).length < 1 ) { add_messaging_area(); }
-    messages.forEach( (message)=>{ $(`#${messaging_id}`).append($('<p/>', {text: 'warn: '+message})); } );
-    $(`#${messaging_id}`).show();
-}
-function error( message ){ // ( {array} ) : {void}
-    let messages = $.isArray( message ) ? message : [ message ];
-    if ( $(`#${messaging_id}`).length < 1 ) { add_messaging_area(); }
-    messages.forEach( (message)=>{ $(`#${messaging_id}`).append($('<p/>', {text: 'ERR!: '+message})); } );
-    $(`#${messaging_id}`).show();
-}
-function assert(condition, message) {
-// based on : http://stackoverflow.com/questions/15313418/javascript-assert/15313435#15313435 @@ http://archive.is/XPo6F
-    if (!condition) {
-        message = message || "Assertion failed";
-        error( message );
-        if (typeof Error !== "undefined") {
-            throw new Error(message);
-        }
-        throw message; // Fallback
-    }
-}
-
-function load_raw_text( uri, timeout ){ // ( {array}, {int} ) : {jQuery.Deferred}
-    // Firefox misinterprets non-HTML (non .htm/.html extension) files as HTML if they contain initial HTML tags and irretrievably alters the text ... this replaces the body content with text equivalent to chrome's interpretation
-    // NOTE: no perceptable speed difference when using this on a high-end machine (via both SSD or HD)
-    //   ... *unneeded by chrome* (also, blocked by cross-origin issue ... ; see below comments) */
-    // ToDO: comment / request fix on "support.mozilla.org" (simlar to: https://support.mozilla.org/en-US/questions/898460)
-    let isFirefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
-    let retVal = $.Deferred;
-    if (isFirefox) {
-        uri = uri || document.location.href;
-        timeout = (timeout !== null) && (timeout >= 0) ? timeout : 2 * 1000/* ms */;
-        // 'chrome'-only: ajax throws here for the "file:///" protocol => "VM4117:7 XMLHttpRequest cannot load file:///C:/Users/Roy/OneDrive/Projects/%23kb/%23pandoc/README.md. Cross origin requests are only supported for protocol schemes: http, data, chrome, chrome-extension, https."
-        // ref: http://stackoverflow.com/questions/4819060/allow-google-chrome-to-use-xmlhttprequest-to-load-a-url-from-a-local-file/18137280#18137280 @@ http://archive.is/W7a9M
-        retVal = $.ajax( uri, { cache: true, dataType: 'text', timeout: timeout } )
-            .done( function( data, statusText, jqXHR ) { $('body').empty(); $('<pre/>', { style: 'word-wrap: break-word; white-space: pre-wrap;' }).text(data).appendTo('body'); } )
-            ;
-        }
-    return retVal;
-}
-
-function load_assets( uris, timeout, optional ) { // ( {array} [, {int}timeout=0] [, {bool}optional=false] ) => {jQuery.Deferred}
-/**
- * load assets in parallel, insert/initialize results *in order* within the document (creating determinate content from async downloads)
- * @param {array} : an array of script uris, loaded asynchronously, but placed into the file in the given order
- * @param {int}   : a timeout for download failure (default == 0 (aka, no timeout))
- * @returns {jQuery.Deferred}
- * ref: (based on) https://stackoverflow.com/questions/9711160/jquery-load-scripts-in-order/19777866#19777866 @@ https://archive.is/yt1su
- * ref: (based on) https://gist.github.com/rivy/5f1bd5225d4ee315a8d7f3c89986600f from https://gist.github.com/ngryman/7309432
- * ref: https://community.oracle.com/blogs/driscoll/2009/09/08/eval-javascript-global-context @@ http://archive.is/qy9fL
- * ref: [jqXHR ~ .done/.fail/.always/.then argument documentation] http://api.jquery.com/jQuery.ajax/#jqXHR
- */
-// NOTE: this function is needed b/c CSS and JS have order dependence (for rules with equivalent specificity and initialization dependencies, respectively)
-    timeout = ((timeout !== null) && (timeout >= 0)) ?  timeout : 2 * 1000/* ms */;
-    optional = (optional !== null) ? !!optional : false;
-    let _ME = 'load_assets()';
-    let asset_uris = $.isArray( uris ) ? uris : [ uris ];
-    ///console.log( `asset_uris = ${JSON.stringify( asset_uris )}`);
-    let default_protocol = (window.location.protocol === 'http:') ? 'http:' : 'https:'; // use 'https:' unless current page is using 'http:'
-    let requests = asset_uris.map( function( asset_uri ) {
-        let uri = asset_uri.trim();
-        if ( /^[\/\\][\/\\]/.test(uri) ) { uri = default_protocol + uri; }
-        let uri_path = new URL( uri, window.location ).pathname;
-        let uri_filename = uri_path.replace(/^.*[\\\/]/, '');
-        let uri_extension = uri_filename.replace(/^.*(?=\.)/, '');
-        console.log( `${_ME}: initiating AJAX download of "${uri}")` );
-        let jqXHR = $.ajax( uri, { cache: true, dataType: 'text', timeout: timeout } );
-        jqXHR.uri = uri;
-        jqXHR.extension = uri_extension;
-        return jqXHR;
-        });
-
-    return $.when.apply($, requests)
-        .done( function() {
-            let args = $.isArray( arguments[0] ) ? arguments : [ arguments ];
-            Array.prototype.forEach.call( args, function( request /* :: [data, textStatus, jqXHR] */, index ) {
-                let jqXHR = request[2];
-                let data = request[0];
-                ///console.log( `${_ME}: done::${JSON.stringify(request)}:: (${jqXHR.status}) '${jqXHR.statusText}' for "${jqXHR.uri}"` );
-                if (jqXHR.extension === '.css') {
-                    console.log( `insert style from "${jqXHR.uri}"` );
-                    $('<style type="text/css" />').html(data).attr('_uri', jqXHR.uri).attr('_index', index).appendTo('head');
-                    }
-                if (jqXHR.extension === '.js') {
-                    console.log( `eval() script from "${jqXHR.uri}"` );
-                    /* jshint ignore:start */
-                    window.eval.call( window, data );
-                    /* jshint ignore:end */
-                    }
-                });})
-        .fail( function() { Array.prototype.forEach.call( arguments, function( request /* :: [jqXHR, textStatus, errorThrown] */, index ) {
-            let message = `failed to load ${optional ? '( optional ) ' : ''}asset "${request.uri}"`;
-            if (optional) {
-                console.log( _ME+`: warn: ${message}`);
-              } else {
-                console.log( `${_ME}: ERR!: ${message} ::${JSON.stringify(request)}::` );
-                error( message + '; render halted' );
-                throw Error(`${_ME}: ERR!: ${message}`);
-                }
-            });})
-        ;
-}
-
 // #### config
+
 // note: using cloudflare (primary) and rawgit CDNs ~ for rawgit, (see https://github.com/rgrove/rawgit/blob/master/FAQ.md @@ http://archive.is/rMkAp)
 // note: see CDN ref @ https://cdnjs.com
 var CDN_base_url = '//cdnjs.cloudflare.com/ajax/libs/';
@@ -253,10 +92,10 @@ $.when([])  // `.when([])` resolves immediately
                    );
                }
          )
-    .then( function(){ console.log( 'main(): promise chain completed' ); })
-    .done( function(){ console.log( 'main(): DONE ' ); } )
-    .catch( function(){ console.log( 'main(): CATCH ' ); } )
-    .always( function(){ console.log( 'main(): ALWAYS ' ); } )
+    //.then( function(){ console.log( 'main(): promise chain completed' ); })
+    //.done( function(){ console.log( 'main(): DONE ' ); } )
+    //.catch( function(){ console.log( 'main(): CATCH ' ); } )
+    //.always( function(){ console.log( 'main(): ALWAYS ' ); } )
     ;
 })();
 
@@ -517,22 +356,6 @@ function highlight_code(){
         });
 }
 
-function isDefined( variable ){
-    // ref: http://www.codereadability.com/how-to-check-for-undefined-in-javascript @@ http://archive.is/RDiQz
-    ///return (typeof variable !== undefined);
-    return (variable !== undefined);
-}
-
-function dequote( s ){
-    // remove any surrounding quotes (including any outer surrounding whitespace)
-    if (( s === undefined ) || ( s === null )) { return s; }
-    let retval = s.trim();
-    let quotes = /["']/;
-    let match = retval.charAt(0).match( quotes );
-    if ( match && ( match[0].charAt[0] === retval.charAt[ retval.length ] ) ) { retval = retval.slice(1, -1); }
-    return match ? retval : s;
-}
-
 function transform_codeblocks_to_CodeMirror(){
 // setup CodeMirror as container and syntax highlighter
     let _ME = 'transform_codeblocks_to_CodeMirror()';
@@ -606,7 +429,106 @@ function transform_codeblocks_to_CodeMirror(){
       });
 }
 
-/* ## jQuery graft-on functions */
+function render_markdown( text ){
+    //md = md || new markdownit( 'commonmark', {
+    let md = new markdownit({
+      html: true,
+      //linkify: true,
+      typographer: true,
+      //highlight: highlight_code,
+      });
+    // plugins
+    md.use(markdownItAttrs);
+    md.use(markdownitDeflist);
+    md.use(markdownitFootnote);
+
+    return md.render(text);
+    }
+
+// ** load functions (async)
+
+function load_raw_text( uri, timeout ){ // ( {array}, {int} ) : {jQuery.Deferred}
+    // Firefox misinterprets non-HTML (non .htm/.html extension) files as HTML if they contain initial HTML tags and irretrievably alters the text ... this replaces the body content with text equivalent to chrome's interpretation
+    // NOTE: no perceptable speed difference when using this on a high-end machine (via both SSD or HD)
+    //   ... *unneeded by chrome* (also, blocked by cross-origin issue ... ; see below comments) */
+    // ToDO: comment / request fix on "support.mozilla.org" (simlar to: https://support.mozilla.org/en-US/questions/898460)
+    let isFirefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
+    let retVal = $.Deferred;
+    if (isFirefox) {
+        uri = uri || document.location.href;
+        timeout = (timeout !== null) && (timeout >= 0) ? timeout : 2 * 1000/* ms */;
+        // 'chrome'-only: ajax throws here for the "file:///" protocol => "VM4117:7 XMLHttpRequest cannot load file:///C:/Users/Roy/OneDrive/Projects/%23kb/%23pandoc/README.md. Cross origin requests are only supported for protocol schemes: http, data, chrome, chrome-extension, https."
+        // ref: http://stackoverflow.com/questions/4819060/allow-google-chrome-to-use-xmlhttprequest-to-load-a-url-from-a-local-file/18137280#18137280 @@ http://archive.is/W7a9M
+        retVal = $.ajax( uri, { cache: true, dataType: 'text', timeout: timeout } )
+            .done( function( data, statusText, jqXHR ) { $('body').empty(); $('<pre/>', { style: 'word-wrap: break-word; white-space: pre-wrap;' }).text(data).appendTo('body'); } )
+            ;
+        }
+    return retVal;
+}
+
+function load_assets( uris, timeout, optional ) { // ( {array} [, {int}timeout=0] [, {bool}optional=false] ) => {jQuery.Deferred}
+/**
+ * load assets in parallel, insert/initialize results *in order* within the document (creating determinate content from async downloads)
+ * @param {array} : an array of script uris, loaded asynchronously, but placed into the file in the given order
+ * @param {int}   : a timeout for download failure (default == 0 (aka, no timeout))
+ * @returns {jQuery.Deferred}
+ * ref: (based on) https://stackoverflow.com/questions/9711160/jquery-load-scripts-in-order/19777866#19777866 @@ https://archive.is/yt1su
+ * ref: (based on) https://gist.github.com/rivy/5f1bd5225d4ee315a8d7f3c89986600f from https://gist.github.com/ngryman/7309432
+ * ref: https://community.oracle.com/blogs/driscoll/2009/09/08/eval-javascript-global-context @@ http://archive.is/qy9fL
+ * ref: [jqXHR ~ .done/.fail/.always/.then argument documentation] http://api.jquery.com/jQuery.ajax/#jqXHR
+ */
+// NOTE: this function is needed b/c CSS and JS have order dependence (for rules with equivalent specificity and initialization dependencies, respectively)
+    timeout = ((timeout !== null) && (timeout >= 0)) ?  timeout : 2 * 1000/* ms */;
+    optional = (optional !== null) ? !!optional : false;
+    let _ME = 'load_assets()';
+    let asset_uris = $.isArray( uris ) ? uris : [ uris ];
+    ///console.log( `asset_uris = ${JSON.stringify( asset_uris )}`);
+    let default_protocol = (window.location.protocol === 'http:') ? 'http:' : 'https:'; // use 'https:' unless current page is using 'http:'
+    let requests = asset_uris.map( function( asset_uri ) {
+        let uri = asset_uri.trim();
+        if ( /^[\/\\][\/\\]/.test(uri) ) { uri = default_protocol + uri; }
+        let uri_path = new URL( uri, window.location ).pathname;
+        let uri_filename = uri_path.replace(/^.*[\\\/]/, '');
+        let uri_extension = uri_filename.replace(/^.*(?=\.)/, '');
+        console.log( `${_ME}: initiating AJAX download of "${uri}")` );
+        let jqXHR = $.ajax( uri, { cache: true, dataType: 'text', timeout: timeout } );
+        jqXHR.uri = uri;
+        jqXHR.extension = uri_extension;
+        return jqXHR;
+        });
+
+    return $.when.apply($, requests)
+        .done( function() {
+            let args = $.isArray( arguments[0] ) ? arguments : [ arguments ];
+            Array.prototype.forEach.call( args, function( request /* :: [data, textStatus, jqXHR] */, index ) {
+                let jqXHR = request[2];
+                let data = request[0];
+                ///console.log( `${_ME}: done::${JSON.stringify(request)}:: (${jqXHR.status}) '${jqXHR.statusText}' for "${jqXHR.uri}"` );
+                if (jqXHR.extension === '.css') {
+                    console.log( `insert style from "${jqXHR.uri}"` );
+                    $('<style type="text/css" />').html(data).attr('_uri', jqXHR.uri).attr('_index', index).appendTo('head');
+                    }
+                if (jqXHR.extension === '.js') {
+                    console.log( `eval() script from "${jqXHR.uri}"` );
+                    /* jshint ignore:start */
+                    window.eval.call( window, data );
+                    /* jshint ignore:end */
+                    }
+                });})
+        .fail( function() { Array.prototype.forEach.call( arguments, function( request /* :: [jqXHR, textStatus, errorThrown] */, index ) {
+            let message = `failed to load ${optional ? '( optional ) ' : ''}asset "${request.uri}"`;
+            if (optional) {
+                console.log( _ME+`: warn: ${message}`);
+              } else {
+                console.log( `${_ME}: ERR!: ${message} ::${JSON.stringify(request)}::` );
+                error( message + '; render halted' );
+                throw Error(`${_ME}: ERR!: ${message}`);
+                }
+            });})
+        ;
+}
+
+// ** jQuery "graft-on" functions
 
 (function ($) {
     // ref: http://stackoverflow.com/questions/6753362/jquery-how-to-copy-all-the-attributes-of-one-element-and-apply-them-to-another/24626637#24626637 @@ http://archive.is/i92ld
@@ -647,20 +569,124 @@ function transform_codeblocks_to_CodeMirror(){
     };
 })(jQuery);
 
-function render_markdown( text ){
-    //md = md || new markdownit( 'commonmark', {
-    let md = new markdownit({
-      html: true,
-      //linkify: true,
-      typographer: true,
-      //highlight: highlight_code,
-      });
-    // plugins
-    md.use(markdownItAttrs);
-    md.use(markdownitDeflist);
-    md.use(markdownitFootnote);
+// ** print render fixup
 
-    return md.render(text);
+// NOTE: Firefox print rendering is *broken* b/c Firefox doesn't apply "@media print" CSS to the page before triggering the `beforePrint` event and the print content is "hidden"
+//   ... see: <https://bugzilla.mozilla.org/show_bug.cgi?id=1048317> and <https://bugzilla.mozilla.org/show_bug.cgi?id=774398>
+//   ... IMO, despite being "in-spec" by one interpretation, this is a Firefox *bug* ... so, print using Chrome
+
+var print_form = false; // signal current document form; used to minimize refresh/setSize on Chrome (which may call these multiple times when printing)
+
+var beforePrint = function() {
+    ///console.log(`beforePrint()`);
+    if ( ! print_form ) {
+       let $cb = $('.codeblock');
+       $cb.each(function(index){
+          let $CB = $(this);
+          let cm = $CB.find('.CodeMirror').get(0).CodeMirror;
+          cm.setOption('lineWrapping', true);
+          cm.refresh(); // re-calculate correct height / width
+          let height = $CB.find('.CodeMirror-lines').outerHeight();
+          cm.setSize( null, height );
+          });
+       print_form = true;
+       }
+};
+
+var afterPrint = function() {
+    ///console.log(`afterPrint()`);
+    if ( print_form ) {
+       let $cb = $('.codeblock');
+       $cb.each(function(index){
+          let $CB = $(this);
+          let cm = $CB.find('.CodeMirror').get(0).CodeMirror;
+          let _lineWrapping = $CB.hasClass('line-wrapping') || $CB.hasClass('line-wrap') || $CB.hasClass('wrapLines') || $CB.hasClass('wordwrap');
+          cm.setOption('lineWrapping', _lineWrapping);
+          cm.setSize( null, 'auto' );
+          cm.refresh(); // fix minor size / text position abberations after `setSize()`
+          });
+       }
+    print_form = false;
+};
+
+//# install print hooks
+// matchMedia API
+function handleMatchMediaPrint( mql ) {
+    if ( mql.matches ) { beforePrint(); } else { afterPrint(); }
+}
+if (window.matchMedia) {
+    // matchMedia() API is available
+    let mediaQueryList = window.matchMedia('print');
+    mediaQueryList.addListener( handleMatchMediaPrint );
+}
+// older API
+$(window).on('beforeprint', beforePrint);
+$(window).on('afterprint', afterPrint);
+
+// ** utility functions
+
+function isDefined( variable ){
+    // ref: http://www.codereadability.com/how-to-check-for-undefined-in-javascript @@ http://archive.is/RDiQz
+    ///return (typeof variable !== undefined);
+    return (variable !== undefined);
+}
+
+//# assertion
+
+function assert(condition, message) {
+    // based on : http://stackoverflow.com/questions/15313418/javascript-assert/15313435#15313435 @@ http://archive.is/XPo6F
+    if (!condition) {
+        message = message || "Assertion failed";
+        error( message );
+        if (typeof Error !== "undefined") {
+            throw new Error(message);
+        }
+        throw message; // Fallback
     }
+}
+
+//# user/browser messaging
+
+let messaging_id = '_messages';
+
+function add_messaging_area(){
+    if ($(`#${messaging_id}`).length < 1) {
+        // basic CSS
+        $('<style>').text(
+            `#${messaging_id} { border: red solid 2px; margin: 0; padding: 0 0.5em; }` +
+            `#${messaging_id} p { margin: 0.5em 0; font-family: monospace }` +
+            '').appendTo('head');
+        // node
+        $('<div/>', { id: messaging_id }).hide().prependTo($('body'));
+        }
+}
+
+function warn( message ){ // ( {array} ) : {void}
+    let messages = $.isArray( message ) ? message : [ message ];
+    if ( $(`#${messaging_id}`).length < 1 ) { add_messaging_area(); }
+    messages.forEach( (message)=>{ $(`#${messaging_id}`).append($('<p/>', {text: 'warn: '+message})); } );
+    $(`#${messaging_id}`).show();
+}
+
+function error( message ){ // ( {array} ) : {void}
+    let messages = $.isArray( message ) ? message : [ message ];
+    if ( $(`#${messaging_id}`).length < 1 ) { add_messaging_area(); }
+    messages.forEach( (message)=>{ $(`#${messaging_id}`).append($('<p/>', {text: 'ERR!: '+message})); } );
+    $(`#${messaging_id}`).show();
+}
+
+//# string / text functions
+
+function dequote( s ){
+    // remove any surrounding quotes (including any outer surrounding whitespace)
+    if (( s === undefined ) || ( s === null )) { return s; }
+    let retval = s.trim();
+    let quotes = /["']/;
+    let match = retval.charAt(0).match( quotes );
+    if ( match && ( match[0].charAt[0] === retval.charAt[ retval.length ] ) ) { retval = retval.slice(1, -1); }
+    return match ? retval : s;
+}
+
+// ####
 
 })( /* window.USERjs = window.USERjs || {}, */ window, jQuery );
