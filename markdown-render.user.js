@@ -3,7 +3,7 @@
 // @namespace   com.houseofivy
 // @description renders markdown files
 //
-// @version     0.129
+// @version     0.131
 // @//updateURL   https://raw.githubusercontent.com/rivy/gms-markdown_viewer.custom-css/master/markdown_viewer.custom-css.user.js
 //
 // file extension: .m(arkdown|kdn?|d(o?wn)?)
@@ -482,10 +482,13 @@ function load_assets( uris, timeout, optional ) { // ( {array} [, {int}timeout=0
     optional = (optional !== null) ? !!optional : false;
     let _ME = 'load_assets()';
     let asset_uris = $.isArray( uris ) ? uris : [ uris ];
-    ///console.log( `asset_uris = ${JSON.stringify( asset_uris )}`);
+    let retVal = $.Deferred;
+    ///console.log( `${_ME}: asset_uris = ${JSON.stringify( asset_uris )}`);
+    if (asset_uris.length < 1) { return retVal; }
     let default_protocol = (window.location.protocol === 'http:') ? 'http:' : 'https:'; // use 'https:' unless current page is using 'http:'
     let requests = asset_uris.map( function( asset_uri ) {
         let uri = asset_uri.trim();
+        ///console.log( `${_ME}: uri = ${JSON.stringify( uri )}`);
         if ( /^[\/\\][\/\\]/.test(uri) ) { uri = default_protocol + uri; }
         let uri_path = new URL( uri, window.location ).pathname;
         let uri_filename = uri_path.replace(/^.*[\\\/]/, '');
@@ -496,8 +499,9 @@ function load_assets( uris, timeout, optional ) { // ( {array} [, {int}timeout=0
         jqXHR.extension = uri_extension;
         return jqXHR;
         });
+    ///console.log( `${_ME}: requests::${JSON.stringify(requests)}::` );
 
-    return $.when.apply($, requests)
+    retVal = $.when.apply($, requests)
         .done( function() {
             let args = $.isArray( arguments[0] ) ? arguments : [ arguments ];
             Array.prototype.forEach.call( args, function( request /* :: [data, textStatus, jqXHR] */, index ) {
@@ -526,6 +530,8 @@ function load_assets( uris, timeout, optional ) { // ( {array} [, {int}timeout=0
                 }
             });})
         ;
+
+    return retVal;
 }
 
 // ** jQuery "graft-on" functions
