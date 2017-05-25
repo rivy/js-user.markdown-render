@@ -3,7 +3,7 @@
 // @namespace   com.houseofivy
 // @description renders markdown files
 //
-// @version     0.131
+// @version     0.133
 // @//updateURL   https://raw.githubusercontent.com/rivy/gms-markdown_viewer.custom-css/master/markdown_viewer.custom-css.user.js
 //
 // file extension: .m(arkdown|kdn?|d(o?wn)?)
@@ -125,8 +125,8 @@ function do_render() { // () : {jQuery.Deferred}
         let mime = get_language_mime( $CODE );
         if ((name === mime) && (name === undefined)) { return; }
         let CM_mode = find_CM_mode( mime ) || find_CM_mode( name );
+        if ((CM_mode.mode === 'null') || (mime === 'text/plain') || (name === 'none') || (name === 'null') || (name === 'plain')) { return; }
         if ( ! CM_mode ) { warn(`unknown code language ('${name}'; mime:'${mime}')`); return; }
-        if ( CM_mode.mode === 'null' ) { return; }
         let CM_mode_template = CM_base_url + "mode/%N/%N.min.js";
         let CM_mode_uri = CM_mode_template.replace(/%N/g, CM_mode.mode);
         ///console.log(`found CodeMirror.mode='${CM_mode.mode}' for language='${name}'; URL = '${CM_mode_uri}'`);
