@@ -47,6 +47,8 @@ blockquote {
 :link, :visited { text-decoration: none; }
 a:hover { text-decoration: underline; }
 
+ul { list-style-type: disc; }
+
 pre, code, .codeblock { font-family: /*Inconsolata,*/ "Fira Code", "Open Sans Mono", "Anonymous Pro", "Consolas", "Lucida Console", monospace; font-size: 1em; line-height: 1.3em; }
 code { background: gainsboro; background: rgba(238,238,238,0.8); padding: 0 0.2em; }
 code { border-radius: 0.1em; }
