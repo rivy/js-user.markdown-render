@@ -23,6 +23,6 @@ Note: Edge currently won't open local files with unknown extensions (eg, all the
 ### `markdown-render` installation
 
 * open <https://github.com/rivy/js-user.markdown-render/raw/master/markdown-render.user.js>
-* CLICK "Install" in the TamperMonkey installtion dialog
+* CLICK "Install" in the TamperMonkey installation dialog
 
 
