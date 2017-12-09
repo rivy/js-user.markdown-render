@@ -3,7 +3,7 @@
 // @namespace   com.houseofivy
 // @description renders markdown files
 //
-// @version     0.141
+// @version     0.143
 // @//updateURL   https://raw.githubusercontent.com/rivy/gms-markdown_viewer.custom-css/master/markdown_viewer.custom-css.user.js
 //
 // file extension: .m(arkdown|kdn?|d(o?wn)?)
@@ -378,6 +378,10 @@ function transform_codeblocks_to_CodeMirror(){
 
         let _lineWrapping = $DIV.hasClass('line-wrapping') || $DIV.hasClass('line-wrap') || $DIV.hasClass('wrapLines') || $DIV.hasClass('wordwrap');
         let _lineNumbers = $DIV.hasClass('line-numbers') || $DIV.hasClass('numberLines');
+
+        if (_lineWrapping && !$DIV.hasClass('line-wrapping')) { $DIV.addClass('line-wrapping') };
+        if (_lineNumbers && !$DIV.hasClass('line-numbers')) { $DIV.addClass('line-numbers') };
+
         let _firstLineNumber = isDefined($DIV.attr('startFrom')) ? parseInt($DIV.attr('startFrom')) : 1; // NOTE: for conversion alternatives, see https://coderwall.com/p/5tlhmw/converting-strings-to-number-in-javascript-pitfalls @@ http://archive.is/1CH5w
         let _gutters = _lineNumbers ? ['CodeMirror-linenumbers'] : ['CodeMirror-gutter-extra'];
         let _mode = dequote( $DIV.attr('data-mime') || 'text/plain' );
