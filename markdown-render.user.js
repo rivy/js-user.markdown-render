@@ -3,7 +3,7 @@
 // @namespace   com.houseofivy
 // @description renders markdown files
 //
-// @version     0.139
+// @version     0.141
 // @//updateURL   https://raw.githubusercontent.com/rivy/gms-markdown_viewer.custom-css/master/markdown_viewer.custom-css.user.js
 //
 // file extension: .m(arkdown|kdn?|d(o?wn)?)
@@ -28,7 +28,7 @@
 // note: see CDN ref @ https://cdnjs.com
 var CDN_base_url = '//cdnjs.cloudflare.com/ajax/libs/';
 var CM_base_url = CDN_base_url + 'codemirror/5.25.0/';
-var CSS_base_url = '//cdn.rawgit.com/rivy/js-user.markdown-render/fc3bd254160472a626686d317134ae8b4bd39620/css/';
+var CSS_base_url = '//cdn.rawgit.com/rivy/js-user.markdown-render/6f664acfa0a06fd649f00c9fda29acfdd40005d3/css/';
 var assets_js = [
   // clipboard support
   CDN_base_url + "clipboard.js/1.6.1/clipboard.min.js",
