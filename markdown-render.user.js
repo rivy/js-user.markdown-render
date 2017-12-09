@@ -3,7 +3,7 @@
 // @namespace   com.houseofivy
 // @description renders markdown files
 //
-// @version     0.137
+// @version     0.139
 // @//updateURL   https://raw.githubusercontent.com/rivy/gms-markdown_viewer.custom-css/master/markdown_viewer.custom-css.user.js
 //
 // file extension: .m(arkdown|kdn?|d(o?wn)?)
@@ -382,7 +382,7 @@ function transform_codeblocks_to_CodeMirror(){
         let _gutters = _lineNumbers ? ['CodeMirror-linenumbers'] : ['CodeMirror-gutter-extra'];
         let _mode = dequote( $DIV.attr('data-mime') || 'text/plain' );
         console.log('_mode = ' + _mode);
-        let _theme = dequote($codeblock.css('--theme') || 'default').trim();
+        let _theme = get_theme( $DIV );
         console.log('_theme = ' + _theme);
 
         let _value = $('<div/>').html($CODE.html()).text().trimRight();
