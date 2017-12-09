@@ -1,5 +1,13 @@
 ## plans
 
+## add optional "prefix" gutter
+
+use 'data-lineprefix'
+
+- if 'data-lineprefix' exists, create a gutter ("CodeMirror-gutter-lineprefix")
+- CSS style similar to 'CodeMirror-gutter-extra'
+- set content == val('data-lineprefix'); ? use :before/:after; ? how to localize the content to only the block (CSS could be too global) 
+
 ## rename tooltip CSS
 
 * change to use top/bottom/right/left terms (eg, tooltipped--tr, etc)
