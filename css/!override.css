@@ -22,3 +22,7 @@
 .CodeMirror { font: inherit; }
 .CodeMirror, .CodeMirror pre { font-variant-ligatures: none; -webkit-font-variant-ligatures: none; }
 /*.CodeMirror, .CodeMirror pre { font-variant-ligatures: contextual; -webkit-font-variant-ligatures: contextual; }*/
+
+/* visible selection (regardless of theme) */
+.CodeMirror-selected  { background-color: blue !important; }
+.CodeMirror-selectedtext { color: white !important; text-shadow: none; }
