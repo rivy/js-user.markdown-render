@@ -19,6 +19,8 @@
 // @grant       none
 // ==/UserScript==
 
+/* jshint esversion: 6 */
+
 (function( /* USERjs, */ window, $ ){
 'use strict';
 
@@ -87,7 +89,9 @@ $.when([])  // `.when([])` resolves immediately
     .then( ()=>{ return load_assets( assets_css.concat( assets_js ) ); } )
     .then( ()=>{ return $.when(
                    do_render() ,
-                   $.getScript( [ 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML&delayStartupUntil=configured' ] ).then( trigger_render_MathJax ).then( ()=>{console.log('MathJax triggered');} ) , // ToDO: discuss the MathJax requirement for `$.getScript( ... )` instead of being able to `eval( ... )` with a MathJax root config on <https://github.com/mathjax/MathJax/issues>
+                   $.getScript( [ 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML&delayStartupUntil=configured' ] )
+                      .then( trigger_render_MathJax )
+                      .then( ()=>{console.log('MathJax triggered');} ) , // ToDO: discuss the MathJax requirement for `$.getScript( ... )` instead of being able to `eval( ... )` with a MathJax root config on <https://github.com/mathjax/MathJax/issues>
                    $.when([]) // placeholder at end-of-list (only syntactic sugar)
                    );
                }
@@ -379,8 +383,8 @@ function transform_codeblocks_to_CodeMirror(){
         let _lineWrapping = $DIV.hasClass('line-wrapping') || $DIV.hasClass('line-wrap') || $DIV.hasClass('wrapLines') || $DIV.hasClass('wordwrap');
         let _lineNumbers = $DIV.hasClass('line-numbers') || $DIV.hasClass('numberLines');
 
-        if (_lineWrapping && !$DIV.hasClass('line-wrapping')) { $DIV.addClass('line-wrapping') };
-        if (_lineNumbers && !$DIV.hasClass('line-numbers')) { $DIV.addClass('line-numbers') };
+        if (_lineWrapping && !$DIV.hasClass('line-wrapping')) { $DIV.addClass('line-wrapping'); }
+        if (_lineNumbers && !$DIV.hasClass('line-numbers')) { $DIV.addClass('line-numbers'); }
 
         let _firstLineNumber = isDefined($DIV.attr('startFrom')) ? parseInt($DIV.attr('startFrom')) : 1; // NOTE: for conversion alternatives, see https://coderwall.com/p/5tlhmw/converting-strings-to-number-in-javascript-pitfalls @@ http://archive.is/1CH5w
         let _gutters = _lineNumbers ? ['CodeMirror-linenumbers'] : ['CodeMirror-gutter-extra'];
