@@ -460,6 +460,7 @@ function load_raw_text( uri, timeout ){ // ( {array}, {int} ) : {jQuery.Deferred
     // NOTE: no perceptable speed difference when using this on a high-end machine (via both SSD or HD)
     //   ... *unneeded by chrome* (also, blocked by cross-origin issue ... ; see below comments) */
     // ToDO: comment / request fix on "support.mozilla.org" (simlar to: https://support.mozilla.org/en-US/questions/898460)
+    // ToDO: change to GM_xmlhttpRequest
     let isFirefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
     let retVal = $.Deferred;
     if (isFirefox) {
