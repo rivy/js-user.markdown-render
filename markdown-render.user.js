@@ -27,8 +27,8 @@
 // note: using cloudflare (primary) and rawgit CDNs ~ for rawgit, (see https://github.com/rgrove/rawgit/blob/master/FAQ.md @@ http://archive.is/rMkAp)
 // note: see CDN ref @ https://cdnjs.com
 var CDN_base_url = '//cdnjs.cloudflare.com/ajax/libs/';
-var CM_base_url = CDN_base_url + 'codemirror/5.25.0/';
-var CSS_base_url = '//cdn.rawgit.com/rivy/js-user.markdown-render/6f664acfa0a06fd649f00c9fda29acfdd40005d3/css/';
+var CDN_CM_base_url = CDN_base_url + 'codemirror/5.25.0/';
+var CDN_CSS_base_url = '//cdn.rawgit.com/rivy/js-user.markdown-render/6f664acfa0a06fd649f00c9fda29acfdd40005d3/css/';
 var assets_js = [
   // clipboard support
   CDN_base_url + "clipboard.js/1.6.1/clipboard.min.js",
@@ -42,11 +42,11 @@ var assets_js = [
   CDN_base_url + "markdown-it-footnote/3.0.1/markdown-it-footnote.min.js",
   // markdown-it ~ YAML :: ? ... see https://github.com/CaliStyle/markdown-it-meta
   // CodeMirror / highlighting
-  CM_base_url + "codemirror.min.js",
-  CM_base_url + "mode/meta.min.js",
-  CM_base_url + "addon/runmode/runmode.min.js",
-  CM_base_url + "addon/runmode/colorize.min.js",
-  CM_base_url + "addon/selection/mark-selection.js",
+  CDN_CM_base_url + "codemirror.min.js",
+  CDN_CM_base_url + "mode/meta.min.js",
+  CDN_CM_base_url + "addon/runmode/runmode.min.js",
+  CDN_CM_base_url + "addon/runmode/colorize.min.js",
+  CDN_CM_base_url + "addon/selection/mark-selection.js",
   // MathJax
 //  CDN_base_url + "mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML&delayStartupUntil=configured",
   //CDN_base_url + "mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML",
@@ -62,17 +62,17 @@ var assets_css = [
 //  // ref: [normalize] http://necolas.github.io/normalize.css @@ http://archive.is/Fo0od ; info: http://nicolasgallagher.com/about-normalize-css @@ http://archive.is/RSXip ; repo: https://github.com/necolas/normalize.css
 //  "//cdnjs.cloudflare.com/ajax/libs/normalize/7.0.0/normalize.min.css",
   // basic
-  CSS_base_url + "_default.css",
-  CSS_base_url + "_fontface.css",
-  CSS_base_url + "base.css",
+  CDN_CSS_base_url + "_default.css",
+  CDN_CSS_base_url + "_fontface.css",
+  CDN_CSS_base_url + "base.css",
 //  "//raw.githubusercontent.com/Thiht/markdown-viewer/master/chrome/lib/sss/sss.css",
 //  "//raw.githubusercontent.com/Thiht/markdown-viewer/master/chrome/lib/sss/sss.print.css",
   // tooltip CSS
-  CSS_base_url + "tooltips.css",
+  CDN_CSS_base_url + "tooltips.css",
   // syntax highlighter
-  CM_base_url + "codemirror.min.css",
+  CDN_CM_base_url + "codemirror.min.css",
   // overrides (* last in order to override prior CSS, without requiring increased CSS specificity)
-  CSS_base_url + "!override.css",
+  CDN_CSS_base_url + "!override.css",
   ];
 
 // #### main()
@@ -127,7 +127,7 @@ function do_render() { // () : {jQuery.Deferred}
         let CM_mode = find_CM_mode( mime ) || find_CM_mode( name );
         if ((CM_mode.mode === 'null') || (mime === 'text/plain') || (name === 'none') || (name === 'null') || (name === 'plain')) { return; }
         if ( ! CM_mode ) { warn(`unknown code language ('${name}'; mime:'${mime}')`); return; }
-        let CM_mode_template = CM_base_url + "mode/%N/%N.min.js";
+        let CM_mode_template = CDN_CM_base_url + "mode/%N/%N.min.js";
         let CM_mode_uri = CM_mode_template.replace(/%N/g, CM_mode.mode);
         ///console.log(`found CodeMirror.mode='${CM_mode.mode}' for language='${name}'; URL = '${CM_mode_uri}'`);
         CodeMirror_mode_js_map.set( CM_mode_uri, (CodeMirror_mode_js_map.get( CM_mode_uri ) || 0) + 1 );
@@ -140,7 +140,7 @@ function do_render() { // () : {jQuery.Deferred}
         let $CODE = $(this);
         let theme = get_theme( $CODE );
         if ((theme === undefined) || (theme === 'default')) { return; }
-        let CM_theme_template = CM_base_url + "theme/%N.min.css";
+        let CM_theme_template = CDN_CM_base_url + "theme/%N.min.css";
         let CM_theme_uri = CM_theme_template.replace(/%N/g, (theme.split(/[\s.]+/))[0]);
         console.log(`found needed theme='${theme}'; URL = '${CM_theme_uri}'`);
         CodeMirror_theme_css_map.set( CM_theme_uri, (CodeMirror_theme_css_map.get( theme ) || 0) + 1 );
