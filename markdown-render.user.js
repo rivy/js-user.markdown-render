@@ -3,7 +3,7 @@
 // @namespace   com.houseofivy
 // @description renders markdown files
 //
-// @version     0.145
+// @version     0.147
 // @//updateURL   https://raw.githubusercontent.com/rivy/gms-markdown_viewer.custom-css/master/markdown_viewer.custom-css.user.js
 //
 // file extension: .m(arkdown|kdn?|d(o?wn)?)
@@ -19,7 +19,7 @@
 // @grant       none
 // ==/UserScript==
 
-/* jshint esversion: 6 */
+/* jshint esnext: false,  esversion: 6, bitwise: true, eqeqeq: true */
 
 (function( /* USERjs, */ window, $ ){
 'use strict';
@@ -101,11 +101,12 @@ $.when([])  // `.when([])` resolves immediately
     //.catch( function(){ console.log( 'main(): CATCH ' ); } )
     //.always( function(){ console.log( 'main(): ALWAYS ' ); } )
     ;
+return;
 })();
 
 // #### subs
 
-function do_render() { // () : {jQuery.Deferred}
+function do_render() { // () => {jQuery.Deferred}
     let _ME = 'do_render()';
     console.log(_ME + ': rendering markdown');
     let original = $('body pre').text();
@@ -289,7 +290,7 @@ function find_CM_mode( name ){
             mode = mode.toLowerCase();
             for (var i = 0; i < CodeMirror.modeInfo.length; i++) {
                 var info = CodeMirror.modeInfo[i];
-                if (info.mode.toLowerCase() == mode) return info;
+                if (info.mode.toLowerCase() === mode) return info;
             }
         })( name )
         ;
@@ -455,7 +456,7 @@ function render_markdown( text ){
 
 // ** load functions (async)
 
-function load_raw_text( uri, timeout ){ // ( {array}, {int} ) : {jQuery.Deferred}
+function load_raw_text( uri, timeout ){ // ( {array}, {int} ) => {jQuery.Deferred}
     // Firefox misinterprets non-HTML (non .htm/.html extension) files as HTML if they contain initial HTML tags and irretrievably alters the text ... this replaces the body content with text equivalent to chrome's interpretation
     // NOTE: no perceptable speed difference when using this on a high-end machine (via both SSD or HD)
     //   ... *unneeded by chrome* (also, blocked by cross-origin issue ... ; see below comments) */
@@ -487,7 +488,7 @@ function load_assets( uris, timeout, optional ) { // ( {array} [, {int}timeout=0
  * ref: [jqXHR ~ .done/.fail/.always/.then argument documentation] http://api.jquery.com/jQuery.ajax/#jqXHR
  */
 // NOTE: this function is needed b/c CSS and JS have order dependence (for rules with equivalent specificity and initialization dependencies, respectively)
-    timeout = ((timeout !== null) && (timeout >= 0)) ?  timeout : 2 * 1000/* ms */;
+    timeout = ((timeout !== null) && (timeout >= 0)) ?  timeout : (2 * 1000/* ms */);
     optional = (optional !== null) ? !!optional : false;
     let _ME = 'load_assets()';
     let asset_uris = $.isArray( uris ) ? uris : [ uris ];
@@ -568,12 +569,12 @@ function load_assets( uris, timeout, optional ) { // ( {array} [, {int}timeout=0
             $(from).prop("attributes") : null;
 
         // Iterate through attributes and add
-        if (allAttributes && $(to) && $(to).length == 1) {
+        if (allAttributes && $(to) && $(to).length === 1) {
             $.each(allAttributes, function() {
                 // Ensure that class names are not copied but rather added
-                if (this.name == "class") {
+                if (this.name === "class") {
                     $(to).addClass(this.value);
-                } else if (this.name == "id") {
+                } else if (this.name === "id") {
                     // skip id's
                 } else {
                     to.attr(this.name, this.value);
