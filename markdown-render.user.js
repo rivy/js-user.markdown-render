@@ -271,7 +271,8 @@ function package_codeblocks(){
     $('pre code').each(function(){
         let $CODE = $(this);
         let class_text = $CODE.attr('class') ? 'class = "'+$CODE.attr('class')+'"' : 'class not defined';
-        console.log(_ME + ': block found == CODE(' + class_text + ')');
+        let theme_text = get_theme( $CODE );
+        console.log(_ME + ': block found == CODE(' + class_text + '; theme = ' + theme_text + ')');
         // hoist 'id' and copy attributes from CODE to PRE
         let $PRE = $CODE.parent('pre');
         $PRE.hoistID($CODE);
@@ -281,6 +282,9 @@ function package_codeblocks(){
         $DIV.addClass(css_class_codeblock);
         $DIV.hoistID($PRE);
         $DIV.copyAllAttributes($PRE);
+        class_text = $DIV.attr('class') ? 'class = "'+$DIV.attr('class')+'"' : 'class not defined';
+        theme_text = get_theme( $DIV );
+        console.log(_ME + ': ... => DIV(' + class_text + '; theme = ' + theme_text + ')');
         });
 }
 
@@ -338,7 +342,7 @@ function highlight_code(){
     $code_with_language.each( function(){
         let $CODE = $(this);
         let theme = get_theme( $CODE );
-        ///console.log(_ME + `: theme = ${theme}` );
+        console.log(_ME + `: theme = ${theme}` );
         if ( theme !== 'default' ) {
             $CODE.removeClass('cm-s-default');
             let theme_classes = theme.split(/[\s.]+/);
@@ -379,7 +383,7 @@ function transform_codeblocks_to_CodeMirror(){
         let $PRE = $CODE.parent('pre');
         let $DIV = $PRE.parent('div');
         let $codeblock = $DIV;
-        console.log(_ME + ': codeblock(' + $codeblock.attr('class') + ')');
+        console.log(_ME + ': DIV.codeblock(' + $codeblock.attr('class') + ')');
 
         let _lineWrapping = $DIV.hasClass('line-wrapping') || $DIV.hasClass('line-wrap') || $DIV.hasClass('wrapLines') || $DIV.hasClass('wordwrap');
         let _lineNumbers = $DIV.hasClass('line-numbers') || $DIV.hasClass('numberLines');
@@ -393,6 +397,13 @@ function transform_codeblocks_to_CodeMirror(){
         console.log('_mode = ' + _mode);
         let _theme = get_theme( $DIV );
         console.log('_theme = ' + _theme);
+
+        // ToDO: refactor ; is this a hack? load_assets is async (? need a promise here? convert transform_codeblocks_to_CodeMirror() to async with promise return? )
+        if ((_theme !== undefined) && (_theme !== 'default')) {
+          let CM_theme_template = CDN_CM_base_url + "theme/%N.min.css";
+          let CM_theme_uri = CM_theme_template.replace(/%N/g, (_theme.split(/[\s.]+/))[0]);
+          load_assets( CM_theme_uri, undefined, true);
+          }
 
         let _value = $('<div/>').html($CODE.html()).text().trimRight();
 
