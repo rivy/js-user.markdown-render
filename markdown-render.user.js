@@ -3,7 +3,7 @@
 // @namespace   com.houseofivy
 // @description renders markdown files
 //
-// @version     0.153
+// @version     0.155
 // @//updateURL   https://raw.githubusercontent.com/rivy/gms-markdown_viewer.custom-css/master/markdown_viewer.custom-css.user.js
 //
 // file extension: .m(arkdown|kdn?|d(o?wn)?)
@@ -40,7 +40,7 @@ var assets_js = [
   // markdown-it ~ definition lists
   "//cdn.rawgit.com/markdown-it/markdown-it-deflist/8f2414f23316a2ec1c54bf4631a294fb2ae57ddd/dist/markdown-it-deflist.min.js", // markdown-it-deflist-2.0.1
   // markdown-it ~ attributes (pandoc compatible)
-  "//cdn.rawgit.com/arve0/markdown-it-attrs/ce98279c9d3ad32bc0f94a9c1ab1206e6a9abaa8/markdown-it-attrs.browser.js", // markdown-it-attrs-0.8.0
+  "//cdn.rawgit.com/arve0/markdown-it-attrs/d4e52614f56310e31644a249dad8a21cf3d04c82/markdown-it-attrs.browser.js", // markdown-it-attrs-1.2.0
   // markdown-it ~ footnotes
   CDN_base_url + "markdown-it-footnote/3.0.1/markdown-it-footnote.min.js",
   // markdown-it ~ YAML :: ? ... see https://github.com/CaliStyle/markdown-it-meta
