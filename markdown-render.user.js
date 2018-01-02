@@ -17,6 +17,7 @@
 // @require     https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js
 //
 // @grant       none
+// @//grant       GM_xmlhttpRequest
 // ==/UserScript==
 
 /* jshint esnext: false,  esversion: 6, bitwise: true, eqeqeq: true */
@@ -75,6 +76,7 @@ var assets_css = [
   CDN_CM_base_url + "codemirror.min.css",
   // overrides (* last in order to override prior CSS, without requiring increased CSS specificity)
   CDN_CSS_base_url + "!override.css",
+  ///"file:///C:/ProgramData/markdown-render/markdown-render.machine-local.css",
   ];
 
 // #### main()
