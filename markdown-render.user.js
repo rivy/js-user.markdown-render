@@ -3,7 +3,7 @@
 // @namespace   com.houseofivy
 // @description renders markdown files
 //
-// @version     0.149
+// @version     0.151
 // @//updateURL   https://raw.githubusercontent.com/rivy/gms-markdown_viewer.custom-css/master/markdown_viewer.custom-css.user.js
 //
 // file extension: .m(arkdown|kdn?|d(o?wn)?)
@@ -217,7 +217,7 @@ function add_codeblock_snippet_support(){
     let snippers = new Clipboard( _selector, {
       text: function( trigger ) {
       let $cm = $( trigger ).parent().find('.CodeMirror');
-      return $cm.get(0).CodeMirror.getDoc().getValue();
+      return $cm.get(0).CodeMirror.getDoc().getValue()+"\n";
       }
     });
     snippers.on('success', function(e) {
