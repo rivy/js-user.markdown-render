@@ -3,7 +3,7 @@
 // @namespace   com.houseofivy
 // @description renders markdown files
 //
-// @version     0.151
+// @version     0.153
 // @//updateURL   https://raw.githubusercontent.com/rivy/gms-markdown_viewer.custom-css/master/markdown_viewer.custom-css.user.js
 //
 // file extension: .m(arkdown|kdn?|d(o?wn)?)
@@ -712,7 +712,7 @@ function dequote( s ){
     let retval = s.trim();
     let quotes = /["']/;
     let match = retval.charAt(0).match( quotes );
-    if ( match && ( match[0].charAt[0] === retval.charAt[ retval.length ] ) ) { retval = retval.slice(1, -1); }
+    if ( match && ( match[0].charAt(0) === retval.charAt[ retval.length ] ) ) { retval = retval.slice(1, -1); }
     return match ? retval : s;
 }
 
