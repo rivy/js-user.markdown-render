@@ -3,7 +3,7 @@
 // @namespace   com.houseofivy
 // @description renders markdown files
 //
-// @version     0.165
+// @version     0.167
 // @//updateURL   https://raw.githubusercontent.com/rivy/gms-markdown_viewer.custom-css/master/markdown_viewer.custom-css.user.js
 //
 // file extension: .m(arkdown|kdn?|d(o?wn)?)
@@ -413,6 +413,7 @@ function transform_codeblocks_to_CodeMirror(){
         //'.CodeMirror-selectedtext { color: white; }' +
         '</style>'
     );
+    let CM_theme_cache = new Map();
     let $codeblock = $(`.${css_class_codeblock}`);
     $codeblock.children('pre').children('code').each(function(){
         let $CODE = $(this);
@@ -440,7 +441,8 @@ function transform_codeblocks_to_CodeMirror(){
         if ((_theme !== undefined) && (_theme !== 'default')) {
           let CM_theme_template = CDN_CM_base_url + "theme/%N.min.css";
           let CM_theme_uri = CM_theme_template.replace(/%N/g, (_theme.split(/[\s.]+/))[0]);
-          load_assets( CM_theme_uri, undefined, true);
+          if (! CM_theme_cache.get( CM_theme_uri ) ) { load_assets( CM_theme_uri, undefined, true); }
+          CM_theme_cache.set( CM_theme_uri, true );
           }
 
         let _value = $('<div/>').html($CODE.html()).text().trimRight();
