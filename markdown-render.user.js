@@ -3,7 +3,7 @@
 // @namespace   com.houseofivy
 // @description renders markdown files
 //
-// @version     0.163
+// @version     0.165
 // @//updateURL   https://raw.githubusercontent.com/rivy/gms-markdown_viewer.custom-css/master/markdown_viewer.custom-css.user.js
 //
 // file extension: .m(arkdown|kdn?|d(o?wn)?)
@@ -67,7 +67,9 @@ var CDN_CM_base_url = CDN_base_url + 'codemirror/5.25.0/';
 var CDN_CSS_base_url = '//cdn.rawgit.com/rivy/js-user.markdown-render/6f664acfa0a06fd649f00c9fda29acfdd40005d3/css/';
 var assets_js = [
   // clipboard support
-  CDN_base_url + "clipboard.js/1.6.1/clipboard.min.js",
+  // ... ref: [Name conflict with Chrome v61+](https://github.com/zenorocha/clipboard.js/issues/468)
+  // ... ref: https://github.com/PrismJS/prism/issues/1181 ; https://github.com/PrismJS/prism/pull/1206
+  "//cdn.rawgit.com/rivy/clipboard.js/021e74439d7d64da9e44bbfb488850ed7a4dadf4/dist/clipboard.min.js", // clipboard.js-2.0.1 *(quick-fix)
   // markdown conversion
   CDN_base_url + "markdown-it/8.3.1/markdown-it.min.js",
   // markdown-it ~ definition lists
@@ -248,7 +250,7 @@ function add_codeblock_snippet_support(){
     //(function(){
     let _selector = `.${css_class_snip_button}`;
     ///console.log( '_selector = '+_selector );
-    let snippers = new Clipboard( _selector, {
+    let snippers = new ClipboardJS( _selector, {
       text: function( trigger ) {
       let $cm = $( trigger ).parent().find('.CodeMirror');
       return $cm.get(0).CodeMirror.getDoc().getValue()+"\n";
