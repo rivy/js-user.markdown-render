@@ -3,7 +3,7 @@
 // @namespace   com.houseofivy
 // @description renders markdown files
 //
-// @version     0.161
+// @version     0.163
 // @//updateURL   https://raw.githubusercontent.com/rivy/gms-markdown_viewer.custom-css/master/markdown_viewer.custom-css.user.js
 //
 // file extension: .m(arkdown|kdn?|d(o?wn)?)
@@ -541,6 +541,8 @@ function load_assets( uris, timeout, optional ) { // ( {array} [, {int}timeout=0
     let asset_uris = $.isArray( uris ) ? uris : [ uris ];
     let retVal = $.Deferred;
     ///console.log( `${_ME}: asset_uris = ${JSON.stringify( asset_uris )}`);
+    asset_uris = asset_uris.filter( function( uri ) { if ((uri === null) || ( uri === '' )) { return; } else { return true; } });
+    ///console.log( `${_ME}: asset_uris.filter() = ${JSON.stringify( asset_uris )}`);
     if (asset_uris.length < 1) { return retVal; }
     let default_protocol = (window.location.protocol === 'http:') ? 'http:' : 'https:'; // use 'https:' unless current page is using 'http:'
     let requests = asset_uris.map( function( asset_uri ) {
