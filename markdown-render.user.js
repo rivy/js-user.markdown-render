@@ -3,7 +3,7 @@
 // @namespace   com.houseofivy
 // @description renders markdown files
 //
-// @version     0.155
+// @version     0.157
 // @//updateURL   https://raw.githubusercontent.com/rivy/gms-markdown_viewer.custom-css/master/markdown_viewer.custom-css.user.js
 //
 // file extension: .m(arkdown|kdn?|d(o?wn)?)
@@ -15,12 +15,45 @@
 // @include     file://*.md
 //
 // @require     https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js
+// @require     https://raw.github.com/sizzlemctwizzle/GM_config/master/gm_config.js
 //
-// @grant       none
+// @//grant       none
+// @grant       GM_getValue
+// @grant       GM_setValue
+// @grant       GM_registerMenuCommand
 // @//grant       GM_xmlhttpRequest
 // ==/UserScript==
 
 /* jshint esnext: false,  esversion: 6, bitwise: true, eqeqeq: true */
+
+GM_registerMenuCommand("'markdown-render' Settings", function() {
+    GM_config.open();
+});
+
+GM_config.init({
+    'id': 'markdown-render',
+    'fields': {
+        'CustomCSS_uri': {
+            'label': 'CustomCSS URI',
+            'type': 'string',
+            'default': ''
+        },
+//        'LogoutAction': {
+//            'label': 'Disconnect Trello',
+//            'type': 'button',
+//            'size': 100,
+//            'click': Trello.deauthorize
+//        }
+    },
+    'events': {
+        'save': function () { initialize(); GM_config.close(); },
+        'reset': initialize
+    }
+});
+function initialize() {
+//    initializeCss();
+//    initializeCards();
+}
 
 (function( /* USERjs, */ window, $ ){
 'use strict';
@@ -78,6 +111,7 @@ var assets_css = [
   CDN_CSS_base_url + "!override.css",
   ///"file:///C:/ProgramData/markdown-render/markdown-render.machine-local.css",
   ];
+var custom_css = GM_config.get('CustomCSS_uri') || '';
 
 // #### main()
 
@@ -88,7 +122,7 @@ console.log('document.compatMode = ' + document.compatMode);
 $.when([])  // `.when([])` resolves immediately
     .then( ()=>{ return load_raw_text(); } )
     .then( ()=>{ return $('html').attr('lang','en'); } ) // ref: http://blog.adrianroselli.com/2015/01/on-use-of-lang-attribute.html @@ http://archive.is/H0ExZ (older, better typography) + http://archive.is/chYjS
-    .then( ()=>{ return load_assets( assets_css.concat( assets_js ) ); } )
+    .then( ()=>{ return load_assets( assets_css.concat( assets_js ).concat( custom_css ) ); } )
     .then( ()=>{ return $.when(
                    do_render() ,
                    $.getScript( [ 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML&delayStartupUntil=configured' ] )
