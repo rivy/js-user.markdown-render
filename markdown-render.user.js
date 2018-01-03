@@ -3,7 +3,7 @@
 // @namespace   com.houseofivy
 // @description renders markdown files
 //
-// @version     0.159
+// @version     0.161
 // @//updateURL   https://raw.githubusercontent.com/rivy/gms-markdown_viewer.custom-css/master/markdown_viewer.custom-css.user.js
 //
 // file extension: .m(arkdown|kdn?|d(o?wn)?)
@@ -550,6 +550,7 @@ function load_assets( uris, timeout, optional ) { // ( {array} [, {int}timeout=0
         let uri_path = new URL( uri, window.location ).pathname;
         let uri_filename = uri_path.replace(/^.*[\\\/]/, '');
         let uri_extension = uri_filename.replace(/^.*(?=\.)/, ''); if ( uri_extension === uri_filename ) { uri_extension = ''; }
+        if ( uri_extension === '' ) { uri_extension = (new URL( uri, window.location ).hash).replace(/^.*(?=\.)/, '') || ''; }
         console.log( `${_ME}: initiating AJAX download of "${uri}" [filename = "${uri_filename}"; extension = "${uri_extension}")` );
         let jqXHR = $.ajax( uri, { cache: true, dataType: 'text', timeout: timeout } );
         jqXHR.uri = uri;
