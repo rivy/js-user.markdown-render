@@ -3,7 +3,7 @@
 // @namespace   com.houseofivy
 // @description renders markdown files
 //
-// @version     0.175
+// @version     0.177
 // @//updateURL   https://raw.githubusercontent.com/rivy/gms-markdown_viewer.custom-css/master/markdown_viewer.custom-css.user.js
 //
 // file extension: .m(arkdown|kdn?|d(o?wn)?)
@@ -494,7 +494,7 @@ function transform_codeblocks_to_CodeMirror(){
 
         // HACK: corrects Chrome miscalculation of gutter heights for non-line-wrapped codeblocks
         // NOTE: for expandable blocks, the calculation must be remade whenever lines are added or removed, or scrollbars are turned on/off
-        if ( ! _lineWrapping ) {
+        if ( ! isChrome() && ! _lineWrapping ) {
           cm.on('viewportChange', function(cm, from, to) {
             console.log('viewport changed! (' + from + ' => ' + to + ')');
             reset_gutter_heights( cm );
@@ -506,7 +506,7 @@ function transform_codeblocks_to_CodeMirror(){
             reset_gutter_heights( cm );
             });
 
-        reset_gutter_heights( cm );
+          reset_gutter_heights( cm );
         }
 
 
@@ -747,6 +747,30 @@ $(window).on('beforeprint', beforePrint);
 $(window).on('afterprint', afterPrint);
 
 // ** utility functions
+
+function isChrome() {
+  // ref: https://stackoverflow.com/questions/4565112/javascript-how-to-find-out-if-the-user-browser-is-chrome/13348618#13348618 @@ https://archive.is/HmfdK#14.5%
+  var isChromium = window.chrome,
+    winNav = window.navigator,
+    vendorName = winNav.vendor,
+    isOpera = winNav.userAgent.indexOf("OPR") > -1,
+    isIEedge = winNav.userAgent.indexOf("Edge") > -1,
+    isIOSChrome = winNav.userAgent.match("CriOS");
+
+  if (isIOSChrome) {
+    return true;
+  } else if (
+    isChromium !== null &&
+    typeof isChromium !== "undefined" &&
+    vendorName === "Google Inc." &&
+    isOpera === false &&
+    isIEedge === false
+  ) {
+    return true;
+  } else {
+    return false;
+  }
+}
 
 function isDefined( variable ){
     // ref: http://www.codereadability.com/how-to-check-for-undefined-in-javascript @@ http://archive.is/RDiQz
