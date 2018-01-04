@@ -361,6 +361,11 @@ function get_theme( $node ){
     return dequote( $node.attr('data-theme') || $node.css('--theme') || 'default' ).trim();
 }
 
+function get_prefix( $node ){
+    let _ME = 'get_prefix()';
+    return dequote( $node.attr('data-prefix') || $node.css('--prefix') || '' ).trim();
+}
+
 function set_code_data(){
     let _ME = 'set_code_data()';
     $('code').each(function(){
@@ -433,6 +438,8 @@ function transform_codeblocks_to_CodeMirror(){
 
         let _firstLineNumber = isDefined($DIV.attr('startFrom')) ? parseInt($DIV.attr('startFrom')) : 1; // NOTE: for conversion alternatives, see https://coderwall.com/p/5tlhmw/converting-strings-to-number-in-javascript-pitfalls @@ http://archive.is/1CH5w
         let _gutters = _lineNumbers ? ['CodeMirror-linenumbers'] : ['CodeMirror-gutter-extra'];
+        let prefix = get_prefix( $DIV );
+        if (( prefix !== null ) && ( prefix !== '' )) { _gutters = [ _gutters, 'CodeMirror-prefix' ]; }
         let _mode = dequote( $DIV.attr('data-mime') || 'text/plain' );
         console.log('_mode = ' + _mode);
         let _theme = get_theme( $DIV );
@@ -486,8 +493,16 @@ function transform_codeblocks_to_CodeMirror(){
             let suffix = '-odd';
             if ((i % 2) === 0) { suffix = '-even'; }
             cm.addLineClass( (i-1), 'background', BACK_CLASS+suffix );
+            if (( prefix !== null ) && ( prefix !== '' )) { cm.setGutterMarker( (i-1), "CodeMirror-prefix", make_prefix( prefix )); }
             }
       });
+}
+
+function make_prefix( s ) {
+  var marker = document.createElement("div");
+  marker.classList.add('CodeMirror-prefix-text');
+  marker.innerHTML = s;
+  return marker;
 }
 
 function render_markdown( text ){
