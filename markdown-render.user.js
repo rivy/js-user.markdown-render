@@ -3,7 +3,7 @@
 // @namespace   com.houseofivy
 // @description renders markdown files
 //
-// @version     0.177
+// @version     0.179
 // @//updateURL   https://raw.githubusercontent.com/rivy/gms-markdown_viewer.custom-css/master/markdown_viewer.custom-css.user.js
 //
 // file extension: .m(arkdown|kdn?|d(o?wn)?)
@@ -494,7 +494,7 @@ function transform_codeblocks_to_CodeMirror(){
 
         // HACK: corrects Chrome miscalculation of gutter heights for non-line-wrapped codeblocks
         // NOTE: for expandable blocks, the calculation must be remade whenever lines are added or removed, or scrollbars are turned on/off
-        if ( ! isChrome() && ! _lineWrapping ) {
+        if ( isChrome() && ! _lineWrapping ) {
           cm.on('viewportChange', function(cm, from, to) {
             console.log('viewport changed! (' + from + ' => ' + to + ')');
             reset_gutter_heights( cm );
