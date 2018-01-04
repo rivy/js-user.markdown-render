@@ -3,7 +3,7 @@
 // @namespace   com.houseofivy
 // @description renders markdown files
 //
-// @version     0.171
+// @version     0.173
 // @//updateURL   https://raw.githubusercontent.com/rivy/gms-markdown_viewer.custom-css/master/markdown_viewer.custom-css.user.js
 //
 // file extension: .m(arkdown|kdn?|d(o?wn)?)
@@ -485,6 +485,31 @@ function transform_codeblocks_to_CodeMirror(){
         //cm.setSize();
         //cm.refresh();
 
+//        cm.on("refresh", function(cm) {
+//          console.log('in refresh');
+//        });
+//        cm.on("change", function(cm, change) {
+//          console.log("something changed! (" + change.origin + ")");
+//        });
+
+        // HACK: corrects Chrome miscalculation of gutter heights for non-line-wrapped codeblocks
+        // NOTE: for expandable blocks, the calculation must be remade whenever lines are added or removed, or scrollbars are turned on/off
+        if ( ! _lineWrapping ) {
+          cm.on('viewportChange', function(cm, from, to) {
+            console.log('viewport changed! (' + from + ' => ' + to + ')');
+            reset_gutter_heights( cm );
+            });
+          //CodeMirror.signal( cm, 'viewportChange', cm );
+
+          cm.on('refresh', function(cm) {
+            console.log('refresh() triggered');
+            reset_gutter_heights( cm );
+            });
+
+        reset_gutter_heights( cm );
+        }
+
+
         // zebra-fy
         //let BACK_CLASS = 'CodeMirror-activeline-background';
         let BACK_CLASS = 'codeblock-line';
@@ -497,6 +522,18 @@ function transform_codeblocks_to_CodeMirror(){
             }
       });
 }
+
+function reset_gutter_heights ( cm ) {
+    // HACK: corrects Chrome miscalculation of gutter heights for non-line-wrapped codeblocks
+    // NOTE: for expandable blocks, the calculation must be remade whenever lines are added or removed, or scrollbars are turned on/off
+    let $G = $(cm.getWrapperElement()).find('.CodeMirror-gutters');
+    let h = $G.css('height');
+    $G.children('.CodeMirror-gutter').each(function(){
+      let $GUTTER = $(this);
+      $GUTTER.css({'height': h});
+      });
+}
+
 
 function make_prefix( s ) {
   var marker = document.createElement("div");
