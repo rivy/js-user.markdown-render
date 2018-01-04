@@ -3,7 +3,7 @@
 // @namespace   com.houseofivy
 // @description renders markdown files
 //
-// @version     0.173
+// @version     0.175
 // @//updateURL   https://raw.githubusercontent.com/rivy/gms-markdown_viewer.custom-css/master/markdown_viewer.custom-css.user.js
 //
 // file extension: .m(arkdown|kdn?|d(o?wn)?)
@@ -63,7 +63,7 @@ function initialize() {
 // note: using cloudflare (primary) and rawgit CDNs ~ for rawgit, (see https://github.com/rgrove/rawgit/blob/master/FAQ.md @@ http://archive.is/rMkAp)
 // note: see CDN ref @ https://cdnjs.com
 var CDN_base_url = '//cdnjs.cloudflare.com/ajax/libs/';
-var CDN_CM_base_url = CDN_base_url + 'codemirror/5.25.0/';
+var CDN_CM_base_url = CDN_base_url + 'codemirror/5.33.0/';
 var CDN_CSS_base_url = '//cdn.rawgit.com/rivy/js-user.markdown-render/6f664acfa0a06fd649f00c9fda29acfdd40005d3/css/';
 var assets_js = [
   // clipboard support
