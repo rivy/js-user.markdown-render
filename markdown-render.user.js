@@ -408,12 +408,12 @@ function transform_codeblocks_to_CodeMirror(){
 // setup CodeMirror as container and syntax highlighter
     let _ME = 'transform_codeblocks_to_CodeMirror()';
     /* expected CSS for *mark-selection* */
-    $('head').append(
-        '<style type="text/css">' +
-        '.CodeMirror-selected  { background-color: blue !important; }' +
-        //'.CodeMirror-selectedtext { color: white; }' +
-        '</style>'
-    );
+//    $('head').append(
+//        '<style type="text/css">' +
+//        '.CodeMirror-selected  { background-color: blue !important; }' +
+//        //'.CodeMirror-selectedtext { color: white; }' +
+//        '</style>'
+//    );
     let CM_theme_cache = new Map();
     let $codeblock = $(`.${css_class_codeblock}`);
     $codeblock.children('pre').children('code').each(function(){
