@@ -3,7 +3,7 @@
 // @namespace   com.houseofivy
 // @description renders markdown files
 //
-// @version     0.179
+// @version     0.181
 // @//updateURL   https://raw.githubusercontent.com/rivy/gms-markdown_viewer.custom-css/master/markdown_viewer.custom-css.user.js
 //
 // file extension: .m(arkdown|kdn?|d(o?wn)?)
@@ -22,6 +22,7 @@
 // @grant       GM_setValue
 // @grant       GM_registerMenuCommand
 // @//grant       GM_xmlhttpRequest
+// @grant       unsafeWindow
 // ==/UserScript==
 
 /* jshint esnext: false,  esversion: 6, bitwise: true, eqeqeq: true */
@@ -292,9 +293,9 @@ function add_codeblock_snippet_support(){
 }
 
 function trigger_render_MathJax(){
-    if (window.MathJax === undefined) return;
+    if (unsafeWindow.MathJax === undefined) return;
 //    let MathJax_root_uri = 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1';
-    window.MathJax.Hub.Config({
+    unsafeWindow.MathJax.Hub.Config({
       //root: MathJax_root_uri,
       tex2jax: {
         inlineMath: [ ['${','}$'], ['$\\phantom{}','\\phantom{}$']  ],
@@ -302,7 +303,7 @@ function trigger_render_MathJax(){
         processEnvironments: true,
       }
     });
-    window.MathJax.Hub.Configured();
+    unsafeWindow.MathJax.Hub.Configured();
 }
 
 function package_codeblocks(){
