@@ -3,7 +3,7 @@
 // @namespace   com.houseofivy
 // @description renders markdown files
 //
-// @version     0.191
+// @version     0.195
 // @//updateURL   https://github.com/rivy/js-user.markdown-render/raw/master/markdown-render.user.js
 //
 // file extension: .m(arkdown|kdn?|d(o?wn)?)
@@ -27,12 +27,17 @@
 
 /* jshint esnext: false,  esversion: 6, bitwise: true, eqeqeq: true */
 
-GM_registerMenuCommand("'markdown-render' Settings", function() {
+var script_name = 'markdown-render';
+var script_repo_path = 'rivy/js-user.' + script_name + '/';
+var script_repo_CDN_commit = '6f664acfa0a06fd649f00c9fda29acfdd40005d3';
+var script_repo_CDN_base_url = '//cdn.rawgit.com/' + script_repo_path + script_repo_CDN_commit + '/';
+
+GM_registerMenuCommand(`'${script_name}' Settings`, function() {
     GM_config.open();
 });
 
 GM_config.init({
-    'id': 'markdown-render',
+    'id': script_name,
     'fields': {
         'CustomCSS_uri': {
             'label': 'CustomCSS URI',
@@ -65,7 +70,7 @@ function initialize() {
 // note: see CDN ref @ https://cdnjs.com
 var CDN_base_url = '//cdnjs.cloudflare.com/ajax/libs/';
 var CDN_CM_base_url = CDN_base_url + 'codemirror/5.33.0/';
-var CDN_CSS_base_url = '//cdn.rawgit.com/rivy/js-user.markdown-render/6f664acfa0a06fd649f00c9fda29acfdd40005d3/css/';
+var CDN_CSS_base_url = script_repo_CDN_base_url + 'css/';
 var assets_js = [
   // clipboard support
   // ... ref: [Name conflict with Chrome v61+](https://github.com/zenorocha/clipboard.js/issues/468)
@@ -226,7 +231,7 @@ function add_codeblock_snippet_support(){
     let css_class_snip_button$ = `${css_class_snip_button} ${css_class_button}`; // unique / ID class must be leftmost in the string
     let css_class_snip_button_tooltip$ = `${css_class_tooltip} ${css_class_tooltip__below}`;
 
-    let clipboard_src = 'https://cdn.rawgit.com/rivy/js-user.markdown-render/master/assets/clippy.svg';
+    let clipboard_src = 'https:' + script_repo_CDN_base_url + 'master/assets/clippy.svg';
     let clipboard_alt = 'Copy to clipboard';
 
     /* expected CSS */
