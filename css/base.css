@@ -1,5 +1,6 @@
 /* ## baseline CSS */
 
+body { margin: /*8px*/ auto; }
 body { font-family: Merriweather, Lora, "Noto Serif", "DejaVu Serif", Palatino, serif; font-size: 1.2rem; line-height: 1.4em; }
 body { text-rendering: optimizeLegibility; -webkit-font-feature-settings: "kern"; -moz-font-feature-settings: "kern"; font-feature-settings: "kern"; }
 h1, h2, h3, h4, h5, h6 { font-family: "Fira Sans Condensed", "Merriweather Sans", "Fira Sans", "Open Sans", "DejaVu Sans", Calibri, Arial, sans-serif; }
@@ -38,11 +39,14 @@ blockquote {
   font-size: 0.9em;
   border-left: 0.25em solid /* #EEE */ gainsboro;
   border-radius: 0.1em;
-  /*margin: 0;*/
+  /*margin-left: 40px; margin-right: 40px;*/
   margin-left: 1em;
+  /*margin-right: 1em;*/
   padding: 0 0.5em;
   padding-left: 1em;
 }
+
+ol, ul, dir, menu, dd { margin-left: /*40px*/ 1em; }
 
 :link, :visited { text-decoration: none; }
 a:hover { text-decoration: underline; }
@@ -87,6 +91,27 @@ tr    { page-break-inside:avoid; page-break-after:auto }
 .codeblock { page-break-inside: avoid; }
 .no-page-break-inside { page-break-inside: avoid; }
 
-/* ## additional customization classes */
-.bordered-b { border-bottom: 0.05em solid lightgrey; border-radius: 0.01em; }
-div.table-width-100percent table { width: 100%; } /* hack until attributes can be applied to tables ## create an issue for markdown-it-attrs */
+/* ## align button appearance between Chrome/Firefox */
+/*
+button {
+    align-items: flex-start;
+    text-align: center;
+    cursor: default;
+    color: buttontext;
+    background-color: buttonface;
+    box-sizing: border-box;
+    padding: 2px 6px 3px;
+    border-width: 2px;
+    border-style: outset;
+    border-color: buttonface;
+    border-image: initial;
+}
+*/
+button { border-width: 1px; }
+/* ref: https://www.templatemonster.com/help/how-to-create-browser-specific-css-rules-styles.html @@ https://archive.is/Bv6TZ */
+button { padding: 2px 6px 3px; }
+@supports (-webkit-appearance:none) { button { padding: 2px 6px 4px; } /* Chrome-only */
+
+/* ## additional customization options (via classes) */
+.--bordered-b { border-bottom: 0.05em solid lightgrey; border-radius: 0.01em; }
+.--width-100percent { width: 100%; }
