@@ -3,7 +3,7 @@
 // @namespace   com.houseofivy
 // @description renders markdown files
 //
-// @version     0.183
+// @version     0.185
 // @//updateURL   https://raw.githubusercontent.com/rivy/gms-markdown_viewer.custom-css/master/markdown_viewer.custom-css.user.js
 //
 // file extension: .m(arkdown|kdn?|d(o?wn)?)
@@ -100,6 +100,8 @@ var assets_css = [
   CDN_base_url + "meyer-reset/2.0/reset.min.css",
 //  // ref: [normalize] http://necolas.github.io/normalize.css @@ http://archive.is/Fo0od ; info: http://nicolasgallagher.com/about-normalize-css @@ http://archive.is/RSXip ; repo: https://github.com/necolas/normalize.css
 //  "//cdnjs.cloudflare.com/ajax/libs/normalize/7.0.0/normalize.min.css",
+  // ref: https://v4-alpha.getbootstrap.com/content/reboot
+  CDN_base_url + "twitter-bootstrap/4.0.0-beta.3/css/bootstrap-reboot.css",
   // basic
   CDN_CSS_base_url + "_default.css",
   CDN_CSS_base_url + "_fontface.css",
