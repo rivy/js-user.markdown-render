@@ -3,7 +3,7 @@
 // @namespace   com.houseofivy
 // @description renders markdown files
 //
-// @version     0.185
+// @version     0.187
 // @//updateURL   https://raw.githubusercontent.com/rivy/gms-markdown_viewer.custom-css/master/markdown_viewer.custom-css.user.js
 //
 // file extension: .m(arkdown|kdn?|d(o?wn)?)
@@ -233,10 +233,10 @@ function add_codeblock_snippet_support(){
     /* expected CSS */
     $('head').append(
         '<style type="text/css">' +
-        `.${css_class_button} { height: 1.75em; }` +
+        `.${css_class_button} { /*height: 1.66rem;*/ font-size: 1.25rem; line-height: initial; padding: 0 0.25rem }` +
         `.${css_class_codeblock} { position: relative; }` +
         //`.${css_class_codeblock} { page-break-inside: avoid; }` +
-        `.${css_class_codeblock} .${css_class_snip_button} { position: absolute; top: 0.2em; right: 0.2em; z-index: 101; opacity: 0; transition: opacity 0.3s ease-in-out; -webkit-transition: opacity 0.3s ease-in-out; }` + /* z-index is used within CodeMirror, use a larger index; heuristic == 10; ToDO: investigate via CodeMirror discourse */
+        `.${css_class_codeblock} .${css_class_snip_button} { position: absolute; top: 0.2em; right: 0.2em; z-index: 101; opacity: 0.2; transition: opacity 0.3s ease-in-out; -webkit-transition: opacity 0.3s ease-in-out; }` + /* z-index is used within CodeMirror, use a larger index; heuristic == 10; ToDO: investigate via CodeMirror discourse */
         `.${css_class_codeblock}:hover .${css_class_snip_button} { opacity: 1; }` + /* z-index is used within CodeMirror, use a larger index; heuristic == 10; ToDO: investigate via CodeMirror discourse */
         '</style>'
     );
