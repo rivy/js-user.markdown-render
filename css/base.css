@@ -110,7 +110,7 @@ button {
 button { border-width: 1px; }
 /* ref: https://www.templatemonster.com/help/how-to-create-browser-specific-css-rules-styles.html @@ https://archive.is/Bv6TZ */
 button { padding: 2px 6px 3px; }
-@supports (-webkit-appearance:none) { button { padding: 2px 6px 4px; } /* Chrome-only */
+@supports (-webkit-appearance:none) { button { padding: 2px 6px 4px; } } /* Chrome-only */
 
 /* ## additional customization options (via classes) */
 .--bordered-b { border-bottom: 0.05em solid lightgrey; border-radius: 0.01em; }
