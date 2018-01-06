@@ -3,7 +3,7 @@
 // @namespace   com.houseofivy
 // @description renders markdown files
 //
-// @version     0.189
+// @version     0.191
 // @//updateURL   https://github.com/rivy/js-user.markdown-render/raw/master/markdown-render.user.js
 //
 // file extension: .m(arkdown|kdn?|d(o?wn)?)
@@ -101,7 +101,7 @@ var assets_css = [
 //  // ref: [normalize] http://necolas.github.io/normalize.css @@ http://archive.is/Fo0od ; info: http://nicolasgallagher.com/about-normalize-css @@ http://archive.is/RSXip ; repo: https://github.com/necolas/normalize.css
 //  "//cdnjs.cloudflare.com/ajax/libs/normalize/7.0.0/normalize.min.css",
   // ref: https://v4-alpha.getbootstrap.com/content/reboot
-  CDN_base_url + "twitter-bootstrap/4.0.0-beta.3/css/bootstrap-reboot.css",
+  CDN_base_url + "twitter-bootstrap/4.0.0-beta.3/css/bootstrap-reboot.min.css",
   // basic
   CDN_CSS_base_url + "_default.css",
   CDN_CSS_base_url + "_fontface.css",
@@ -114,7 +114,6 @@ var assets_css = [
   CDN_CM_base_url + "codemirror.min.css",
   // overrides (* last in order to override prior CSS, without requiring increased CSS specificity)
   CDN_CSS_base_url + "!override.css",
-  ///"file:///C:/ProgramData/markdown-render/markdown-render.machine-local.css",
   ];
 var custom_css = GM_config.get('CustomCSS_uri') || '';
 
