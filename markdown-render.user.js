@@ -3,7 +3,7 @@
 // @namespace   com.houseofivy
 // @description renders markdown files
 //
-// @version     0.195
+// @version     0.197
 // @//updateURL   https://github.com/rivy/js-user.markdown-render/raw/master/markdown-render.user.js
 //
 // file extension: .m(arkdown|kdn?|d(o?wn)?)
@@ -234,13 +234,18 @@ function add_codeblock_snippet_support(){
     let clipboard_src = 'https:' + script_repo_CDN_base_url + 'master/assets/clippy.svg';
     let clipboard_alt = 'Copy to clipboard';
 
+    let isFirefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
+
     /* expected CSS */
     $('head').append(
         '<style type="text/css">' +
-        `.${css_class_button} { /*height: 1.66rem;*/ font-size: 1.25rem; line-height: initial; padding: 0 0.25rem }` +
+        //'button { align-items: flex-start; text-align: center; cursor: default; color: buttontext; background-color: buttonface; box-sizing: border-box; padding: 2px 6px 3px; border-width: 2px; border-style: outset; border-color: buttonface; border-image: initial; }' +
+        `.${css_class_button} { font-size: 1em; line-height: normal; }` +
+        `.${css_class_button} { border-width: 1px; }` + // increases similarity of appearance between Chrome/Firefox
+        (isFirefox ? `.${css_class_button} { padding: 0 0.5rem; }` : `.${css_class_button} { padding: 0 0.5rem 1px; }` ) +
         `.${css_class_codeblock} { position: relative; }` +
         //`.${css_class_codeblock} { page-break-inside: avoid; }` +
-        `.${css_class_codeblock} .${css_class_snip_button} { position: absolute; top: 0.2em; right: 0.2em; z-index: 101; opacity: 0.2; transition: opacity 0.3s ease-in-out; -webkit-transition: opacity 0.3s ease-in-out; }` + /* z-index is used within CodeMirror, use a larger index; heuristic == 10; ToDO: investigate via CodeMirror discourse */
+        `.${css_class_codeblock} .${css_class_snip_button} { position: absolute; top: 0.25em; right: 0.2em; z-index: 101; opacity: 0.1; transition: opacity 0.3s ease-in-out; -webkit-transition: opacity 0.3s ease-in-out; }` + /* z-index is used within CodeMirror, use a larger index; heuristic == 10; ToDO: investigate via CodeMirror discourse */
         `.${css_class_codeblock}:hover .${css_class_snip_button} { opacity: 1; }` + /* z-index is used within CodeMirror, use a larger index; heuristic == 10; ToDO: investigate via CodeMirror discourse */
         '</style>'
     );
