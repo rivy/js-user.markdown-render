@@ -3,8 +3,8 @@
 // @namespace   com.houseofivy
 // @description renders markdown files
 //
-// @version     0.187
-// @//updateURL   https://raw.githubusercontent.com/rivy/gms-markdown_viewer.custom-css/master/markdown_viewer.custom-css.user.js
+// @version     0.189
+// @//updateURL   https://github.com/rivy/js-user.markdown-render/raw/master/markdown-render.user.js
 //
 // file extension: .m(arkdown|kdn?|d(o?wn)?)
 // @include     file://*.markdown
