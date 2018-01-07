@@ -1,4 +1,12 @@
+<!DOCTYPE markdown>
+<meta charset="utf-8" content="text/markdown" lang="en">
+<!-- ## editors ## (emacs/sublime) -*- coding: utf8-nix; tab-width: 4; mode: markdown; st-word_wrap: 'true' -*- ## (jEdit) :tabSize=4:indentSize=4:mode=markdown: ## (notepad++) vim:tabstop=4:syntax=markdown: -->
+
 ## plans
+
+<style>
+body { font-family: Lora, "Noto Serif", "DejaVu Serif", Palatino, serif; }
+</style>
 
 ## add optional "prefix" gutter
 
@@ -6,7 +14,7 @@ use 'data-lineprefix'
 
 - if 'data-lineprefix' exists, create a gutter ("CodeMirror-gutter-lineprefix")
 - CSS style similar to 'CodeMirror-gutter-extra'
-- set content == val('data-lineprefix'); ? use :before/:after; ? how to localize the content to only the block (CSS could be too global) 
+- set content == val('data-lineprefix'); ? use :before/:after; ? how to localize the content to only the block (CSS could be too global)
 
 ## rename tooltip CSS
 
