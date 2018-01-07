@@ -31,12 +31,12 @@ th, td {
   padding: /* 5px 10px */ 0.35em 0.7em;
 }
 caption {
-  padding: 0 0.7em;
   border-collapse: collapse;
+  padding: 0 0.7em;
 }
 
+blockquote { font-size: 0.9em; }
 blockquote {
-  font-size: 0.9em;
   border-left: 0.25em solid /* #EEE */ gainsboro;
   border-radius: 0.1em;
   /*margin-left: 40px; margin-right: 40px;*/
@@ -58,11 +58,14 @@ code { background: gainsboro; background: rgba(238,238,238,0.8); padding: 0 0.2e
 code { border-radius: 0.1em; }
 
 /* ## page / media settings */
+body { transition: width 0.3s ease-in-out; }
+/* continuously varying would be prefered over a transition but `calc()` is unable to calculate the fractional distance between a `100vw` and an `Nem` */
 @media all {
     body { margin: auto; }
 }
-/* ref: [Practical Typography ~ Page Margins](http://practicaltypography.com/page-margins.html) @@ <http://archive.is/sOEL6> */
-/* ref: http://bradfrost.com/blog/post/7-habits-of-highly-effective-media-queries @@ http://archive.is/cv0mA */
+/* ref: [Practical Typography ~ Page Margins](http://practicaltypography.com/page-margins.html)@@<https://archive.is/sOEL6> */
+/* ref: <http://bradfrost.com/blog/post/7-habits-of-highly-effective-media-queries>@@<https://archive.is/cv0mA> */
+/* seek optimum line length ~ 45-90 characters (or, 50-75 characters, from an alternate reference) */
 @media screen and (max-width: 24rem) {
     body { width: 96%; }
 }
@@ -87,7 +90,7 @@ pre, code { hyphens: none; }
 
 blockquote { page-break-inside: avoid; }
 table { page-break-inside:avoid; }
-tr    { page-break-inside:avoid; page-break-after:auto }
+tr    { page-break-after:auto; page-break-inside:avoid; }
 .codeblock { page-break-inside: avoid; }
 .no-page-break-inside { page-break-inside: avoid; }
 
