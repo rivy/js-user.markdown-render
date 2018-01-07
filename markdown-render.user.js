@@ -3,7 +3,7 @@
 // @namespace   com.houseofivy
 // @description renders markdown files
 //
-// @version     0.205
+// @version     0.207
 // @//updateURL   https://github.com/rivy/js-user.markdown-render/raw/master/markdown-render.user.js
 //
 // file extension: .m(arkdown|kdn?|d(o?wn)?)
@@ -450,9 +450,16 @@ function transform_codeblocks_to_CodeMirror(){
         if (_lineNumbers && !$DIV.hasClass('line-numbers')) { $DIV.addClass('line-numbers'); }
 
         let _firstLineNumber = isDefined($DIV.attr('startFrom')) ? parseInt($DIV.attr('startFrom')) : 1; // NOTE: for conversion alternatives, see https://coderwall.com/p/5tlhmw/converting-strings-to-number-in-javascript-pitfalls @@ http://archive.is/1CH5w
-        let _gutters = _lineNumbers ? ['CodeMirror-linenumbers'] : ['CodeMirror-gutter-extra'];
+
+        let _gutters = [];
+        if (_lineNumbers) { _gutters.push( 'CodeMirror-linenumbers' ); }
         let prefix = get_prefix( $DIV );
-        if (( prefix !== null ) && ( prefix !== '' )) { _gutters = [ _gutters, 'CodeMirror-prefix' ]; }
+        if (( prefix !== null ) && ( prefix !== '' )) {
+            _gutters.push( 'CodeMirror-prefix' );
+            let n; for (n=1; n<prefix.length; n++) { _gutters.push( `CodeMirror-prefix CodeMirror-prefix-sizer CodeMirror-prefix-sizer-${n}` ); }
+        }
+        if (_gutters.length < 1) { _gutters = [ 'CodeMirror-gutter-extra' ]; }
+
         let _mode = dequote( $DIV.attr('data-mime') || 'text/plain' );
         console.log('_mode = ' + _mode);
         let _theme = get_theme( $DIV );
