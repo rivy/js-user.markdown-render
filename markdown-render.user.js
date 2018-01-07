@@ -3,7 +3,7 @@
 // @namespace   com.houseofivy
 // @description renders markdown files
 //
-// @version     0.201
+// @version     0.203
 // @//updateURL   https://github.com/rivy/js-user.markdown-render/raw/master/markdown-render.user.js
 //
 // file extension: .m(arkdown|kdn?|d(o?wn)?)
@@ -340,6 +340,7 @@ function package_codeblocks(){
 }
 
 function find_CM_mode( name ){
+    // ref: valid modes/names are listed @ <https://github.com/codemirror/CodeMirror/blob/8b9d8e337eb7c1d48d42589a5caee0a2215f620c/mode/meta.js#L14-169>
     return CodeMirror.findModeByMIME( name ) || CodeMirror.findModeByName( name ) ||
         (function(mode){
             mode = mode.toLowerCase();
@@ -354,7 +355,7 @@ function find_CM_mode( name ){
 function get_language_name( $node ){
     let _ME = 'get_language_name()';
     let attr_class = $node.attr('class') || '';
-    let match = dequote( $node.attr('data-lang') || ( attr_class.match(/(?:^|\s)language-(\S+)/) || attr_class.match(/^\s*(\S+)/) || [null, undefined] )[1] );
+    let match = dequote( $node.attr('data-lang') || ( attr_class.match(/(?:^|\s)language-(\w\S*)/) || attr_class.match(/^\s*(\w\S*)/) || [null, undefined] )[1] );
     return match;
 }
 
