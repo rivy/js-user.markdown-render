@@ -1,0 +1,28 @@
+<!DOCTYPE markdown>
+<meta charset="utf-8" content="text/markdown" lang="en">
+<!-- ## editors ## (emacs/sublime) -*- coding: utf8-nix; tab-width: 4; mode: markdown; st-word_wrap: 'true' -*- ## (jEdit) :tabSize=4:indentSize=4:mode=markdown: ## (notepad++) vim:tabstop=4:syntax=markdown: -->
+
+# `markdown-render` Setup
+
+`markdown-render` is a user javascript, which runs in-browser, rendering local markdown files (eg, "file://PATH/TO/file.mkd").
+
+## Initial browser setups
+
+#### Chrome and Firefox
+
+- install the TamperMonkey extension from [TamperMonkey](http://tampermonkey.net/index.php) (or via the [Chrome web store](https://chrome.google.com/webstore/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo))
+<!--
+2. enable access to local files
+   1. open "chrome://extensions"
+   2. for the TamperMonkey extension, ENABLE the "Allow access to file URLs" option
+   - for more detailed explanation, see the [TamperMonkey FAQ](http://tampermonkey.net/faq.php#Q204) or the [video](http://fastly.tampermonkey.net/images/animated/allow_access_to_file_urls.gif)
+-->
+
+#### Edge
+
+MS Edge won't open and render local files with unknown extensions (eg, all the markdown extensions). So, while the script *may* be working, it's impossible to use or test at this moment. If a markdown file is opened, it will be pushed to whichever application is setup as the default handler.
+
+## `markdown-render` installation
+
+1. open <https://github.com/rivy/js-user.markdown-render/raw/master/markdown-render.user.js>
+2. CLICK "Install" in the TamperMonkey installation dialog
