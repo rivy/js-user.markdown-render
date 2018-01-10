@@ -4,25 +4,23 @@
 
 ## `markdown-render`
 
-`markdown-render` is a user javascript, which runs in-browser, rendering local markdown files (eg, "file://PATH/TO/file.mkd").
+`markdown-render` is a user javascript, running in-browser, which automatically renders raw local markdown files (eg, "file://PATH/TO/file.mkd") into HTML.
 
 ## Setup
 
-### Initial browser setups
-
-#### Chrome and Firefox
-
-- install the TamperMonkey extension from [TamperMonkey](http://tampermonkey.net/index.php) (or via the [Chrome web store](https://chrome.google.com/webstore/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo))
+1. Setup the browser userscript manager
+   - install the TamperMonkey extension from [TamperMonkey](http://tampermonkey.net/index.php)
+     - alternatively, for Chrome, it may be installed via the [Chrome web store](https://chrome.google.com/webstore/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo)
+     - or, for Firefox, it may be installed via [Firefox Add-ons](https://addons.mozilla.org/en-US/firefox/addon/tampermonkey)
 <!--
     1. open "chrome://extensions"
    2. for the TamperMonkey extension, ENABLE the "Allow access to file URLs" option
    - for more detailed explanation, see the [TamperMonkey FAQ](http://tampermonkey.net/faq.php#Q204) or the [video](http://fastly.tampermonkey.net/images/animated/allow_access_to_file_urls.gif)
 -->
 
-### `markdown-render` script installation
-
-1. open <https://github.com/rivy/js-user.markdown-render/raw/master/markdown-render.user.js>
-2. CLICK "Install" in the TamperMonkey installation dialog
+2. Install the `markdown-render` userscript
+   1. open <https://github.com/rivy/js-user.markdown-render/raw/master/markdown-render.user.js>
+   2. CLICK "Install" in the TamperMonkey installation dialog
 
 ## Known Limitations
 
@@ -38,4 +36,6 @@ A workaround, which works for all browsers and results in valid markdown, is to 
 
 #### Edge isn't usable
 
-MS Edge won't open and render local files, except for files with specific extensions (eg, ".html"). And there is no current method to enable reading and rendering of new file types / extensions (eg, all the markdown extensions). So, while the script *may* actually work, it's impossible to test or use at this moment. If a markdown file is opened, it will be pushed to whichever application is setup as the default handler.
+* TLDR; use Chrome or Firefox as default handlers for files with markdown file extensions.
+
+MS Edge won't open and render local files, except for files with specific extensions (eg, ".html"). And there is no current method to enable reading and rendering of new file types / extensions (eg, all the markdown extensions). So, while the script *may* actually work, it's impossible to test or use at this moment. If a markdown file is opened, it will be pushed to whichever application is setup as the default handler. Luckily, either of the more capable Chrome or Firefox browsers *can* be set as the default handler for files with the various markdown extensions, which ultimately solves the problem.
