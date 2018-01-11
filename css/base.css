@@ -5,12 +5,22 @@ body { font-family: Merriweather, Lora, "Noto Serif", "DejaVu Serif", Palatino, 
 body { text-rendering: optimizeLegibility; -webkit-font-feature-settings: "kern"; -moz-font-feature-settings: "kern"; font-feature-settings: "kern"; }
 h1, h2, h3, h4, h5, h6 { font-family: "Fira Sans Condensed", "Merriweather Sans", "Fira Sans", "Open Sans", "DejaVu Sans", Calibri, Arial, sans-serif; }
 /* h1, h2, h3, h4, h5, h6 { font-family: "Merriweather Sans", "Fira Sans", "Open Sans", "DejaVu Sans", Calibri, Arial, sans-serif; letter-spacing: -0.05em; } */ /* ref: [Condensing a font with CSS](http://stackoverflow.com/questions/13786971/make-a-font-more-condensed-with-css) @@ <http://archive.is/BJDxg>; */
+/*
 h1 { font-size: 2.5em; margin-block-start: 0.67em; margin-block-end: 0.67em; line-height: 1.1em; }
 h2 { font-size: 2em; margin-block-start: 0.83em; margin-block-end: 0.83em; line-height: 1.1em; }
 h3 { font-size: 1.75em; margin-block-start: 1em; margin-block-end: 1em; line-height: 1.1em; }
 h4 { font-size: 1.5em; margin-block-start: 1.33em; margin-block-end: 1.33em; line-height: 1.1em; }
 h5 { font-size: 1.25em; margin-block-start: 1.67em; margin-block-end: 1.67em; line-height: 1.1em; }
 h6 { font-size: 1.25em; margin-block-start: 2.33em; margin-block-end: 2.33em; line-height: 1.1em; }
+*/
+h1 { font-size: 2.5em;  margin-top: 0.67em; margin-bottom: 0.67em; line-height: 1.1em; font-weight: 900; }
+h2 { font-size: 2em;    margin-top: 0.83em; margin-bottom: 0.83em; line-height: 1.1em; }
+h3 { font-size: 1.75em; margin-top: 1em;    margin-bottom: 0.2em;  line-height: 1.1em; letter-spacing: -0.025em; }
+h4 { font-size: 1.5em;  margin-top: 1.33em; margin-bottom: 0.2em;  line-height: 1.1em; }
+h5 { font-size: 1.25em; margin-top: 1.67em; margin-bottom: 0em;    line-height: 1.1em; }
+h6 { font-size: 1.25em; margin-top: 2.33em; margin-bottom: 0em;    line-height: 1.1em; letter-spacing: -0.025em; }
+
+p, blockquote, ul, fieldset, form, ol, dl, dir, menu { margin-top: 0; margin-bottom: 1.12em; }
 
 table {
   border-collapse: collapse;
@@ -48,10 +58,16 @@ blockquote {
 
 ol, ul, dir, menu, dd { margin-left: /*40px*/ 1em; }
 
-:link, :visited { text-decoration: none; }
-a:hover { text-decoration: underline; }
+ol { list-style-type: decimal; }
+ol ol { list-style-type: lower-alpha; }
+ol ol ol { list-style-type: lower-roman; }
 
 ul { list-style-type: disc; }
+ul ul { list-style-type: circle; }
+ul ul ul { list-style-type: square; }
+
+:link, :visited { text-decoration: none; }
+a:hover { text-decoration: underline; }
 
 pre, code, .codeblock { font-family: /*Inconsolata,*/ "Fira Code", "Open Sans Mono", "Anonymous Pro", "Consolas", "Lucida Console", monospace; font-size: 1em; line-height: 1.3em; }
 code { background: gainsboro; background: rgba(238,238,238,0.8); padding: 0 0.2em; }
@@ -116,5 +132,5 @@ button { padding: 2px 6px 3px; }
 @supports (-webkit-appearance:none) { button { padding: 2px 6px 4px; } } /* Chrome-only */
 
 /* ## additional customization options (via classes) */
-.--bordered-b { border-bottom: 0.05em solid lightgrey; border-radius: 0.01em; }
+.--border-bottom { border-bottom: 0.05em solid lightgrey; border-radius: 0.01em; }
 .--width-100percent { width: 100%; }
