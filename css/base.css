@@ -17,10 +17,14 @@ h1 { font-size: 2.5em;  margin-top: 0.67em; margin-bottom: 0.67em; line-height: 
 h2 { font-size: 2em;    margin-top: 0.83em; margin-bottom: 0.83em; line-height: 1.1em; }
 h3 { font-size: 1.75em; margin-top: 1em;    margin-bottom: 0.2em;  line-height: 1.1em; letter-spacing: -0.025em; }
 h4 { font-size: 1.5em;  margin-top: 1.33em; margin-bottom: 0.2em;  line-height: 1.1em; }
-h5 { font-size: 1.25em; margin-top: 1.67em; margin-bottom: 0em;    line-height: 1.1em; }
-h6 { font-size: 1.25em; margin-top: 2.33em; margin-bottom: 0em;    line-height: 1.1em; letter-spacing: -0.025em; }
+h5 { font-size: 1.25em; margin-top: 1.67em; margin-bottom: 0.1em;  line-height: 1.1em; }
+h6 { font-size: 1.25em; margin-top: 2.33em; margin-bottom: 0.1em;  line-height: 1.1em; letter-spacing: -0.025em; }
 
 p, blockquote, ul, fieldset, form, ol, dl, dir, menu { margin-top: 0; margin-bottom: 1.12em; }
+table, code, pre, .codeblock { margin-top: 1.12em; margin-bottom: 1.12em; }
+
+li { margin-bottom: 0.2em; }
+li > p { margin-bottom: 0.2em; }
 
 table {
   border-collapse: collapse;
