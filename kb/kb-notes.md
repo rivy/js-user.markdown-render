@@ -4,11 +4,29 @@
 
 ## plans
 
+### implement reading markdown-attr attributes from inline HTML comments
+
+* implement and submit a PR
+* see 'markdown-decorate' for inspiration (an earlier fork of markdown-attr)
+
+### document possible CSS customizations in "css\!override.css" file
+
+### implement `npm` based build to combine and minify into a single, fully offline capable script
+
+? include all CodeMirror themes? or just a subset ... revert to included "--theme: ..." or included 'default' if loading fails
+? include all languages/modes? or include just a subset, lazy loading any needed additional modes ... should already default to "plain text" if mode can't be loaded
+
+### explore best font family stacks for body, headers, and code/CodeMirror
+
+Look at combining stacks for Apple, Linux, and Windows...
+
+* ? 'Calibri' as 1st choice for headings?
+
 <style>
 body { font-family: Lora, "Noto Serif", "DejaVu Serif", Palatino, serif; }
 </style>
 
-## add optional "prefix" gutter
+### add optional "prefix" gutter &middot; *DONE* with 'data-prefix'
 
 use 'data-lineprefix'
 
@@ -16,7 +34,7 @@ use 'data-lineprefix'
 - CSS style similar to 'CodeMirror-gutter-extra'
 - set content == val('data-lineprefix'); ? use :before/:after; ? how to localize the content to only the block (CSS could be too global)
 
-## rename tooltip CSS
+### rename tooltip CSS
 
 * change to use top/bottom/right/left terms (eg, tooltipped--tr, etc)
 * top/bottom/left/right is in line with the usual HTML terminology
