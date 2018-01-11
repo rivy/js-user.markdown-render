@@ -23,6 +23,8 @@ h6 { font-size: 1.25em; margin-top: 2.33em; margin-bottom: 0.1em;  line-height: 
 p, blockquote, ul, fieldset, form, ol, dl, dir, menu { margin-top: 0; margin-bottom: 1.12em; }
 table, code, pre, .codeblock { margin-top: 1.12em; margin-bottom: 1.12em; }
 
+table pre, /*table code,*/ table .codeblock { margin: 0; }
+
 li { margin-bottom: 0.2em; }
 li > p { margin-bottom: 0.2em; }
 
