@@ -11,6 +11,14 @@
 
 ### document possible CSS customizations in "css\!override.css" file
 
+### implement "live reload"
+
+? poll for file changes
+
+? add config to turn on/off
+
+### add enable/disable config for "User CSS" selection
+
 ### implement `npm` based build to combine and minify into a single, fully offline capable script
 
 ? include all CodeMirror themes? or just a subset ... revert to included "--theme: ..." or included 'default' if loading fails
