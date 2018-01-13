@@ -3,7 +3,7 @@
 // @namespace   com.houseofivy
 // @description renders markdown files
 //
-// @version     0.221
+// @version     0.223
 // @//updateURL   https://github.com/rivy/js-user.markdown-render/raw/master/markdown-render.user.js
 //
 // file extension: .m(arkdown|kdn?|d(o?wn)?)
@@ -29,7 +29,7 @@
 
 var script_name = 'markdown-render';
 var script_repo_path = 'rivy/js-user.' + script_name + '/';
-var script_repo_CDN_commit = '28ece1fab2014becbd8ffad5e05018867109fb19';
+var script_repo_CDN_commit = '12f9c1f1e3c2d9f00c44cd11616ccfede484c74b';
 var script_repo_CDN_base_url = '//cdn.rawgit.com/' + script_repo_path + script_repo_CDN_commit + '/';
 
 GM_registerMenuCommand(`'${script_name}' Settings`, function() {
