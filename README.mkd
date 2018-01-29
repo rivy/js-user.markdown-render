@@ -26,15 +26,15 @@
 
 ## Known Limitations
 
-#### Incorrect interpretation of files as HTML
+#### Incorrect interpretation of files with initial HTML tags
 
-* TLDR; use `<!DOCTYPE markdown>` as the first line of all markdown files.
+* TLDR; when possible, use `<!DOCTYPE markdown>` as the first line of all markdown files.
 
-Both Chrome and Firefox will interpret and parse a file as HTML if it contains an initial HTML tag, even if the file extension is not ".htm" or ".html". This intepretation and parsing of the file happens during loading and results in an irretrievable garbling of file contents and a subsequent incorrect rendering of the file.
+While most markdown files are correctly intepreted, those with leading HTML tags are problematic. Both Chrome and Firefox will interpret and parse a file as HTML if it contains an initial HTML tag, even if the file extension is not ".htm" or ".html". This intepretation and parsing of the file happens during loading and results in an irretrievable garbling of file contents and a subsequent inability to correctly render the file.
 
 Firefox can be coerced into re-reading the file as text, but Chrome can not. So, valid markdown files with leading HTML elements will be misinterpreted by Chrome.
 
-A workaround, which works for all browsers and results in valid markdown, is to start the file with a DOCTYPE declaration specifiying that the file is not HTML, eg, `<!DOCTYPE markdown>`.
+A workaround, which works for all browsers and is completely valid markdown, is to start the file with a DOCTYPE declaration specifiying that the file is not HTML, eg, `<!DOCTYPE markdown>`.
 
 #### Edge isn't usable
 
