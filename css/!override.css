@@ -5,29 +5,24 @@
 /* note: include this CSS as the last lexically in order to override without having to use increased CSS specificity */
 
 /* required CodeMirror CSS */
+/* minimally required gutter configuration */
+.CodeMirror-gutter-extra { min-width: 2em; }
 /* # minimally required prefix configuration */
 .CodeMirror-prefix { width: 1em; }
 .CodeMirror-prefix-text { padding-left: 0.25em; }
 .CodeMirror-prefix.CodeMirror-prefix-sizer { width: 0.5em; padding-left: 0; }
 
-/* ### .CodeMirror customization */
+/* ### .CodeMirror default customizations */
+/* #* code block border configuration */
 .CodeMirror {
-  border: 1px solid gainsboro;
+  border: 1px solid gainsboro /* #f7f7f7 == default CodeMirror border color */;
   border-radius: 0.2em;
-  /* border-radius: 5px; */
 }
 /* #* gutter configuration */
-.CodeMirror-gutter-extra {
-  min-width: 2em;
-  background: whitesmoke/* f5f5f5 */
-  ;
-  /* #f7f7f7 default border color for CodeMirror */
-}
+.CodeMirror-gutter-extra { background-color: hsla( 0, 0%, 50%, 0.1) /* #f5f5f5 == default CodeMirror color */; }
 /* #** prefix gutter customization */
-/*.CodeMirror-gutters { background: red; }*/
-/*.CodeMirror-gutter-extra { background-color: hsla( 0, 0%, 50%, 0.1); }*/
-.CodeMirror-prefix { background-color: hsla( 0, 0%, 50%, 0.1); /*background-color: green;*/}
-.CodeMirror-prefix-text { color: hsla( 0, 0%, 50%, 0.75); /*background-color: green;*/}
+.CodeMirror-prefix { background-color: hsla( 0, 0%, 50%, 0.1); }
+.CodeMirror-prefix-text { color: hsla( 0, 0%, 50%, 0.75); }
 
 /*  CodeMirror CSS uses '.CodeMirror pre', use same here for specificity */
 /*.CodeMirror, .CodeMirror pre { font-family: "Fira Code", "Open Sans Mono", "Anonymous Pro", "Consolas", "Lucida Console", monospace;*/
