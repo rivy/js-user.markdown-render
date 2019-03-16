@@ -6,6 +6,10 @@
 // @version     0.225
 // @//updateURL   https://github.com/rivy/js-user.markdown-render/raw/master/markdown-render.user.js
 //
+// spell-checker:words rivy repo Trello Cloudflare Pandoc CodeMirror MathJax Katex tooltip tooltips codeblock codeblocks dequote CommonMark markdownit monospace deauthorize
+// spell-checker:ignore arkdown mkdn mdwn rawgit cdnjs xmlhttp fontface runmode tooltipped buttonface buttontext Thiht githubusercontent scrollbar clippy hscrollbar linkify selectedtext scroller retval Eedge IEedge deflist activeline linenumbers cdns CHTML arve0 arve
+// spell-checker:ignore eqeqeq esnext esversion
+//
 // file extension: .m(arkdown|kdn?|d(o?wn)?)
 // @include     file://*.markdown
 // @include     file://*.mkdn
@@ -582,9 +586,9 @@ function render_markdown( text ){
 
 function load_raw_text( uri, timeout ){ // ( {array}, {int} ) => {jQuery.Deferred}
     // Firefox misinterprets non-HTML (non .htm/.html extension) files as HTML if they contain initial HTML tags and irretrievably alters the text ... this replaces the body content with text equivalent to chrome's interpretation
-    // NOTE: no perceptable speed difference when using this on a high-end machine (via both SSD or HD)
+    // NOTE: no perceptible speed difference when using this on a high-end machine (via both SSD or HD)
     //   ... *unneeded by chrome* (also, blocked by cross-origin issue ... ; see below comments) */
-    // ToDO: comment / request fix on "support.mozilla.org" (simlar to: https://support.mozilla.org/en-US/questions/898460)
+    // ToDO: comment / request fix on "support.mozilla.org" (similar to: https://support.mozilla.org/en-US/questions/898460)
     // ToDO: change to GM_xmlhttpRequest
     let isFirefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
     let retVal = $.Deferred;
@@ -746,7 +750,7 @@ var afterPrint = function() {
           let _lineWrapping = $CB.hasClass('line-wrapping') || $CB.hasClass('line-wrap') || $CB.hasClass('wrapLines') || $CB.hasClass('wordwrap');
           cm.setOption('lineWrapping', _lineWrapping);
           cm.setSize( null, 'auto' );
-          cm.refresh(); // fix minor size / text position abberations after `setSize()`
+          cm.refresh(); // fix minor size / text position aberrations after `setSize()`
           });
        }
     print_form = false;
