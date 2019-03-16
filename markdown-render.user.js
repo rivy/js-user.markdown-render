@@ -96,12 +96,12 @@ var assets_js = [
   CDN_CM_base_url + "addon/runmode/colorize.min.js",
   CDN_CM_base_url + "addon/selection/mark-selection.js",
   // MathJax
-//  CDN_base_url + "mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML&delayStartupUntil=configured",
-  //CDN_base_url + "mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML",
+//  CDN_base_url + "mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML&delayStartupUntil=configured",
+  //CDN_base_url + "mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML",
 //  ],
-  //// KaTeX
-  //CDN_base_url + "KaTeX/0.7.1/katex.min.js",
-  //CDN_base_url + "KaTeX/0.7.1/contrib/auto-render.min.js",
+  // // KaTeX
+  // CDN_base_url + "KaTeX/0.10.1/katex.min.js",
+  // CDN_base_url + "KaTeX/0.10.1/contrib/auto-render.min.js",
   ];
 var assets_css = [
   // reset ~ see http://meyerweb.com/eric/tools/css/reset @@ http://archive.is/XvC4w
@@ -138,7 +138,7 @@ $.when([])  // `.when([])` resolves immediately
     .then( ()=>{ return load_assets( assets_css.concat( assets_js ).concat( custom_css ) ); } )
     .then( ()=>{ return $.when(
                    do_render() ,
-                   $.getScript( [ 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML&delayStartupUntil=configured' ] )
+                   $.getScript( [ 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML&delayStartupUntil=configured' ] )
                       .then( trigger_render_MathJax )
                       .then( ()=>{console.log('MathJax triggered');} ) , // ToDO: discuss the MathJax requirement for `$.getScript( ... )` instead of being able to `eval( ... )` with a MathJax root config on <https://github.com/mathjax/MathJax/issues>
                    $.when([]) // placeholder at end-of-list (only syntactic sugar)
@@ -309,7 +309,7 @@ function add_codeblock_snippet_support(){
 
 function trigger_render_MathJax(){
     if (unsafeWindow.MathJax === undefined) return;
-//    let MathJax_root_uri = 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1';
+//    let MathJax_root_uri = 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5';
     unsafeWindow.MathJax.Hub.Config({
       //root: MathJax_root_uri,
       tex2jax: {
