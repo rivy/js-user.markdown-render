@@ -82,7 +82,7 @@ code { border-radius: 0.1em; }
 
 /* ## page / media settings */
 body { transition: width 0.3s ease-in-out; }
-/* continuously varying would be prefered over a transition but `calc()` is unable to calculate the fractional distance between a `100vw` and an `Nem` */
+/* continuously varying would be preferred over a transition but `calc()` is unable to calculate the fractional distance between a `100vw` and an `Nem` */
 @media all {
     body { margin: auto; }
 }
@@ -91,7 +91,7 @@ body { transition: width 0.3s ease-in-out; }
 /* ref: <http://bradfrost.com/blog/post/7-habits-of-highly-effective-media-queries>[`@`](https://archive.is/cv0mA) */
 /* ref: <http://webtypography.net/2.1.2>[`@`](https://archive.is/Rihn0) */
 /* seek optimum line length ~ 45-90 characters (or, 50-75 characters, from alternate references) */
-/* note: continuously varying would be prefered over a transition but `calc()` is unable to calculate the fractional distance between a `100vw` and an `Nem` */
+/* note: continuously varying would be preferred over a transition but `calc()` is unable to calculate the fractional distance between a `100vw` and an `Nem` */
 @media screen and (max-width: 24rem) {
     body { width: 96%; }
 }
@@ -105,7 +105,7 @@ body { transition: width 0.3s ease-in-out; }
     body { width: 75%; }
 }
 @media screen and (min-width: 60rem) {
-    body { width: 40em; /* (40em / line) / (0.5em / avergage char) => 80 average char / line */ }
+    body { width: 40em; /* (40em / line) / (0.5em / average char) => 80 average char / line */ }
 }
 @media print {
     body { font-size: 0.8em; /*width: 75%; margin-left: 15%; margin-top:10%; margin-bottom: 10%;*/ }
