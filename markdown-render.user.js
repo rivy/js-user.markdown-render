@@ -79,13 +79,13 @@ var assets_js = [
   // clipboard support
   // ... ref: [Name conflict with Chrome v61+](https://github.com/zenorocha/clipboard.js/issues/468)
   // ... ref: https://github.com/PrismJS/prism/issues/1181 ; https://github.com/PrismJS/prism/pull/1206
-  "//cdn.rawgit.com/rivy/clipboard.js/021e74439d7d64da9e44bbfb488850ed7a4dadf4/dist/clipboard.min.js", // clipboard.js-2.0.1 *(quick-fix)
+  "//cdn.jsdelivr.net/gh/rivy/clipboard.js@021e74439d7d64da9e44bbfb488850ed7a4dadf4/dist/clipboard.min.js", // clipboard.js-2.0.1 *(quick-fix)
   // markdown conversion
   CDN_base_url + "markdown-it/8.3.1/markdown-it.min.js",
   // markdown-it ~ definition lists
-  "//cdn.rawgit.com/markdown-it/markdown-it-deflist/8f2414f23316a2ec1c54bf4631a294fb2ae57ddd/dist/markdown-it-deflist.min.js", // markdown-it-deflist-2.0.1
+  "//cdn.jsdelivr.net/gh/markdown-it/markdown-it-deflist@8f2414f23316a2ec1c54bf4631a294fb2ae57ddd/dist/markdown-it-deflist.min.js", // markdown-it-deflist-2.0.1
   // markdown-it ~ attributes (pandoc compatible)
-  "//cdn.rawgit.com/arve0/markdown-it-attrs/eef1b2ea2ed9d17738722950b75e259df1e4eb6f/markdown-it-attrs.browser.js", // markdown-it-attrs-1.2.1
+  "//cdn.jsdelivr.net/gh/arve0/markdown-it-attrs@eef1b2ea2ed9d17738722950b75e259df1e4eb6f/markdown-it-attrs.browser.js", // markdown-it-attrs-1.2.1
   // markdown-it ~ footnotes
   CDN_base_url + "markdown-it-footnote/3.0.1/markdown-it-footnote.min.js",
   // markdown-it ~ YAML :: ? ... see https://github.com/CaliStyle/markdown-it-meta
