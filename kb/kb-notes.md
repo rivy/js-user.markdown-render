@@ -89,7 +89,10 @@ ref: http://blog.adrianroselli.com/2015/01/on-use-of-lang-attribute.html @@ http
 
 Currently, because *MathJax* can't handle single `$` signal characters,`$\phantom{}` ... `\phantom{}$` are used as a *hack-ish* method of implementing inline LaTeX that works for both `pandoc` and markdown. It is possible that KaTeX may offer a more compatible solution when the no `quirks` mode issue is resolved.
 
-* see
+* see <https://github.com/KaTeX/KaTeX/pull/608> , <https://github.com/KaTeX/KaTeX/pull/777>
+* see <https://techoverflow.net/2018/03/14/how-to-fix-katex-parse-error-katex-doesnt-work-in-quirks-mode>
+
+[2019-03] This may no longer be true... MathJax seems to be fine with single `$` signal characters although `pandoc` has an error ("! Missing $ inserted."). Double dollar (`$$`) signal characters are workable for both.
 
 ### Printing Fidelity / Issues
 
