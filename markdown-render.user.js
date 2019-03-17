@@ -140,15 +140,15 @@ $.when([])  // `.when([])` resolves immediately
     .then( ()=>{ return $('html').attr('lang','en'); } ) // ref: http://blog.adrianroselli.com/2015/01/on-use-of-lang-attribute.html @@ http://archive.is/H0ExZ (older, better typography) + http://archive.is/chYjS
     .then( ()=>{ return load_assets( assets_css.concat( assets_js ).concat( custom_css ) ); } )
     .then( ()=>{ return $.when(
-                   do_render() ,
-                   $.getScript( [ 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML&delayStartupUntil=configured' ] )
-                      .then( trigger_render_MathJax )
-                      .then( ()=>{console.log('MathJax triggered');} ) , // ToDO: discuss the MathJax requirement for `$.getScript( ... )` instead of being able to `eval( ... )` with a MathJax root config on <https://github.com/mathjax/MathJax/issues>
-                   // renderMathInElement(document.body) , // KaTeX render (but... unfortunately, KaTeX doesn't work in "quirks" mode)
-                   $.when([]) // placeholder at end-of-list (only syntactic sugar)
-                   );
-               }
-         )
+                  do_render() ,
+                  $.getScript( [ 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML&delayStartupUntil=configured' ] )
+                    .then( trigger_render_MathJax )
+                    .then( ()=>{console.log('MathJax triggered');} ) , // ToDO: discuss the MathJax requirement for `$.getScript( ... )` instead of being able to `eval( ... )` with a MathJax root config on <https://github.com/mathjax/MathJax/issues>
+                  // renderMathInElement(document.body) , // KaTex (doesn't work in "quirks" mode)
+                  $.when([]) // placeholder at end-of-list (only syntactic sugar)
+                  );
+              }
+          )
     //.then( function(){ console.log( 'main(): promise chain completed' ); })
     //.done( function(){ console.log( 'main(): DONE ' ); } )
     //.catch( function(){ console.log( 'main(): CATCH ' ); } )
