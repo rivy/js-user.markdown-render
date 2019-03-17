@@ -1,6 +1,7 @@
 // ==UserScript==
 // @name        markdown-render
-// @namespace   com.houseofivy
+// @namespace   dev.rivy
+// @author      rivy
 // @description renders markdown files
 //
 // @version     0.225
