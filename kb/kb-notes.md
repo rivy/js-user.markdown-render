@@ -4,6 +4,25 @@
 
 ## plans
 
+## document fix for "open (local-only?) markdown file opens 'Save as...' instead of render"
+
+This happens after a Win10 program takes the file association (eg, 'Texts').
+
+Removing the offending program should reset the file associations to null.
+Or, associate the file type with a temporary BAT file on the desktop which is then deleted. After a reboot (or just a restart of explorer?), the file association should be null.
+Or, go through the registry keys and remove them.
+
+For help dis/un-associating, see <https://answers.microsoft.com/en-us/windows/forum/windows_10-files-winpc/unassociate-file-types-in-windows-10-completely/40021241-00fb-4fff-85ea-489a0e39bba8?auth=1> @@ <http://archive.is/mM688> ,
+
+* ToDO: create a BAT file to remove all the problematic keys
+* ToDO: add explanation and link to fix in README
+
+* ref: <https://staffcv.zendesk.com/hc/en-us/articles/208251606-Why-do-my-attachments-Download-in-Chrome-instead-of-Open-> @@ <http://archive.is/2WMsR>
+* ref: <https://download.cnet.com/Unassoc/3000-2094_4-75911436.html>
+* ref: <https://troubleshooter.xyz/wiki/how-to-remove-file-type-associations-in-windows-10>
+
+
+
 ### implement reading markdown-attr attributes from inline HTML comments
 
 * implement and submit a PR
