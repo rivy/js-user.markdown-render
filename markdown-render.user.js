@@ -318,7 +318,7 @@ function trigger_render_MathJax(){
     unsafeWindow.MathJax.Hub.Config({
       //root: MathJax_root_uri,
       tex2jax: {
-        inlineMath: [ ['${','}$'], ['$\\phantom{}','\\phantom{}$']  ],
+        inlineMath: [ ['$','$'], ['${','}$'], ['$\\phantom{}','\\phantom{}$']  ],
         displayMath: [ ['$$','$$'], ['$${','}$$'] ],
         processEnvironments: true,
       }
