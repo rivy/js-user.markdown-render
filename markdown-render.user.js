@@ -87,7 +87,7 @@ var assets_js = [
   // markdown-it ~ attributes (pandoc compatible)
   "//cdn.jsdelivr.net/gh/arve0/markdown-it-attrs@eef1b2ea2ed9d17738722950b75e259df1e4eb6f/markdown-it-attrs.browser.js", // markdown-it-attrs-1.2.1
   // markdown-it ~ bracketed spans
-  "//cdn.jsdelivr.net/gh/rivy/markdown-it-bracketed-spans@8a6111cb61fd7e609733f23f65564b9c04940b76/dist/markdown-it-bracketed-spans.min.js", // markdown-it-bracketed-spans-1.0.1
+  "//cdn.jsdelivr.net/gh/rivy/markdown-it-bracketed-spans@e17f9b658c58b7fb904db8b96f403d2f89206f41/dist/markdown-it-bracketed-spans.min.js", // markdown-it-bracketed-spans-1.0.1
   // markdown-it ~ footnotes
   CDN_base_url + "markdown-it-footnote/3.0.1/markdown-it-footnote.min.js",
   // markdown-it ~ YAML :: ? ... see https://github.com/CaliStyle/markdown-it-meta
