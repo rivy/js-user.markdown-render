@@ -143,6 +143,7 @@ $.when([])  // `.when([])` resolves immediately
                    $.getScript( [ 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML&delayStartupUntil=configured' ] )
                       .then( trigger_render_MathJax )
                       .then( ()=>{console.log('MathJax triggered');} ) , // ToDO: discuss the MathJax requirement for `$.getScript( ... )` instead of being able to `eval( ... )` with a MathJax root config on <https://github.com/mathjax/MathJax/issues>
+                   // renderMathInElement(document.body) , // KaTeX render (but... unfortunately, KaTeX doesn't work in "quirks" mode)
                    $.when([]) // placeholder at end-of-list (only syntactic sugar)
                    );
                }
