@@ -160,10 +160,11 @@ return;
 // #### subs
 
 function do_render() { // () => {jQuery.Deferred}
-    let _ME = 'do_render()';
+    var _ME = 'do_render()';
     console.log(_ME + ': rendering markdown');
-    let original = $('body pre').text();
+    var original = $('body pre').text();
     let render = render_markdown( original );
+
     $('body pre').remove();
     $('<div style="display:none"/>').html( $('<pre/>').text( original ) ).attr('id', '_src').appendTo('body');
     $('<div/>').html( render ).appendTo('body');
