@@ -1,0 +1,11 @@
+{
+  // ref: <https://www.sitepoint.com/beginners-guide-webpack-module-bundling> @@ <https://archive.is/9JdMl>
+  // transpile (except export/import statements)
+  "presets": [
+    ["@babel/env", {
+      "modules": false
+    }]
+  ],
+  // enable dynamic imports
+  // "plugins": ["syntax-dynamic-import"]
+}
