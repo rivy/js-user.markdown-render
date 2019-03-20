@@ -640,6 +640,7 @@ function render_markdown( text ){
     md.use(markdownItBracketedSpans);
     md.use(markdownitDeflist);
     md.use(markdownitFootnote);
+    md.use(markdownItMeta);
 
     return md.render(text);
     }
