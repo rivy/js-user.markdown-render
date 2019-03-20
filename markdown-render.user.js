@@ -7,10 +7,6 @@
 // @version     0.227
 // @//updateURL   https://github.com/rivy/js-user.markdown-render/raw/master/markdown-render.user.js
 //
-// spell-checker:words rivy repo Trello Cloudflare Pandoc CodeMirror MathJax Katex tooltip tooltips codeblock codeblocks dequote CommonMark markdownit monospace deauthorize
-// spell-checker:ignore arkdown mkdn mdwn rawgit cdnjs xmlhttp fontface runmode tooltipped buttonface buttontext Thiht githubusercontent scrollbar clippy hscrollbar linkify selectedtext scroller retval Eedge IEedge deflist activeline linenumbers cdns CHTML arve0 arve
-// spell-checker:ignore eqeqeq esnext esversion
-//
 // file extension: .m(arkdown|kdn?|d(o?wn)?)
 // @include     file://*.markdown
 // @include     file://*.mkdn
