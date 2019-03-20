@@ -30,12 +30,57 @@
 // @grant       unsafeWindow
 // ==/UserScript==
 
-/* jshint esnext: false,  esversion: 6, bitwise: true, eqeqeq: true */
+// spell-checker:words rivy repo Trello Cloudflare Pandoc CodeMirror MathJax Katex tooltip tooltips codeblock codeblocks dequote CommonMark markdownit monospace deauthorize
+// spell-checker:ignore arkdown mkdn mdwn rawgit cdnjs xmlhttp fontface runmode tooltipped buttonface buttontext Thiht githubusercontent scrollbar clippy hscrollbar jsdelivr linkify selectedtext scroller retval Eedge IEedge deflist activeline linenumbers cdns CHTML arve0 arve clike
+// spell-checker:ignore eqeqeq esnext esversion
 
-var script_name = 'markdown-render';
-var script_repo_path = 'rivy/js-user.' + script_name + '/';
-var script_repo_CDN_commit = '520d0330bbc2202b0ca2b790e9a5a4d8a0c27c2b';
-var script_repo_CDN_base_url = '//cdn.rawgit.com/' + script_repo_path + script_repo_CDN_commit + '/';
+// jshint esnext: false, esversion: 6, bitwise: true, eqeqeq: true
+
+"use strict";
+
+const script_name = 'markdown-render';
+const script_repo_path = 'rivy/js-user.' + script_name + '/';
+const script_repo_CDN_commit = '520d0330bbc2202b0ca2b790e9a5a4d8a0c27c2b';
+const script_repo_CDN_base_url = '//cdn.rawgit.com/' + script_repo_path + script_repo_CDN_commit + '/';
+
+const ClipboardJS = require('clipboard');
+
+const markdownit = require('markdown-it');
+const markdownItAttrs = require('markdown-it-attrs');
+const markdownItBracketedSpans = require('markdown-it-bracketed-spans');
+const markdownitDeflist = require('markdown-it-deflist');
+const markdownitFootnote = require('markdown-it-footnote');
+const markdownItMeta = require('markdown-it-meta');
+
+// CodeMirror mode scripts expect "CodeMirror" as an accessible global variable; use `script-loader` to load as a <script/>
+import 'script-loader!codemirror';
+import 'script-loader!codemirror/mode/meta';
+import 'script-loader!codemirror/addon/runmode/colorize';
+import 'script-loader!codemirror/addon/runmode/runmode';
+import 'script-loader!codemirror/addon/selection/mark-selection';
+// * preload common CodeMirror modes into the bundle
+import 'script-loader!codemirror/mode/clike/clike';
+import 'script-loader!codemirror/mode/go/go';
+import 'script-loader!codemirror/mode/javascript/javascript';
+import 'script-loader!codemirror/mode/perl/perl';
+import 'script-loader!codemirror/mode/python/python';
+// import 'script-loader!codemirror/mode/rust/rust';  // causes "CodeMirror.defineSimpleMode is not a function" browser console error
+import 'script-loader!codemirror/mode/shell/shell';
+
+import './css/_reset/reset.min.css';
+import './css/_reset/bootstrap-reboot.min.css';
+import './css/_default.css';
+import './css/_fontface.css';
+import './css/base.css';
+import './css/tooltips.css';
+import './node_modules/codemirror/lib/codemirror.css';
+import './css/+override.css';
+// * preload common CodeMirror CSS styles into the bundle
+let CodeMirror_themes = new Map();
+let CM_theme = '';
+CM_theme = 'monokai';   import './node_modules/codemirror/theme/monokai.css';   CodeMirror_themes.set(CM_theme, (CodeMirror_themes.get(CM_theme) || -1) + 1);
+CM_theme = 'solarized'; import './node_modules/codemirror/theme/solarized.css'; CodeMirror_themes.set(CM_theme, (CodeMirror_themes.get(CM_theme) || -1) + 1);
+CM_theme = 'zenburn';   import './node_modules/codemirror/theme/zenburn.css';   CodeMirror_themes.set(CM_theme, (CodeMirror_themes.get(CM_theme) || -1) + 1);
 
 GM_registerMenuCommand(`'${script_name}' Settings`, function() {
     GM_config.open();
@@ -80,24 +125,25 @@ var assets_js = [
   // clipboard support
   // ... ref: [Name conflict with Chrome v61+](https://github.com/zenorocha/clipboard.js/issues/468)
   // ... ref: https://github.com/PrismJS/prism/issues/1181 ; https://github.com/PrismJS/prism/pull/1206
-  "//cdn.jsdelivr.net/gh/rivy/clipboard.js@021e74439d7d64da9e44bbfb488850ed7a4dadf4/dist/clipboard.min.js", // clipboard.js-2.0.1 *(quick-fix)
+  // "//cdn.jsdelivr.net/gh/rivy/clipboard.js@021e74439d7d64da9e44bbfb488850ed7a4dadf4/dist/clipboard.min.js", // clipboard.js-2.0.1 *(quick-fix)
   // markdown conversion
-  CDN_base_url + "markdown-it/8.3.1/markdown-it.min.js",
-  // markdown-it ~ definition lists
-  "//cdn.jsdelivr.net/gh/markdown-it/markdown-it-deflist@8f2414f23316a2ec1c54bf4631a294fb2ae57ddd/dist/markdown-it-deflist.min.js", // markdown-it-deflist-2.0.1
+  // CDN_base_url + "markdown-it/8.3.1/markdown-it.min.js",
   // markdown-it ~ attributes (pandoc compatible)
-  "//cdn.jsdelivr.net/gh/arve0/markdown-it-attrs@eef1b2ea2ed9d17738722950b75e259df1e4eb6f/markdown-it-attrs.browser.js", // markdown-it-attrs-1.2.1
+  // "//cdn.jsdelivr.net/gh/arve0/markdown-it-attrs@eef1b2ea2ed9d17738722950b75e259df1e4eb6f/markdown-it-attrs.browser.js", // markdown-it-attrs-1.2.1
   // markdown-it ~ bracketed spans
-  "//cdn.jsdelivr.net/gh/rivy/markdown-it-bracketed-spans@e17f9b658c58b7fb904db8b96f403d2f89206f41/dist/markdown-it-bracketed-spans.min.js", // markdown-it-bracketed-spans-1.0.1
+  // "//cdn.jsdelivr.net/gh/rivy/markdown-it-bracketed-spans@e17f9b658c58b7fb904db8b96f403d2f89206f41/dist/markdown-it-bracketed-spans.min.js", // markdown-it-bracketed-spans-1.0.1
+  // markdown-it ~ definition lists
+  // "//cdn.jsdelivr.net/gh/markdown-it/markdown-it-deflist@8f2414f23316a2ec1c54bf4631a294fb2ae57ddd/dist/markdown-it-deflist.min.js", // markdown-it-deflist-2.0.1
   // markdown-it ~ footnotes
-  CDN_base_url + "markdown-it-footnote/3.0.1/markdown-it-footnote.min.js",
-  // markdown-it ~ YAML :: ? ... see https://github.com/CaliStyle/markdown-it-meta
+  // CDN_base_url + "markdown-it-footnote/3.0.1/markdown-it-footnote.min.js",
+  // markdown-it ~ meta
+  // "//cdn.jsdelivr.net/gh/rivy/markdown-it-meta@466fea07c5e8d5442c0c572f505c330e21f38477/dist/markdown-it-meta.js",
   // CodeMirror / highlighting
-  CDN_CM_base_url + "codemirror.min.js",
-  CDN_CM_base_url + "mode/meta.min.js",
-  CDN_CM_base_url + "addon/runmode/runmode.min.js",
-  CDN_CM_base_url + "addon/runmode/colorize.min.js",
-  CDN_CM_base_url + "addon/selection/mark-selection.js",
+  // CDN_CM_base_url + "codemirror.min.js",
+  // CDN_CM_base_url + "mode/meta.min.js",
+  // CDN_CM_base_url + "addon/runmode/runmode.min.js",
+  // CDN_CM_base_url + "addon/runmode/colorize.min.js",
+  // CDN_CM_base_url + "addon/selection/mark-selection.js",
   // MathJax
 //  CDN_base_url + "mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML&delayStartupUntil=configured",
   //CDN_base_url + "mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML",
@@ -109,36 +155,38 @@ var assets_js = [
 var assets_css = [
   // reset ~ see http://meyerweb.com/eric/tools/css/reset @@ http://archive.is/XvC4w
   // ... see https://stackoverflow.com/questions/3388705/why-is-a-table-not-using-the-body-font-size-even-though-i-havent-set-the-table/3388766#3388766 @@ http://archive.is/wePmk
-  CDN_base_url + "meyer-reset/2.0/reset.min.css",
+  // CDN_base_url + "meyer-reset/2.0/reset.min.css",
 //  // ref: [normalize] http://necolas.github.io/normalize.css @@ http://archive.is/Fo0od ; info: http://nicolasgallagher.com/about-normalize-css @@ http://archive.is/RSXip ; repo: https://github.com/necolas/normalize.css
 //  "//cdnjs.cloudflare.com/ajax/libs/normalize/7.0.0/normalize.min.css",
   // ref: https://v4-alpha.getbootstrap.com/content/reboot
-  CDN_base_url + "twitter-bootstrap/4.0.0-beta.3/css/bootstrap-reboot.min.css",
+  // CDN_base_url + "twitter-bootstrap/4.0.0-beta.3/css/bootstrap-reboot.min.css",
   // basic
-  CDN_CSS_base_url + "_default.css",
-  CDN_CSS_base_url + "_fontface.css",
-  CDN_CSS_base_url + "base.css",
+  // CDN_CSS_base_url + "_default.css",
+  // CDN_CSS_base_url + "_fontface.css",
+  // CDN_CSS_base_url + "base.css",
 //  "//raw.githubusercontent.com/Thiht/markdown-viewer/master/chrome/lib/sss/sss.css",
 //  "//raw.githubusercontent.com/Thiht/markdown-viewer/master/chrome/lib/sss/sss.print.css",
   // tooltip CSS
-  CDN_CSS_base_url + "tooltips.css",
+  // CDN_CSS_base_url + "tooltips.css",
   // syntax highlighter
-  CDN_CM_base_url + "codemirror.min.css",
+  // CDN_CM_base_url + "codemirror.min.css",
   // overrides (* last in order to override prior CSS, without requiring increased CSS specificity)
-  CDN_CSS_base_url + "!override.css",
+  // CDN_CSS_base_url + "+override.css",
   ];
-var custom_css = GM_config.get('CustomCSS_uri') || '';
+const custom_css = GM_config.get('CustomCSS_uri') || '';
 
 // #### main()
 
 (function main(){
+'use strict';
 
 console.log('document.compatMode = ' + document.compatMode);
 
 $.when([])  // `.when([])` resolves immediately
     .then( ()=>{ return load_raw_text(); } )
     .then( ()=>{ return $('html').attr('lang','en'); } ) // ref: http://blog.adrianroselli.com/2015/01/on-use-of-lang-attribute.html @@ http://archive.is/H0ExZ (older, better typography) + http://archive.is/chYjS
-    .then( ()=>{ return load_assets( assets_css.concat( assets_js ).concat( custom_css ) ); } )
+    .then( ()=>{ return load_assets( assets_css.concat( assets_js ) ); } )
+    .then( ()=>{ return load_assets( custom_css, undefined, true ); } ).catch(e => {})
     .then( ()=>{ return $.when(
                   do_render() ,
                   $.getScript( [ 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML&delayStartupUntil=configured' ] )
@@ -149,10 +197,10 @@ $.when([])  // `.when([])` resolves immediately
                   );
               }
           )
-    //.then( function(){ console.log( 'main(): promise chain completed' ); })
-    //.done( function(){ console.log( 'main(): DONE ' ); } )
-    //.catch( function(){ console.log( 'main(): CATCH ' ); } )
-    //.always( function(){ console.log( 'main(): ALWAYS ' ); } )
+    .then( function(){ console.log( 'main(): promise chain completed' ); })
+    .done( function(){ console.log( 'main(): DONE ' ); } )
+    .catch( function(){ console.log( 'main(): CATCH ' ); } )
+    .always( function(){ console.log( 'main(): ALWAYS ' ); } )
     ;
 return;
 })();
@@ -188,9 +236,12 @@ function do_render() { // () => {jQuery.Deferred}
         if ( ! CM_mode ) { warn(`unknown code language ('${name}'; mime:'${mime}')`); return; }
         let CM_mode_template = CDN_CM_base_url + "mode/%N/%N.min.js";
         let CM_mode_uri = CM_mode_template.replace(/%N/g, CM_mode.mode);
-        ///console.log(`found CodeMirror.mode='${CM_mode.mode}' for language='${name}'; URL = '${CM_mode_uri}'`);
-        CodeMirror_mode_js_map.set( CM_mode_uri, (CodeMirror_mode_js_map.get( CM_mode_uri ) || 0) + 1 );
+        console.log(`found requested CodeMirror.mode='${CM_mode.mode}' for language='${name}'; URL = '${CM_mode_uri}'`);
+        if ( ! CodeMirror.modes[ CM_mode.mode ] ) {
+          console.log(`add asset download request for URL = '${CM_mode_uri}'`);
+          CodeMirror_mode_js_map.set( CM_mode_uri, (CodeMirror_mode_js_map.get( CM_mode_uri ) || 0) + 1 );
 //        CodeMirror_mode_js_map.set( CM_mode_uri, true );
+          }
         });
 
     // find any needed CodeMirror themes (for lazy loading)
@@ -199,16 +250,21 @@ function do_render() { // () => {jQuery.Deferred}
         let $CODE = $(this);
         let theme = get_theme( $CODE );
         if ((theme === undefined) || (theme === 'default')) { return; }
+        let theme_name = (theme.split(/[\s.]+/))[0];
         let CM_theme_template = CDN_CM_base_url + "theme/%N.min.css";
-        let CM_theme_uri = CM_theme_template.replace(/%N/g, (theme.split(/[\s.]+/))[0]);
-        console.log(`found needed theme='${theme}'; URL = '${CM_theme_uri}'`);
-        CodeMirror_theme_css_map.set( CM_theme_uri, (CodeMirror_theme_css_map.get( theme ) || 0) + 1 );
+        let CM_theme_uri = CM_theme_template.replace(/%N/g, theme_name);
+        console.log(`found requested theme='${theme}'; URL = '${CM_theme_uri}'`);
+        if ( ! CodeMirror_themes.has( theme_name ) ) {
+            console.log(`add asset download request for URL = '${CM_theme_uri}'`);
+            CodeMirror_theme_css_map.set( CM_theme_uri, (CodeMirror_theme_css_map.get( theme_name ) || 0) + 1 );
+          }
+        CodeMirror_themes.set( theme_name, (CodeMirror_themes.get( theme_name ) || 0) + 1);
         });
 
     let assets = Array.from(CodeMirror_theme_css_map.keys()).concat(Array.from(CodeMirror_mode_js_map.keys()));
 
     return $.when([])
-        .then( ()=>{ return load_assets( assets, undefined, true ); } )
+        .then( ()=>{ return load_assets( assets, undefined, true ); } ).catch(e => {})
         .then( ()=>{
             console.log(_ME + ': transform codeblocks');
             // required CSS
@@ -628,7 +684,7 @@ function load_assets( uris, timeout, optional ) { // ( {array} [, {int}timeout=0
     let asset_uris = $.isArray( uris ) ? uris : [ uris ];
     let retVal = $.Deferred;
     ///console.log( `${_ME}: asset_uris = ${JSON.stringify( asset_uris )}`);
-    asset_uris = asset_uris.filter( function( uri ) { if ((uri === null) || ( uri === '' )) { return; } else { return true; } });
+    asset_uris = asset_uris.filter( function( uri ) { if ((uri === undefined) || (uri === null) || ( uri === '' )) { return; } else { return true; } });
     ///console.log( `${_ME}: asset_uris.filter() = ${JSON.stringify( asset_uris )}`);
     if (asset_uris.length < 1) { return retVal; }
     let default_protocol = (window.location.protocol === 'http:') ? 'http:' : 'https:'; // use 'https:' unless current page is using 'http:'
@@ -660,16 +716,17 @@ function load_assets( uris, timeout, optional ) { // ( {array} [, {int}timeout=0
                     $('<style type="text/css" />').html(data).attr('_uri', jqXHR.uri).attr('_index', index).appendTo('head');
                     }
                 if (jqXHR.extension === '.js') {
-                    console.log( `eval() script from "${jqXHR.uri}"` );
-                    /* jshint ignore:start */
-                    window.eval.call( window, data );
-                    /* jshint ignore:end */
+                    // console.log( `eval() script from "${jqXHR.uri}"` );
+                    // window['eval'].call( window, data );  // jshint ignore:line
+                    console.log( `insert script from "${jqXHR.uri}"` );
+                    $('<script />').html(data).attr('_uri', jqXHR.uri).attr('_index', index).appendTo('body');
+                    // or `$.getScript()`? ref: <https://stackoverflow.com/questions/3857874/how-to-dynamically-insert-a-script-tag-via-jquery-after-page-load#3857899>
                     }
                 });})
         .fail( function() { Array.prototype.forEach.call( arguments, function( request /* :: [jqXHR, textStatus, errorThrown] */, index ) {
             let message = `failed to load ${optional ? '( optional ) ' : ''}asset "${request.uri}"`;
             if (optional) {
-                console.log( _ME+`: warn: ${message}`);
+                console.log( _ME+`: warn: ${message} ::${JSON.stringify(request)}::`);
               } else {
                 console.log( `${_ME}: ERR!: ${message} ::${JSON.stringify(request)}::` );
                 error( message + '; render halted' );

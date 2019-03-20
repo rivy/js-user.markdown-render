@@ -1,9 +1,12 @@
 {
   "name": "markdown-render",
+  "browserModuleName": "markdownRender",
   "version": "1.0.0",
   "description": "js-user script to render markdown in-browser",
   "main": "markdown-render.user.js",
   "scripts": {
+    "build": "webpack --mode production",
+    "dev": "webpack --mode development",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -12,7 +15,8 @@
   },
   "keywords": [
     "markdown",
-    "js-user",
+    "user.js",
+    "UserJS",
     "greasemonkey",
     "tampermonkey"
   ],
@@ -21,5 +25,21 @@
   "bugs": {
     "url": "https://github.com/rivy/js-user.markdown-render/issues"
   },
-  "homepage": "https://github.com/rivy/js-user.markdown-render#readme"
+  "homepage": "https://github.com/rivy/js-user.markdown-render#readme",
+  "devDependencies": {
+    "@babel/core": "^7.4.0",
+    "@babel/preset-env": "^7.4.2",
+    "babel-loader": "^8.0.5",
+    "webpack": "^4.29.6",
+    "webpack-cli": "^3.3.0"
+  },
+  "dependencies": {
+    "clipboard.js": "^1.0.1",
+    "codemirror": "^5.33.0",
+    "markdown-it": "^8.4.2",
+    "markdown-it-attrs": "^2.3.2",
+    "markdown-it-bracketed-spans": "^1.0.1",
+    "markdown-it-deflist": "^2.0.3",
+    "markdown-it-footnote": "^3.0.1"
+  }
 }
