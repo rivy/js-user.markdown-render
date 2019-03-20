@@ -4,7 +4,7 @@
 // @author      rivy
 // @description renders markdown files
 //
-// @version     0.226
+// @version     0.227
 // @//updateURL   https://github.com/rivy/js-user.markdown-render/raw/master/markdown-render.user.js
 //
 // spell-checker:words rivy repo Trello Cloudflare Pandoc CodeMirror MathJax Katex tooltip tooltips codeblock codeblocks dequote CommonMark markdownit monospace deauthorize
