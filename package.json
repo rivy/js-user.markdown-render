@@ -1,0 +1,25 @@
+{
+  "name": "markdown-render",
+  "version": "1.0.0",
+  "description": "js-user script to render markdown in-browser",
+  "main": "markdown-render.user.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rivy/js-user.markdown-render.git"
+  },
+  "keywords": [
+    "markdown",
+    "js-user",
+    "greasemonkey",
+    "tampermonkey"
+  ],
+  "author": "Roy Ivy III <rivy.dev@gmail.com> (https://rivy.dev/)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/rivy/js-user.markdown-render/issues"
+  },
+  "homepage": "https://github.com/rivy/js-user.markdown-render#readme"
+}
