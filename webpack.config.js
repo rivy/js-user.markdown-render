@@ -8,6 +8,8 @@ const TerserPlugin = require('terser-webpack-plugin');
 
 const PKG = require('./package.json');
 
+// ToDO: generate 'library' from PKG.name instead of using PKG.browserModuleName (and get rid of that property)
+
 module.exports = {
   mode: 'development',
   context: __dirname,
