@@ -20,7 +20,7 @@
     "greasemonkey",
     "tampermonkey"
   ],
-  "author": "Roy Ivy III <rivy.dev@gmail.com> (https://rivy.dev/)",
+  "author": "Roy Ivy III <rivy.dev@gmail.com> (rivy; https://rivy.dev)",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/rivy/js-user.markdown-render/issues"
