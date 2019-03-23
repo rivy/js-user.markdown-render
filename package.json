@@ -34,7 +34,7 @@
     "webpack-cli": "^3.3.0"
   },
   "dependencies": {
-    "clipboard.js": "^1.0.1",
+    "clipboard": "^2.0.4",
     "codemirror": "^5.33.0",
     "markdown-it": "^8.4.2",
     "markdown-it-attrs": "^2.3.2",
