@@ -1,11 +1,11 @@
 ---
+## editors ## (emacs/sublime) -*- coding: utf8-nix; tab-width: 4; mode: markdown; indent-tabs-mode: nil; basic-offset: 2; st-word_wrap: 'true' -*- ## (jEdit) :tabSize=4:indentSize=4:mode=markdown: ## (notepad++) vim:tabstop=4:syntax=markdown:expandtab:smarttab:softtabstop=2 ## modeline (see <https://archive.is/djTUD>@@<http://webcitation.org/66W3EhCAP> ) -->
 title: README
 tags: markdown, browser, render, UserJS, greasemonkey, tampermonkey
 ---
 
 <!DOCTYPE markdown><!-- markdownlint-disable no-inline-html -->
 <meta charset="utf-8" content="text/markdown" lang="en">
-<!-- ## editors ## (emacs/sublime) -*- coding: utf8-nix; tab-width: 4; mode: markdown; st-word_wrap: 'true' -*- ## (jEdit) :tabSize=4:indentSize=4:mode=markdown: ## (notepad++) vim:tabstop=4:syntax=markdown: -->
 <!-- spell-checker:words greasemonkey tampermonkey -->
 <!-- spell-checker:ignore markdownlint TLDR userscript -->
 <!-- markdownlint-disable first-header-h1 first-line-h1 header-increment no-inline-html ul-style -->
@@ -17,32 +17,32 @@ tags: markdown, browser, render, UserJS, greasemonkey, tampermonkey
 ## Setup
 
 1. Setup the browser userscript manager
-   - install the TamperMonkey extension from [TamperMonkey](http://tampermonkey.net/index.php)
-     - for Chrome, it may, alternatively, be installed via the [Chrome web store](https://chrome.google.com/webstore/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo)
-     - for Firefox, it may, alternatively, be installed via [Firefox Add-ons](https://addons.mozilla.org/en-US/firefox/addon/tampermonkey)
+    - install the TamperMonkey extension from [TamperMonkey](http://tampermonkey.net/index.php)
+      - for Chrome, it may, alternatively, be installed via the [Chrome web store](https://chrome.google.com/webstore/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo)
+      - for Firefox, it may, alternatively, be installed via [Firefox Add-ons](https://addons.mozilla.org/en-US/firefox/addon/tampermonkey)
 
 2. Enable TamperMonkey scripting of file URLs
-   - Chrome
-     1. open "chrome://extensions"
-     2. for the TamperMonkey extension, ENABLE the "Allow access to file URLs" option
-     - for more detailed explanation, see the [TamperMonkey FAQ](http://tampermonkey.net/faq.php#Q204) or the [video](http://fastly.tampermonkey.net/images/animated/allow_access_to_file_urls.gif)
-   - Firefox ... not needed
+    - Chrome
+      1. open "chrome://extensions"
+      2. for the TamperMonkey extension, ENABLE the "Allow access to file URLs" option
+      - for more detailed explanation, see the [TamperMonkey FAQ](http://tampermonkey.net/faq.php#Q204) or the [video](http://fastly.tampermonkey.net/images/animated/allow_access_to_file_urls.gif)
+    - Firefox ... not needed
 
 3. Install the `markdown-render` userscript
-   1. open <https://github.com/rivy/js-user.markdown-render/raw/master/markdown-render.user.js>
-   2. CLICK "Install" in the TamperMonkey installation dialog
+    1. open <https://github.com/rivy/js-user.markdown-render/raw/master/dist/markdown-render.user.js>
+    2. CLICK "Install" in the TamperMonkey installation dialog
 
 ## Known Limitations
 
 #### Incorrect interpretation of files with initial HTML tags
 
-* TLDR; when possible, use YAML front matter prior to, or `<!DOCTYPE markdown>` as the initial content of, all markdown files.
+* TLDR; when possible, use `<!DOCTYPE markdown>` or YAML front matter as the initial content of all markdown files.
 
 While most markdown files are correctly interpreted, those with leading HTML tags are problematic. Both Chrome and Firefox will interpret and parse a file as HTML if it contains an initial HTML tag, even if the file extension is not ".htm" or ".html". This interpretation and parsing of the file happens during loading and results in an irretrievable garbling of file contents and a subsequent inability to correctly render the file.
 
 Firefox can be coerced into re-reading the file as text, but Chrome can not. So, valid markdown files with leading HTML elements will be misinterpreted by Chrome.
 
-A "workaround" is to always use initial content without HTML elements, such as a DOCTYPE declaration (eg, `<!DOCTYPE markdown>` [uppercase 'DOCTYPE' preferred for widest compatibility]). A DOCTYPE declaration works for all browsers and is completely valid markdown. Alternatively, using YAML front matter elements will also prevent the destructive interpretation of the file as purely HTML.
+A "workaround" is to always use initial content without HTML elements, such as a DOCTYPE declaration (eg, `<!DOCTYPE markdown>` [uppercase 'DOCTYPE' preferred for widest compatibility]). A DOCTYPE declaration works for all browsers and is completely valid markdown. Alternatively, using YAML front matter elements will also prevent the destructive as-HTML interpretation of the file.
 
 #### Edge isn't usable
 
