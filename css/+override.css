@@ -1,5 +1,7 @@
 /* ## override CSS */
 
+/* spell-checker:ignore selectedtext */
+
 /* ToDO: document useful CSS configuration/modifications (with examples below) */
 
 /* note: include this CSS as the last lexically in order to override without having to use increased CSS specificity */
@@ -12,7 +14,7 @@
 .CodeMirror-prefix-text { padding-left: 0.25em; }
 .CodeMirror-prefix.CodeMirror-prefix-sizer { width: 0.5em; padding-left: 0; }
 
-/* ### .CodeMirror default customizations */
+/* ### .CodeMirror default customization */
 /* #* code block border configuration */
 .CodeMirror {
   border: 1px solid gainsboro /* #f7f7f7 == default CodeMirror border color */;
