@@ -1,5 +1,8 @@
 /* ## baseline CSS */
 
+/* spell-checker:words Calibri */
+/* spell-checker:ignore codeblock buttontext buttonface */
+
 body { margin: /*8px*/ auto; }
 body { font-family: Merriweather, Lora, "Noto Serif", "DejaVu Serif", Palatino, serif; font-size: 1.2rem; line-height: 1.4em; }
 body { text-rendering: optimizeLegibility; -webkit-font-feature-settings: "kern"; -moz-font-feature-settings: "kern"; font-feature-settings: "kern"; }

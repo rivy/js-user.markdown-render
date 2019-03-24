@@ -26,7 +26,7 @@
 // @grant       unsafeWindow
 // ==/UserScript==
 
-// spell-checker:words rivy repo Trello Cloudflare Pandoc CodeMirror MathJax Katex tooltip tooltips codeblock codeblocks dequote CommonMark markdownit monospace deauthorize
+// spell-checker:words rivy repo Trello Cloudflare Pandoc CodeMirror MathJax Katex tooltip tooltips codeblock codeblocks dequote CommonMark markdownit monospace deauthorize monokai zenburn
 // spell-checker:ignore arkdown mkdn mdwn rawgit cdnjs xmlhttp fontface runmode tooltipped buttonface buttontext Thiht githubusercontent scrollbar clippy hscrollbar jsdelivr linkify selectedtext scroller retval Eedge IEedge deflist activeline linenumbers cdns CHTML arve0 arve clike
 // spell-checker:ignore eqeqeq esnext esversion
 
