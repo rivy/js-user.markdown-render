@@ -147,3 +147,8 @@ button { padding: 2px 6px 3px; }
 /* ## additional customization options (via classes) */
 .--border-bottom { border-bottom: 0.05em solid lightgrey; border-radius: 0.01em; }
 .--width-100percent { width: 100%; }
+
+/* header-anchor */
+.header-anchor { display: inline-block; margin-left: -1em; width: 1em; text-align: center; opacity: 0.075; transition: opacity 0.3s ease-in-out; }
+h1:hover > a.header-anchor, h2:hover > a.header-anchor, h3:hover > a.header-anchor , h4:hover > a.header-anchor , h5:hover > a.header-anchor, h6:hover > a.header-anchor, .header-anchor:hover { opacity: 1; }
+a.header-anchor { text-decoration: none; }

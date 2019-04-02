@@ -42,6 +42,7 @@ const script_repo_CDN_base_url = '//cdn.rawgit.com/' + script_repo_path + script
 const ClipboardJS = require('clipboard');
 
 const markdownit = require('markdown-it');
+const markdownItAnchor = require('markdown-it-anchor').default;
 const markdownItAttrs = require('markdown-it-attrs');
 const markdownItBracketedSpans = require('markdown-it-bracketed-spans');
 const markdownitDeflist = require('markdown-it-deflist');
@@ -637,6 +638,8 @@ function render_markdown( text ){
     md.use(markdownitDeflist);
     md.use(markdownitFootnote);
     md.use(markdownItMeta);
+
+    md.use(markdownItAnchor, { permalink: true, permalinkBefore: true, permalinkSymbol: '#', permalinkSpace: false }); // after 'attrs' (see <https://github.com/valeriangalliat/markdown-it-anchor/issues/49#issuecomment-431632231>)
 
     return md.render(text);
     }
