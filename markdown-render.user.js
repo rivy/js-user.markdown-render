@@ -178,6 +178,7 @@ const custom_css = GM_config.get('CustomCSS_uri') || '';
 'use strict';
 
 console.log('document.compatMode = ' + document.compatMode);
+let protocol = (window.location.protocol === 'http:') ? 'http:' : 'https:'; // use 'https:' unless current page is using 'http:'
 
 $.when([])  // `.when([])` resolves immediately
     .then( ()=>{ return load_raw_text(); } )
@@ -186,10 +187,9 @@ $.when([])  // `.when([])` resolves immediately
     .then( ()=>{ return load_assets( custom_css, undefined, true ); } ).catch(e => {})
     .then( ()=>{ return $.when(
                   do_render() ,
-                  $.getScript( [ 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML&delayStartupUntil=configured' ] )
+                  $.getScript( [ protocol+CDN_base_url+'mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML&delayStartupUntil=configured' ] )
                     .then( trigger_render_MathJax )
                     .then( ()=>{console.log('MathJax triggered');} ) , // ToDO: discuss the MathJax requirement for `$.getScript( ... )` instead of being able to `eval( ... )` with a MathJax root config on <https://github.com/mathjax/MathJax/issues>
-                  // renderMathInElement(document.body) , // KaTex (doesn't work in "quirks" mode)
                   $.when([]) // placeholder at end-of-list (only syntactic sugar)
                   );
               }
