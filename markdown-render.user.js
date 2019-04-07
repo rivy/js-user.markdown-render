@@ -64,6 +64,34 @@ import 'script-loader!codemirror/mode/python/python';
 // import 'script-loader!codemirror/mode/rust/rust';  // causes "CodeMirror.defineSimpleMode is not a function" browser console error
 import 'script-loader!codemirror/mode/shell/shell';
 
+// KaTeX doesn't work in 'quirks' mode
+// // import katex from 'katex';
+// // var katexAutoRender = require('katex/contrib/auto-render/auto-render')
+// import renderMathInElement from 'katex/contrib/auto-render/auto-render';
+
+// // // import MathJax as a global script
+// // // ToDO: investigate moving MathJax into usual `require ...`
+// import 'script-loader!mathjax/MathJax.js?config=TeX-MML-AM_CHTML&delayStartupUntil=configured';
+// var mjAPI = require("mathjax-node");
+// mjAPI.config({
+//     MathJax: {
+//       jax: ["input/TeX","input/MathML","input/AsciiMath","output/CommonHTML"],
+//       extensions: ["tex2jax.js","mml2jax.js","asciimath2jax.js","MathMenu.js","MathZoom.js","AssistiveMML.js","a11y/accessibility-menu.js"],
+//       TeX: {
+//         extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
+//       }
+//     }
+// });
+// mjAPI.start();
+
+// MathJax3
+const MathJax = require('mathjax3/mathjax3/mathjax.js').MathJax       // MathJax core
+const TeX     = require('mathjax3/mathjax3/input/tex.js').TeX;        // TeX input
+const CHTML   = require('mathjax3/mathjax3/output/chtml.js').CHTML;   // HTML output
+const browser = require('mathjax3/mathjax3/adaptors/browserAdaptor').browserAdaptor; // browser DOM
+const AllPackages = require('mathjax3/mathjax3/input/tex/AllPackages.js').AllPackages;
+require('mathjax3/mathjax3/handlers/html.js').RegisterHTMLHandler(browser());
+
 import './css/_reset/reset.min.css';
 import './css/_reset/bootstrap-reboot.min.css';
 import './css/_default.css';
@@ -187,9 +215,10 @@ $.when([])  // `.when([])` resolves immediately
     .then( ()=>{ return load_assets( custom_css, undefined, true ); } ).catch(e => {})
     .then( ()=>{ return $.when(
                   do_render() ,
-                  $.getScript( [ protocol+CDN_base_url+'mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML&delayStartupUntil=configured' ] )
-                    .then( trigger_render_MathJax )
-                    .then( ()=>{console.log('MathJax triggered');} ) , // ToDO: discuss the MathJax requirement for `$.getScript( ... )` instead of being able to `eval( ... )` with a MathJax root config on <https://github.com/mathjax/MathJax/issues>
+                  // $.getScript( [ protocol+CDN_base_url+'mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML&delayStartupUntil=configured' ] )
+                  //   .then( trigger_render_MathJax )
+                  //   .then( ()=>{console.log('MathJax triggered');} ) , // ToDO: discuss the MathJax requirement for `$.getScript( ... )` instead of being able to `eval( ... )` with a MathJax root config on <https://github.com/mathjax/MathJax/issues>
+                  render_MathJax3() ,
                   $.when([]) // placeholder at end-of-list (only syntactic sugar)
                   );
               }
@@ -363,6 +392,25 @@ function add_codeblock_snippet_support(){
         return actionMsg;
     }
     //})();
+}
+
+function render_MathJax3(){
+  const html = MathJax.document(document, {
+    InputJax: new TeX({
+      inlineMath: [ ['$','$'], ['${','}$'], ['$\\phantom{}','\\phantom{}$']  ],
+      displayMath: [ ['$$','$$'], ['$${','}$$'] ],
+      processEnvironments: true,
+      packages: AllPackages
+    }),
+    OutputJax: new CHTML({
+        fontURL: 'https://cdn.rawgit.com/mathjax/mathjax-v3/3.0.0-beta.3/mathjax2/css'
+    })
+  });
+  html.findMath()
+        .compile()
+        .getMetrics()
+        .typeset()
+        .updateDocument();
 }
 
 function trigger_render_MathJax(){
