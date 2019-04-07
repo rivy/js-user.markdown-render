@@ -54,17 +54,6 @@ caption {
   padding: 0 0.7em;
 }
 
-blockquote { font-size: 0.9em; }
-blockquote {
-  border-left: 0.25em solid /* #EEE */ gainsboro;
-  border-radius: 0.1em;
-  /*margin-left: 40px; margin-right: 40px;*/
-  margin-left: 1em;
-  /*margin-right: 1em;*/
-  padding: 0 0.5em;
-  padding-left: 1em;
-}
-
 /*ol, */ul, dir, menu, dd { margin-left: /*40px*/ 1em; }
 ol { margin-left: 1.2em; }
 
@@ -152,3 +141,42 @@ button { padding: 2px 6px 3px; }
 .header-anchor { display: inline-block; margin-left: -1em; width: 1em; text-align: center; opacity: 0.075; transition: opacity 0.3s ease-in-out; }
 h1:hover > a.header-anchor, h2:hover > a.header-anchor, h3:hover > a.header-anchor , h4:hover > a.header-anchor , h5:hover > a.header-anchor, h6:hover > a.header-anchor, .header-anchor:hover { opacity: 1; }
 a.header-anchor { text-decoration: none; }
+
+/* blockquotes with type modifiers */
+blockquote { font-size: 0.9em; }
+blockquote {
+  background: gainsboro;
+  border-left: 0.5em solid /* #EEE */ dimgray;
+  border-radius: 0.1em;
+  margin-left: 0em;
+  margin-right: 0em;
+  padding: 0.5em;
+  padding-left: 1em;
+}
+
+blockquote:before {
+  font-family: fontawesome;
+  font-style: normal;
+  font-size: 1em;
+  display: inline-block;
+  float: left;
+  position: relative;
+  margin: 0;
+  margin-left: -3em;
+  padding: 0;
+  color: white;
+  width: 2em;
+  text-align: center;
+}
+
+blockquote.--error { background: #FFBFBF; border-left: 2em solid crimson; margin-left: 0em; }
+blockquote.--error:before { content: "\F06a"; margin-left: -3em; text-align: center; }
+
+blockquote.--info { background: #BFE9FF; border-left: 2em solid royalblue; margin-left: 0em; }
+blockquote.--info:before { content: "\F05a"; margin-left: -3em; text-align: center; }
+
+blockquote.--warning { background: #FFF2BF; border-left: 2em solid darkorange; margin-left: 0em; }
+blockquote.--warning:before { content: "\F071"; margin-left: -3em; text-align: center; }
+
+blockquote.--success { background: #D7FFBF; border-left: 2em solid forestgreen; margin-left: 0em; }
+blockquote.--success:before { content: "\F058"; margin-left: -3em; text-align: center; }
