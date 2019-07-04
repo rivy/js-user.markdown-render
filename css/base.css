@@ -180,3 +180,8 @@ blockquote.--warning:before { content: "\F071"; margin-left: -3em; text-align: c
 
 blockquote.--success { background: #D7FFBF; border-left: 2em solid forestgreen; margin-left: 0em; }
 blockquote.--success:before { content: "\F058"; margin-left: -3em; text-align: center; }
+
+/* # remove "block-quote" bulge */
+/* blockquote p:last-child { margin-bottom: 0; } *//* remove "blockquote paragraph bulge"; ref: <https://css-tricks.com/blockquote-bulge> @@ <https://archive.is/190Ba> */
+blockquote > :first-child { margin-top: 0; }
+blockquote > :last-child { margin-bottom: 0; }
