@@ -47,6 +47,7 @@ const markdownItAttrs = require('markdown-it-attrs');
 const markdownItBracketedSpans = require('markdown-it-bracketed-spans');
 const markdownitDeflist = require('markdown-it-deflist');
 const markdownitFootnote = require('markdown-it-footnote');
+const markdownItReplacements = require('markdown-it-replacements');
 const markdownItMeta = require('markdown-it-meta');
 
 // CodeMirror mode scripts expect "CodeMirror" as an accessible global variable; use `script-loader` to load as a <script/>
@@ -686,6 +687,7 @@ function render_markdown( text ){
     md.use(markdownitDeflist);
     md.use(markdownitFootnote);
     md.use(markdownItMeta);
+    md.use(markdownItReplacements, {ellipsis: false});  // disable faulty ellipsis replacement (`...` => `â¦`)
 
     md.use(markdownItAnchor, { permalink: true, permalinkBefore: true, permalinkSymbol: '#', permalinkSpace: false }); // after 'attrs' (see <https://github.com/valeriangalliat/markdown-it-anchor/issues/49#issuecomment-431632231>)
 
