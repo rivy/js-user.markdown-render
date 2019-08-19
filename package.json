@@ -6,6 +6,7 @@
   "main": "markdown-render.user.js",
   "scripts": {
     "build": "webpack --mode production",
+    "build:changelog": "changelog --markdown github.com/rivy/js-user.markdown-render all",
     "dev": "webpack --mode development",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -30,6 +31,8 @@
     "@babel/core": "^7.4.0",
     "@babel/preset-env": "^7.4.2",
     "babel-loader": "^8.0.5",
+    "changelog": "^1.4.2",
+    "commitlint": "^8.1.0",
     "css-loader": "^2.1.1",
     "script-loader": "^0.7.2",
     "style-loader": "^0.23.1",
