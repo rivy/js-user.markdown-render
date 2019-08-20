@@ -28,7 +28,10 @@ module.exports = {
     minimize: true,
     minimizer: [ new TerserPlugin({
       include: /[.]min([.]user)?[.]js$/i,
-      sourceMap: true
+      sourceMap: true,
+      terserOptions: {
+        output: { ascii_only: true } // ref: <https://stackoverflow.com/a/57362733/43774>
+      }
     })]
   },
   module: {
