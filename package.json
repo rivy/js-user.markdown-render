@@ -7,6 +7,7 @@
   "scripts": {
     "build": "webpack --mode production",
     "build:changelog": "changelog --markdown github.com/rivy/js-user.markdown-render all",
+    "build:conventional-changelog": "conventional-changelog -r 0",
     "dev": "webpack --mode development",
     "lint:repo": "commitlint --config .commitlint.config.js --from #0 --to head",
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -36,8 +37,11 @@
     "babel-loader": "^8.0.5",
     "changelog": "^1.4.2",
     "commitlint": "^8.1.0",
+    "conventional-changelog": "^3.1.10",
+    "conventional-changelog-cli": "^2.0.23",
     "css-loader": "^2.1.1",
     "script-loader": "^0.7.2",
+    "standard-changelog": "^2.0.13",
     "style-loader": "^0.23.1",
     "webpack": "^4.29.6",
     "webpack-cli": "^3.3.0"
