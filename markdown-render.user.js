@@ -22,7 +22,7 @@
 // @grant       GM_getValue
 // @grant       GM_setValue
 // @grant       GM_registerMenuCommand
-// @//grant       GM_xmlhttpRequest
+// @grant       GM_xmlhttpRequest
 // @grant       unsafeWindow
 // ==/UserScript==
 
@@ -708,18 +708,60 @@ function load_raw_text( uri, timeout ){ // ( {array}, {int} ) => {jQuery.Deferre
     // ToDO: comment / request fix on "support.mozilla.org" (similar to: https://support.mozilla.org/en-US/questions/898460)
     // ToDO: change to GM_xmlhttpRequest
     // const isFirefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
-    let retVal = $.Deferred;
+    let retVal = $.Deferred();
     if (window.document.contentType === 'text/html') {
         uri = uri || document.location.href;
         timeout = (timeout !== null) && (timeout >= 0) ? timeout : 2 * 1000/* ms */;
-        // 'chrome'-only: ajax throws here for the "file:///" protocol => "VM4117:7 XMLHttpRequest cannot load file:///C:/Users/Roy/OneDrive/Projects/%23kb/%23pandoc/README.md. Cross origin requests are only supported for protocol schemes: http, data, chrome, chrome-extension, https."
-        // ... ref: http://stackoverflow.com/questions/4819060/allow-google-chrome-to-use-xmlhttprequest-to-load-a-url-from-a-local-file/18137280#18137280 @@ http://archive.is/W7a9M
-        // suppress XML parsing error for returned content using a MIME override
-        // ... ref: https://stackoverflow.com/questions/16932930/ajax-response-errorxml-parsing-error-no-element-found-location-moz-nullprinci/46920606#46920606 @@ https://web.archive.org/web/20190821002437/https://stackoverflow.com/questions/16932930/ajax-response-errorxml-parsing-error-no-element-found-location-moz-nullprinci/46920606
-        retVal = $.ajax( uri, { cache: true, dataType: 'text', timeout: timeout, beforeSend: function( xhr ) { xhr.overrideMimeType( "text/plain; charset=x-user-defined" ); } } )
-            .done( function( data, statusText, jqXHR ) { $('body').empty(); $('<pre/>', { style: 'word-wrap: break-word; white-space: pre-wrap;' }).text(data).appendTo('body'); } )
-            ;
+        if (isChrome()) {
+          // ref: https://wiki.greasespot.net/GM.xmlHttpRequest @@ https://web.archive.org/web/20190821010800/https://wiki.greasespot.net/GM.xmlHttpRequest
+          GM_xmlhttpRequest({
+            // * works for chrome-ish browsers when
+            // ... 1. [as noted in README] "chrome://extensions" / for the TamperMonkey extension, ENABLE the "Allow access to file URLs" option
+            // ... 2. "chrome://extensions" / Site Access == SELECT "All sites" ## ToDO: add to README?
+            // ... 3. TamperMonkey / Settings / Security / "Allow scripts to access local files" == "All local files"
+            // * does NOT work for Firefox; ref: https://github.com/Tampermonkey/tampermonkey/issues/347 ; https://bugzilla.mozilla.org/show_bug.cgi?id=1266960
+            // ... "Refused to connect to "file:///C:/...": NetworkError when attempting to fetch resource."
+            method: "GET",
+            url: uri,
+            headers: {
+              // "User-Agent": "Mozilla/5.0",    // If not specified, navigator.userAgent will be used.
+              "Accept": "text/plain; charset=x-user-defined"            // If not specified, browser defaults will be used.
+            },
+            onload: function(response) { retVal.resolve( response ); }
+          });
+          retVal.done(response => {
+            $('body').empty(); $('<pre/>', { style: 'word-wrap: break-word; white-space: pre-wrap;' }).text(response.responseText).appendTo('body');
+            // var responseXML = null;
+            // // Inject responseXML into existing Object (only appropriate for XML content).
+            // if (!response.responseXML) {
+            //   responseXML = new DOMParser()
+            //     .parseFromString(response.responseText, "text/xml");
+            // }
+            console.log([
+              'load_raw_text():GM_xmlhttpRequest',
+              'status', response.status,
+              'statusText', response.statusText,
+              'readyState', response.readyState,
+              'responseHeaders', response.responseHeaders,
+              'responseText', response.responseText,
+              'finalUrl', response.finalUrl
+              // ,
+              // responseXML
+            ].join("\n"));
+          });
+        } else {
+          // * fails for chrome-like browsers: ajax throws here for the "file:///" protocol => "VM4117:7 XMLHttpRequest cannot load file:///C:/Users/Roy/OneDrive/Projects/%23kb/%23pandoc/README.md. Cross origin requests are only supported for protocol schemes: http, data, chrome, chrome-extension, https."
+          // ... ref: http://stackoverflow.com/questions/4819060/allow-google-chrome-to-use-xmlhttprequest-to-load-a-url-from-a-local-file/18137280#18137280 @@ http://archive.is/W7a9M
+          // suppress XML parsing error for returned content using a MIME override
+          // ... ref: https://stackoverflow.com/questions/16932930/ajax-response-errorxml-parsing-error-no-element-found-location-moz-nullprinci/46920606#46920606 @@ https://web.archive.org/web/20190821002437/https://stackoverflow.com/questions/16932930/ajax-response-errorxml-parsing-error-no-element-found-location-moz-nullprinci/46920606
+          retVal = $.ajax( uri, { cache: true, dataType: 'text', timeout: timeout, beforeSend: function( xhr ) { xhr.overrideMimeType( "text/plain; charset=x-user-defined" ); } } )
+              .done( function( data, statusText, jqXHR ) {
+                $('body').empty(); $('<pre/>', { style: 'word-wrap: break-word; white-space: pre-wrap;' }).text(data).appendTo('body');
+                console.log('load_raw_text():ajax', 'data', data);
+                })
+              ;
         }
+    } else { retVal.resolve(); }
     return retVal;
 }
 
