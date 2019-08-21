@@ -44,6 +44,12 @@ Firefox can be coerced into re-reading the file as text, but Chrome can not. So,
 
 A "workaround" is to always use initial content without HTML elements, such as a DOCTYPE declaration (eg, `<!DOCTYPE markdown>` [uppercase 'DOCTYPE' preferred for widest compatibility]). A DOCTYPE declaration works for all browsers and is completely valid markdown. Alternatively, using YAML front matter elements will also prevent the destructive as-HTML interpretation of the file.
 
+As of 2019-08, Firefox now interprets leading XML elements (eg, `<!DOCTYPE ...>`) as HTML elements, leading to misinterpretation of the file. Chrome still reads the file as pure text.
+
+`<!DOCTYPE markdown>` is the best option for Chrome; for Firefox ... the kata is a work-in-progress, but the file *can* be re-read if the content-type is not "text/plain" (or "text/markdown"); possibly testing for "text/html" and re-reading in that case would be best.
+
+For Firefox, any non-HTML/XML character sequence will stimulate a "text/plain" interpretation of the file. So, YAML or title text first in the file will work. Notably, for Github's markdown, initial YAML will appear as a table of values at the top of the converted page. Additionally `&nbsp;<!--{style="display:none"}--><!DOCTYPE markdown>` will also work although it adds an initial line for parsers which don't implement 'markdown-it-decorate' comment-style attribute application.
+
 #### Edge isn't usable
 
 * TLDR; use Chrome or Firefox as default handlers for files with markdown file extensions.
