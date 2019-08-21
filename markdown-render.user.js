@@ -704,14 +704,16 @@ function load_raw_text( uri, timeout ){ // ( {array}, {int} ) => {jQuery.Deferre
     //   ... *unneeded by chrome* (also, blocked by cross-origin issue ... ; see below comments) */
     // ToDO: comment / request fix on "support.mozilla.org" (similar to: https://support.mozilla.org/en-US/questions/898460)
     // ToDO: change to GM_xmlhttpRequest
-    let isFirefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
+    // const isFirefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
     let retVal = $.Deferred;
-    if (isFirefox) {
+    if (window.document.contentType === 'text/html') {
         uri = uri || document.location.href;
         timeout = (timeout !== null) && (timeout >= 0) ? timeout : 2 * 1000/* ms */;
         // 'chrome'-only: ajax throws here for the "file:///" protocol => "VM4117:7 XMLHttpRequest cannot load file:///C:/Users/Roy/OneDrive/Projects/%23kb/%23pandoc/README.md. Cross origin requests are only supported for protocol schemes: http, data, chrome, chrome-extension, https."
-        // ref: http://stackoverflow.com/questions/4819060/allow-google-chrome-to-use-xmlhttprequest-to-load-a-url-from-a-local-file/18137280#18137280 @@ http://archive.is/W7a9M
-        retVal = $.ajax( uri, { cache: true, dataType: 'text', timeout: timeout } )
+        // ... ref: http://stackoverflow.com/questions/4819060/allow-google-chrome-to-use-xmlhttprequest-to-load-a-url-from-a-local-file/18137280#18137280 @@ http://archive.is/W7a9M
+        // suppress XML parsing error for returned content using a MIME override
+        // ... ref: https://stackoverflow.com/questions/16932930/ajax-response-errorxml-parsing-error-no-element-found-location-moz-nullprinci/46920606#46920606 @@ https://web.archive.org/web/20190821002437/https://stackoverflow.com/questions/16932930/ajax-response-errorxml-parsing-error-no-element-found-location-moz-nullprinci/46920606
+        retVal = $.ajax( uri, { cache: true, dataType: 'text', timeout: timeout, beforeSend: function( xhr ) { xhr.overrideMimeType( "text/plain; charset=x-user-defined" ); } } )
             .done( function( data, statusText, jqXHR ) { $('body').empty(); $('<pre/>', { style: 'word-wrap: break-word; white-space: pre-wrap;' }).text(data).appendTo('body'); } )
             ;
         }
