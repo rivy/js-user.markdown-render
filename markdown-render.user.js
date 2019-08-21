@@ -207,8 +207,11 @@ const custom_css = GM_config.get('CustomCSS_uri') || '';
 (function main(){
 'use strict';
 
-console.log('document.compatMode = ' + document.compatMode);
 let protocol = (window.location.protocol === 'http:') ? 'http:' : 'https:'; // use 'https:' unless current page is using 'http:'
+
+console.log('document.compatMode = ' + document.compatMode);
+console.log('contentType', window.document.contentType);
+//console.log(window.document);
 
 $.when([])  // `.when([])` resolves immediately
     .then( ()=>{ return load_raw_text(); } )
