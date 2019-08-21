@@ -45,6 +45,7 @@ const markdownit = require('markdown-it');
 const markdownItAnchor = require('markdown-it-anchor').default;
 const markdownItAttrs = require('markdown-it-attrs');
 const markdownItBracketedSpans = require('markdown-it-bracketed-spans');
+const markdownItDecorate = require('markdown-it-decorate');
 const markdownitDeflist = require('markdown-it-deflist');
 const markdownitFootnote = require('markdown-it-footnote');
 const markdownItReplacements = require('markdown-it-replacements');
@@ -685,6 +686,7 @@ function render_markdown( text ){
     md.use(markdownItAttrs);
     md.use(markdownItBracketedSpans);
     md.use(markdownitDeflist);
+    md.use(markdownItDecorate);
     md.use(markdownitFootnote);
     md.use(markdownItMeta);
     md.use(markdownItReplacements, {ellipsis: false});  // disable faulty ellipsis replacement (`...` => `â¦`)
