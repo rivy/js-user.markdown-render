@@ -6,8 +6,8 @@ tags: markdown, browser, render, UserJS, greasemonkey, tampermonkey
 
 <!DOCTYPE markdown><!-- markdownlint-disable no-inline-html -->
 <meta charset="utf-8" content="text/markdown" lang="en">
-<!-- spell-checker:words greasemonkey tampermonkey -->
-<!-- spell-checker:ignore markdownlint TLDR userscript -->
+<!-- spell-checker:words greasemonkey tampermonkey Github Github's -->
+<!-- spell-checker:ignore markdownlint TLDR userscript kata -->
 <!-- markdownlint-disable first-header-h1 first-line-h1 header-increment no-inline-html ul-style -->
 
 ## `markdown-render`

@@ -26,9 +26,9 @@
 // @grant       unsafeWindow
 // ==/UserScript==
 
-// spell-checker:words rivy repo Trello Cloudflare Pandoc CodeMirror MathJax Katex tooltip tooltips codeblock codeblocks dequote CommonMark markdownit monospace deauthorize monokai zenburn
-// spell-checker:ignore arkdown mkdn mdwn rawgit cdnjs xmlhttp fontface runmode tooltipped buttonface buttontext Thiht githubusercontent scrollbar clippy hscrollbar jsdelivr linkify selectedtext scroller retval Eedge IEedge deflist activeline linenumbers cdns CHTML arve0 arve clike
-// spell-checker:ignore eqeqeq esnext esversion
+// spell-checker:words AMSmath AMSsymbols Cloudflare CodeMirror CommonMark Katex MathJax Pandoc Trello asciimath codeblock codeblocks deauthorize dequote markdownit monokai monospace repo rivy tooltip tooltips zenburn
+// spell-checker:ignore CHTML Eedge IEedge Thiht activeline arkdown arve arve0 buttonface buttontext cdnjs cdns clike clippy deflist fontface githubusercontent hscrollbar jsdelivr linenumbers linkify mdwn mkdn rawgit retval runmode scrollbar scroller selectedtext tooltipped xmlhttp
+// spell-checker:ignore esversion esnext eqeqeq
 
 // jshint esnext: false, esversion: 6, bitwise: true, eqeqeq: true
 
