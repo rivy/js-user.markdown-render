@@ -215,7 +215,7 @@ console.log('contentType', window.document.contentType);
 
 $.when([])  // `.when([])` resolves immediately
     .then( ()=>{ return load_raw_text(); } )
-    .then( ()=>{ return $('html').attr('lang','en'); } ) // ref: http://blog.adrianroselli.com/2015/01/on-use-of-lang-attribute.html @@ http://archive.is/H0ExZ (older, better typography) + http://archive.is/chYjS
+    // .then( ()=>{ return $('html').attr('lang','en'); } ) // ref: http://blog.adrianroselli.com/2015/01/on-use-of-lang-attribute.html @@ http://archive.is/H0ExZ (older, better typography) + http://archive.is/chYjS
     .then( ()=>{ return load_assets( assets_css.concat( assets_js ) ); } )
     .then( ()=>{ return load_assets( custom_css, undefined, true ); } ).catch(e => {})
     .then( ()=>{ return $.when(
