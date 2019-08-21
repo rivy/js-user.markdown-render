@@ -1,5 +1,5 @@
 ---
-## editors ## (emacs/sublime) -*- coding: utf8-nix; tab-width: 4; mode: markdown; indent-tabs-mode: nil; basic-offset: 2; st-word_wrap: 'true' -*- ## (jEdit) :tabSize=4:indentSize=4:mode=markdown: ## (notepad++) vim:tabstop=4:syntax=markdown:expandtab:smarttab:softtabstop=2 ## modeline (see <https://archive.is/djTUD>@@<http://webcitation.org/66W3EhCAP> ) -->
+## editors ## (emacs/sublime) -*- coding: utf8-nix; tab-width: 4; mode: markdown; indent-tabs-mode: nil; basic-offset: 2; st-word_wrap: 'true' -*- ## (jEdit) :tabSize=4:indentSize=4:mode=markdown: ## (notepad++) vim:tabstop=4:syntax=markdown:expandtab:smarttab:softtabstop=2 ## modeline (see <https://archive.is/djTUD>@@<http://webcitation.org/66W3EhCAP>)
 title: README
 tags: markdown, browser, render, UserJS, greasemonkey, tampermonkey
 ---
@@ -25,30 +25,40 @@ tags: markdown, browser, render, UserJS, greasemonkey, tampermonkey
     - Chrome
       1. open "chrome://extensions"
       2. for the TamperMonkey extension, ENABLE the "Allow access to file URLs" option
-      - for more detailed explanation, see the [TamperMonkey FAQ](http://tampermonkey.net/faq.php#Q204) or the [video](http://fastly.tampermonkey.net/images/animated/allow_access_to_file_urls.gif)
+      - for more detailed explanation, see the [TamperMonkey FAQ](http://tampermonkey.net/faq.php#Q204) or [video](http://fastly.tampermonkey.net/images/animated/allow_access_to_file_urls.gif)<sup><small>[`@`](https://archive.is/ZGnZc)</small></sup>
     - Firefox ... not needed
 
 3. Install the `markdown-render` userscript
     1. open <https://github.com/rivy/js-user.markdown-render/raw/master/dist/markdown-render.user.js>
     2. CLICK "Install" in the TamperMonkey installation dialog
 
+> *Optional* &ac; For best results when reading files with leading HTML/XML-like elements, enable access to all local files for TamperMonkey scripts.
+>
+> 1. Open the TamperMonkey Dashboard by clicking on "Dashboard" in the TamperMonkey drop-down list from the browser toolbar
+> 2. Select the "Settings" tab
+> 3. In the "Security" section, for "Allow scripts to access local files:", select "All local files", and click the "Save" button
+>
+> This allows `markdown-render` to re-read any local file which may have been misread (and mangled) as HTML/XML instead of 'text/plain'.
+> Notably, this allows *any* user script to access *any local file*, so use with care.
+<!--{blockquote:.--warning}-->
+
 ## Known Limitations
 
 #### Incorrect interpretation of files with initial HTML tags
 
-* TLDR; when possible, use `<!DOCTYPE markdown>` or YAML front matter as the initial content of all markdown files.
+* TLDR; when possible, avoid initial HTML/XML-like elements within the markdown file.
 
-While most markdown files are correctly interpreted, those with leading HTML tags are problematic. Both Chrome and Firefox will interpret and parse a file as HTML if it contains an initial HTML tag, even if the file extension is not ".htm" or ".html". This interpretation and parsing of the file happens during loading and results in an irretrievable garbling of file contents and a subsequent inability to correctly render the file.
+While most markdown files are correctly interpreted, those with leading HTML/XML-like elements are problematic. Both Chrome and Firefox will interpret and parse a file as HTML if it contains any initial HTML content, even if the file extension is not ".htm",  ".html", or ".xml". This interpretation and parsing of the file happens during loading and results in an irretrievable garbling of file contents and a subsequent inability to correctly render the file.
 
-Firefox can be coerced into re-reading the file as text, but Chrome can not. So, valid markdown files with leading HTML elements will be misinterpreted by Chrome.
+Both Chrome and Firefox, through various techniques and some extra, manually enabled, user permissions, can be coerced into re-reading the file as text. But the techniques are workarounds and can't expected to work for all future browser versions.
 
 A "workaround" is to always use initial content without HTML elements, such as a DOCTYPE declaration (eg, `<!DOCTYPE markdown>` [uppercase 'DOCTYPE' preferred for widest compatibility]). A DOCTYPE declaration works for all browsers and is completely valid markdown. Alternatively, using YAML front matter elements will also prevent the destructive as-HTML interpretation of the file.
 
 As of 2019-08, Firefox now interprets leading XML elements (eg, `<!DOCTYPE ...>`) as HTML elements, leading to misinterpretation of the file. Chrome still reads the file as pure text.
 
-`<!DOCTYPE markdown>` is the best option for Chrome; for Firefox ... the kata is a work-in-progress, but the file *can* be re-read if the content-type is not "text/plain" (or "text/markdown"); possibly testing for "text/html" and re-reading in that case would be best.
+For Firefox, any non-HTML/XML character sequence will stimulate a "text/plain" interpretation of the file. So, YAML or title text first in the file will work. Notably, for Github's markdown, initial YAML will appear as a table of values at the top of the converted page. Additionally `&nbsp;<!--{style="display:none"}--><!DOCTYPE markdown>` or `📖<!--{style="display:none"}--><!DOCTYPE markdown>` will also work although either add an initial blank line, or line with a character, for parsers which don't implement 'markdown-it-decorate' comment-style attribute application.
 
-For Firefox, any non-HTML/XML character sequence will stimulate a "text/plain" interpretation of the file. So, YAML or title text first in the file will work. Notably, for Github's markdown, initial YAML will appear as a table of values at the top of the converted page. Additionally `&nbsp;<!--{style="display:none"}--><!DOCTYPE markdown>` will also work although it adds an initial line for parsers which don't implement 'markdown-it-decorate' comment-style attribute application.
+`<!DOCTYPE markdown>` is currently the best option for Chrome; for Firefox ... the kata is a work-in-progress, but the file *can* be re-read if the content-type is not "text/plain" (or "text/markdown"); possibly testing for "text/html" and re-reading in that case would be best. Firefox makes the most mistakes, but it's less used and can easily re-read the file (in no noticeable with an SSD), using `<!DOCTYPE markdown>` is likely the best option.
 
 #### Edge isn't usable
 
