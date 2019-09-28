@@ -702,6 +702,11 @@ function render_markdown( text ){
     let matter = grayMatter(text);
     let content = matter.content;
 
+    // add meta-data 'title' as initial H1 header (if present)
+    if (matter.data.title) {
+      content = "# " + matter.data.title + "\n\n" + content;
+    }
+
     return md.render(content);
     }
 
