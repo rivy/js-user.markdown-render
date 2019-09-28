@@ -763,9 +763,9 @@ function load_raw_text( uri, timeout ){ // ( {array}, {int} ) => {jQuery.Deferre
         } else {
           // * fails for chrome-like browsers: ajax throws here for the "file:///" protocol => "VM4117:7 XMLHttpRequest cannot load file:///C:/Users/Roy/OneDrive/Projects/%23kb/%23pandoc/README.md. Cross origin requests are only supported for protocol schemes: http, data, chrome, chrome-extension, https."
           // ... ref: http://stackoverflow.com/questions/4819060/allow-google-chrome-to-use-xmlhttprequest-to-load-a-url-from-a-local-file/18137280#18137280 @@ http://archive.is/W7a9M
-          // suppress XML parsing error for returned content using a MIME override
+          // suppress XML parsing error for returned content using a MIME override (and assume UTF-8 charset)
           // ... ref: https://stackoverflow.com/questions/16932930/ajax-response-errorxml-parsing-error-no-element-found-location-moz-nullprinci/46920606#46920606 @@ https://web.archive.org/web/20190821002437/https://stackoverflow.com/questions/16932930/ajax-response-errorxml-parsing-error-no-element-found-location-moz-nullprinci/46920606
-          retVal = $.ajax( uri, { cache: true, dataType: 'text', timeout: timeout, beforeSend: function( xhr ) { xhr.overrideMimeType( "text/plain; charset=x-user-defined" ); } } )
+          retVal = $.ajax( uri, { cache: true, dataType: 'text', timeout: timeout, beforeSend: function( xhr ) { xhr.overrideMimeType( "text/plain; charset=utf-8" ); } } )
               .done( function( data, statusText, jqXHR ) {
                 $('body').empty(); $('<pre/>', { style: 'word-wrap: break-word; white-space: pre-wrap;' }).text(data).appendTo('body');
                 console.log('load_raw_text():ajax', 'data', data);
