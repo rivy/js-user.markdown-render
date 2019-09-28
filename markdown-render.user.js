@@ -41,6 +41,8 @@ const script_repo_CDN_base_url = '//cdn.rawgit.com/' + script_repo_path + script
 
 const ClipboardJS = require('clipboard');
 
+const grayMatter = require('gray-matter');
+
 const markdownit = require('markdown-it');
 const markdownItAnchor = require('markdown-it-anchor').default;
 const markdownItAttrs = require('markdown-it-attrs');
@@ -49,7 +51,7 @@ const markdownItDecorate = require('markdown-it-decorate');
 const markdownitDeflist = require('markdown-it-deflist');
 const markdownitFootnote = require('markdown-it-footnote');
 const markdownItReplacements = require('markdown-it-replacements');
-const markdownItMeta = require('markdown-it-meta');
+// const markdownItMeta = require('markdown-it-meta');
 
 // CodeMirror mode scripts expect "CodeMirror" as an accessible global variable; use `script-loader` to load as a <script/>
 import 'script-loader!codemirror';
@@ -691,12 +693,16 @@ function render_markdown( text ){
     md.use(markdownitDeflist);
     md.use(markdownItDecorate);
     md.use(markdownitFootnote);
-    md.use(markdownItMeta);
+    // md.use(markdownItMeta);
     md.use(markdownItReplacements, {ellipsis: false});  // disable faulty ellipsis replacement (`...` => `â¦`)
 
     md.use(markdownItAnchor, { permalink: true, permalinkBefore: true, permalinkSymbol: '#', permalinkSpace: false }); // after 'attrs' (see <https://github.com/valeriangalliat/markdown-it-anchor/issues/49#issuecomment-431632231>)
 
-    return md.render(text);
+    // parse and remove any initial front matter
+    let matter = grayMatter(text);
+    let content = matter.content;
+
+    return md.render(content);
     }
 
 // ** load functions (async)

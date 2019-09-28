@@ -49,6 +49,7 @@
   "dependencies": {
     "clipboard": "^2.0.4",
     "codemirror": "^5.33.0",
+    "gray-matter": "^4.0.2",
     "markdown-it": "github:rivy/js.markdown-it#fix.webpack-fail",
     "markdown-it-anchor": "^5.2.4",
     "markdown-it-attrs": "^3.0.1",
@@ -56,7 +57,6 @@
     "markdown-it-decorate": "^1.2.2",
     "markdown-it-deflist": "^2.0.3",
     "markdown-it-footnote": "^3.0.1",
-    "markdown-it-meta": "0.0.1",
     "markdown-it-replacements": "^1.0.1",
     "mathjax3": "^3.0.0-beta.3"
   },
