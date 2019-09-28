@@ -709,7 +709,7 @@ function load_raw_text( uri, timeout ){ // ( {array}, {int} ) => {jQuery.Deferre
     // ToDO: change to GM_xmlhttpRequest
     // const isFirefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
     let retVal = $.Deferred();
-    if (window.document.contentType === 'text/html') {
+    // if (window.document.contentType === 'text/html') {
         uri = uri || document.location.href;
         timeout = (timeout !== null) && (timeout >= 0) ? timeout : 2 * 1000/* ms */;
         if (isChrome()) {
@@ -761,7 +761,7 @@ function load_raw_text( uri, timeout ){ // ( {array}, {int} ) => {jQuery.Deferre
                 })
               ;
         }
-    } else { retVal.resolve(); }
+    // } else { retVal.resolve(); }
     return retVal;
 }
 
