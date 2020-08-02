@@ -174,7 +174,11 @@ blockquote.--error:before { content: "\F06a"; margin-left: -3em; text-align: cen
 
 blockquote.--info { background: #BFE9FF; border-left: 2em solid royalblue; margin-left: 0em; }
 blockquote.--info:before { content: "\F05a"; margin-left: -3em; text-align: center; }
+blockquote.--information { background: #BFE9FF; border-left: 2em solid royalblue; margin-left: 0em; }
+blockquote.--information:before { content: "\F05a"; margin-left: -3em; text-align: center; }
 
+blockquote.--warn { background: #FFF2BF; border-left: 2em solid darkorange; margin-left: 0em; }
+blockquote.--warn:before { content: "\F071"; margin-left: -3em; text-align: center; }
 blockquote.--warning { background: #FFF2BF; border-left: 2em solid darkorange; margin-left: 0em; }
 blockquote.--warning:before { content: "\F071"; margin-left: -3em; text-align: center; }
 
