@@ -30,7 +30,10 @@ module.exports = {
       include: /[.]min([.]user)?[.]js$/i,
       sourceMap: true,
       terserOptions: {
-        output: { ascii_only: true } // ref: <https://stackoverflow.com/a/57362733/43774>
+        output: {
+          ascii_only: true,
+          comments: /@license/i
+        } // ref: <https://stackoverflow.com/a/57362733/43774>
       }
     })]
   },
@@ -53,8 +56,8 @@ module.exports = {
   plugins: [
     new webpack.BannerPlugin({
       banner:
-        // `${PKG.name} (as ${PKG.browserModuleName}) ${PKG.version} ([hash]) ${PKG.homepage} @license ${PKG.license}`
-        `${PKG.name} (as ${PKG.browserModuleName}) ${PKG.version} ${PKG.homepage} @license ${PKG.license}`
+        // `${PKG.name} (as ${PKG.browserModuleName}; ==UserScript==) ${PKG.version} [(hash)] ${PKG.homepage} @license ${PKG.license}`
+        `${PKG.name} (as ${PKG.browserModuleName}; ==UserScript==) ${PKG.version} ${PKG.homepage} @license ${PKG.license}`
     })
   ]
 };
