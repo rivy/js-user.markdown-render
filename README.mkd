@@ -40,7 +40,7 @@ tags: markdown, browser, render, UserJS, greasemonkey, tampermonkey
 >
 > This allows `markdown-render` to re-read any local file which may have been misread (and mangled) as HTML/XML instead of 'text/plain'.
 > Notably, this allows *any* user script to access *any local file*, so use with care.
-<!--{blockquote:.--warning}-->
+<!--{blockquote:.--info}-->
 
 ## Known Limitations
 
