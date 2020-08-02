@@ -14,6 +14,40 @@ tags: markdown, browser, render, UserJS, greasemonkey, tampermonkey
 
 `markdown-render` is a user javascript, running in-browser, which automatically renders raw local markdown files (eg, "file://PATH/TO/file.mkd") into HTML.
 
+<style>
+kbd
+{
+  /* modified from https://auth0.github.io/kbd/ */
+  font-family: Consolas, "Lucida Console", monospace;
+  display: inline-block;
+  border-radius: 3px;
+  padding: 0px 4px;
+  box-shadow: 1px 1px 1px #777;
+  margin: 2px;
+  font-size: 0.9em;
+  line-height: 1.1;
+  vertical-align: text-bottom;
+  background: #eee;
+  font-weight: 500;
+  color: #555;
+  cursor: pointer;
+  font-variant: small-caps;
+  font-weight: 600;
+
+  /* This two work */
+  /* letter-spacing: 0.5px; */
+  letter-spacing: 1px;
+
+  /* Prevent selection */
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+</style>
+
 ## Setup
 
 1. Setup the browser userscript manager
@@ -23,20 +57,24 @@ tags: markdown, browser, render, UserJS, greasemonkey, tampermonkey
 
 2. Enable TamperMonkey scripting of file URLs
     - Chrome
-      1. open "chrome://extensions"
-      2. for the TamperMonkey extension, ENABLE the "Allow access to file URLs" option
+      1. open <kbd>chrome://extensions</kbd>
+      2. for the TamperMonkey extension, ENABLE the <kbd>Allow access to file URLs</kbd> option
       - for more detailed explanation, see the [TamperMonkey FAQ](http://tampermonkey.net/faq.php#Q204) or [video](http://fastly.tampermonkey.net/images/animated/allow_access_to_file_urls.gif)<sup><small>[`@`](https://archive.is/ZGnZc)</small></sup>
     - Firefox ... not needed
 
 3. Install the `markdown-render` userscript
     1. open <https://github.com/rivy/js-user.markdown-render/raw/master/dist/markdown-render.user.js>
-    2. CLICK "Install" in the TamperMonkey installation dialog
+    2. CLICK <kbd>Install</kbd> in the TamperMonkey installation dialog
 
 > *Optional* &ac; For best results when reading files with leading HTML/XML-like elements, enable access to all local files for TamperMonkey scripts.
 >
-> 1. Open the TamperMonkey Dashboard by clicking on "Dashboard" in the TamperMonkey drop-down list from the browser toolbar
-> 2. Select the "Settings" tab
-> 3. In the "Security" section, for "Allow scripts to access local files:", select "All local files", and click the "Save" button
+> <div style="background:rgba(0, 0, 0, 0.1); font-size:0.8em; line-height:1.4;">
+>
+> 1. Open the TamperMonkey Dashboard by clicking on <kbd>Dashboard</kbd> in the TamperMonkey drop-down list from the browser toolbar
+> 2. Select the <kbd>Settings</kbd> tab
+> 3. In the <kbd>Security</kbd> section, for <kbd>Allow scripts to access local files:</kbd>, select <kbd>All local files</kbd>, and click the <kbd>Save</kbd> button
+>
+> </div>
 >
 > This allows `markdown-render` to re-read any local file which may have been misread (and mangled) as HTML/XML instead of 'text/plain'.
 > Notably, this allows *any* user script to access *any local file*, so use with care.
