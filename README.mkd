@@ -51,22 +51,22 @@ kbd
 ## Setup
 
 1. Setup the browser userscript manager
-    - install the TamperMonkey extension from [TamperMonkey](http://tampermonkey.net/index.php)
-      - for Chrome, it may, alternatively, be installed via the [Chrome web store](https://chrome.google.com/webstore/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo)
-      - for Firefox, it may, alternatively, be installed via [Firefox Add-ons](https://addons.mozilla.org/en-US/firefox/addon/tampermonkey)
+   - install the TamperMonkey extension from [TamperMonkey](http://tampermonkey.net/index.php)
+     - for Chrome, it may, alternatively, be installed via the [Chrome web store](https://chrome.google.com/webstore/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo)
+     - for Firefox, it may, alternatively, be installed via [Firefox Add-ons](https://addons.mozilla.org/en-US/firefox/addon/tampermonkey)
 
 2. Enable TamperMonkey scripting of file URLs
-    - Chrome
-      1. open <kbd>chrome://extensions</kbd>
-      2. for the TamperMonkey extension, ENABLE the <kbd>Allow access to file URLs</kbd> option
-      - for more detailed explanation, see the [TamperMonkey FAQ](http://tampermonkey.net/faq.php#Q204) or [video](http://fastly.tampermonkey.net/images/animated/allow_access_to_file_urls.gif)<sup><small>[`@`](https://archive.is/ZGnZc)</small></sup>
-    - Firefox ... not needed
+   - Chrome
+     1. open <kbd>chrome://extensions</kbd>
+     2. for the TamperMonkey extension, ENABLE the <kbd>Allow access to file URLs</kbd> option
+     - for more detailed explanation, see the [TamperMonkey FAQ](http://tampermonkey.net/faq.php#Q204) or [video](http://fastly.tampermonkey.net/images/animated/allow_access_to_file_urls.gif)<sup><small> [`@`](https://archive.is/ZGnZc)</small></sup>
+   - Firefox ... not needed
 
 3. Install the `markdown-render` userscript
-    1. open <https://github.com/rivy/js-user.markdown-render/raw/master/dist/markdown-render.user.js>
-    2. CLICK <kbd>Install</kbd> in the TamperMonkey installation dialog
+   1. open <https://github.com/rivy/js-user.markdown-render/raw/master/dist/markdown-render.user.js>
+   2. CLICK <kbd>Install</kbd> in the TamperMonkey installation dialog
 
-> *Optional* &ac; For best results when reading files with leading HTML/XML-like elements, enable access to all local files for TamperMonkey scripts.
+> _Optional_ &ac; For best results when reading files with leading HTML/XML-like elements, enable access to all local files for TamperMonkey scripts.
 >
 > <div style="background:rgba(0, 0, 0, 0.1); font-size:0.8em; line-height:1.4;">
 >
@@ -76,17 +76,17 @@ kbd
 >
 > </div>
 >
-> This allows `markdown-render` to re-read any local file which may have been misread (and mangled) as HTML/XML instead of 'text/plain'.
-> Notably, this allows *any* user script to access *any local file*, so use with care.
+> This allows `markdown-render` to re-read any local file which may have been misread (and mangled) as HTML/XML instead of 'text/plain'. Notably, this allows _any_ user script to access _any local file_, so use with care.
+
 <!--{blockquote:.--info}-->
 
 ## Known Limitations
 
 #### Incorrect interpretation of files with initial HTML tags
 
-* TLDR; when possible, avoid initial HTML/XML-like elements within the markdown file.
+- TLDR; when possible, avoid initial HTML/XML-like elements within the markdown file.
 
-While most markdown files are correctly interpreted, those with leading HTML/XML-like elements are problematic. Both Chrome and Firefox will interpret and parse a file as HTML if it contains any initial HTML content, even if the file extension is not ".htm",  ".html", or ".xml". This interpretation and parsing of the file happens during loading and results in an irretrievable garbling of file contents and a subsequent inability to correctly render the file.
+While most markdown files are correctly interpreted, those with leading HTML/XML-like elements are problematic. Both Chrome and Firefox will interpret and parse a file as HTML if it contains any initial HTML content, even if the file extension is not ".htm", ".html", or ".xml". This interpretation and parsing of the file happens during loading and results in an irretrievable garbling of file contents and a subsequent inability to correctly render the file.
 
 Both Chrome and Firefox, through various techniques and some extra, manually enabled, user permissions, can be coerced into re-reading the file as text. But the techniques are workarounds and can't expected to work for all future browser versions.
 
@@ -96,10 +96,20 @@ As of 2019-08, Firefox now interprets leading XML elements (eg, `<!DOCTYPE ...>`
 
 For Firefox, any non-HTML/XML character sequence will stimulate a "text/plain" interpretation of the file. So, YAML or title text first in the file will work. Notably, for Github's markdown, initial YAML will appear as a table of values at the top of the converted page. Additionally `&nbsp;<!--{style="display:none"}--><!DOCTYPE markdown>` or `📖<!--{style="display:none"}--><!DOCTYPE markdown>` will also work although either add an initial blank line, or line with a character, for parsers which don't implement 'markdown-it-decorate' comment-style attribute application.
 
-`<!DOCTYPE markdown>` is currently the best option for Chrome; for Firefox ... the kata is a work-in-progress, but the file *can* be re-read if the content-type is not "text/plain" (or "text/markdown"); possibly testing for "text/html" and re-reading in that case would be best. Firefox makes the most mistakes, but it's less used and can easily re-read the file (in no noticeable with an SSD), using `<!DOCTYPE markdown>` is likely the best option.
+`<!DOCTYPE markdown>` is currently the best option for Chrome; for Firefox ... the kata is a work-in-progress, but the file _can_ be re-read if the content-type is not "text/plain" (or "text/markdown"); possibly testing for "text/html" and re-reading in that case would be best. Firefox makes the most mistakes, but it's less used and can easily re-read the file (in no noticeable with an SSD), using `<!DOCTYPE markdown>` is likely the best option.
 
 #### Edge isn't usable
 
-* TLDR; use Chrome or Firefox as default handlers for files with markdown file extensions.
+- TLDR; use Chrome or Firefox as default handlers for files with markdown file extensions.
 
-MS Edge won't open and render local files, except for files with specific extensions (eg, ".html"). And there is no current method to enable reading and rendering of new file types / extensions (eg, all the markdown extensions). So, while the script *may* actually work, it's impossible to test or use at this moment. If a markdown file is opened, it will be pushed to whichever application is setup as the default handler. Luckily, either of the more capable Chrome or Firefox browsers *can* be set as the default handler for files with the various markdown extensions, which ultimately solves the problem.
+MS Edge won't open and render local files, except for files with specific extensions (eg, ".html"). And there is no current method to enable reading and rendering of new file types / extensions (eg, all the markdown extensions). So, while the script _may_ actually work, it's impossible to test or use at this moment. If a markdown file is opened, it will be pushed to whichever application is setup as the default handler. Luckily, either of the more capable Chrome or Firefox browsers _can_ be set as the default handler for files with the various markdown extensions, which ultimately solves the problem.
+
+## Build
+
+- use NodeJS v16 or earlier; NodeJS v17+ causes build errors and won't package the script
+- recipe:
+
+```shell
+npm install ## or `npm clean-install` (to use "package-lock.json" deps)
+npm run build
+```
