@@ -54,7 +54,7 @@
     "markdown-it-anchor": "^5.2.4",
     "markdown-it-attrs": "^3.0.1",
     "markdown-it-bracketed-spans": "^1.0.1",
-    "markdown-it-decorate": "^1.2.2",
+    "markdown-it-decorate": "github:rivy-t/js.markdown-it-decorate#x",
     "markdown-it-deflist": "^2.0.3",
     "markdown-it-footnote": "^3.0.1",
     "markdown-it-replacements": "^1.0.1",
