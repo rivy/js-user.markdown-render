@@ -21,6 +21,7 @@ module.exports = {
   output: {
     path: path.resolve(__dirname, 'dist'),
     filename: '[name].js',
+    hashFunction: 'sha256', // ref: https://stackoverflow.com/a/73027407/43774 @@ <https://archive.is/8KniB>
     library: PKG.browserModuleName,
     libraryTarget: 'umd',
   },
