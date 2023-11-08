@@ -1,4 +1,4 @@
-/*! markdown-render (as markdownRender; ==UserScript==) 0.0.230 https://github.com/rivy/js-user.markdown-render#readme @license MIT */
+/*! markdown-render (as markdownRender; ==UserScript==) 0.0.231 https://github.com/rivy/js-user.markdown-render#readme @license MIT */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
 		module.exports = factory();
@@ -24721,7 +24721,7 @@ __webpack_require__.r(__webpack_exports__);
 // @author      rivy
 // @description renders markdown files
 //
-// @version     0.0.230
+// @version     0.0.231
 // @//updateURL   https://github.com/rivy/js-user.markdown-render/raw/master/markdown-render.user.js
 //
 // file extension: .m(arkdown|kdn?|d(o?wn)?)
@@ -24733,7 +24733,7 @@ __webpack_require__.r(__webpack_exports__);
 // @include     file://*.md
 //
 // @require     https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js
-// @require     https://raw.github.com/sizzlemctwizzle/GM_config/master/gm_config.js
+// @require     https://raw.githubusercontent.com/sizzlemctwizzle/GM_config/2207c5c1322ebb56e401f03c2e581719f909762a/gm_config.js
 //
 // @//grant       none
 // @grant       GM_getValue
@@ -48106,6 +48106,7 @@ module.exports = function bracketed_spans_plugin(md) {
 /* eslint-disable no-cond-assign */
 
 var tagExpr = /^<!-- ?\{(?:([a-z0-9]+)(\^[0-9]*)?: ?)?(.*)\} ?-->\n?$/;
+var tagExprRehype = /^<!--rehype:(?:([a-z0-9]+)(\^[0-9]*)?: ?)?(.*)-->\n?$/;
 
 module.exports = function attributes(md) {
   md.core.ruler.push('curly_attributes', curlyAttrs);
@@ -48156,7 +48157,7 @@ function curlyAttrs(state) {
 
 
     if (token.type === 'html_block') {
-      m = token.content.match(tagExpr);
+      m = token.content.match(tagExpr) || token.content.match(tagExprRehype);
       if (!m) return;
       parent = findParent(stack, m[1], m[2]);
 
@@ -48199,7 +48200,7 @@ function curlyInline(children, stack) {
     } // Decorate tags are found
 
 
-    if (m = child.content.match(tagExpr)) {
+    if (m = child.content.match(tagExpr) || child.content.match(tagExprRehype)) {
       var tag = m[1];
       var depth = m[2];
       var attrs = m[3]; // Remove the comment, then remove the extra space
