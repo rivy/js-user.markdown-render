@@ -1,7 +1,7 @@
 {
   "name": "markdown-render",
   "browserModuleName": "markdownRender",
-  "version": "0.0.230",
+  "version": "0.0.231",
   "description": "js-user script to render markdown in-browser",
   "main": "markdown-render.user.js",
   "scripts": {

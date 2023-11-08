@@ -4,7 +4,7 @@
 // @author      rivy
 // @description renders markdown files
 //
-// @version     0.0.230
+// @version     0.0.231
 // @//updateURL   https://github.com/rivy/js-user.markdown-render/raw/master/markdown-render.user.js
 //
 // file extension: .m(arkdown|kdn?|d(o?wn)?)
