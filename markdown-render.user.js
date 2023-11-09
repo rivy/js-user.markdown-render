@@ -16,7 +16,7 @@
 // @include     file://*.md
 //
 // @require     https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js
-// @require     https://raw.github.com/sizzlemctwizzle/GM_config/master/gm_config.js
+// @require     https://raw.githubusercontent.com/sizzlemctwizzle/GM_config/2207c5c1322ebb56e401f03c2e581719f909762a/gm_config.js
 //
 // @//grant       none
 // @grant       GM_getValue
