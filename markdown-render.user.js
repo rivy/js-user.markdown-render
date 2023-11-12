@@ -152,6 +152,7 @@ function load_css( uri, timeout ) { // ( {array}, {int} ) => {$.Deffered}
  * @returns {$.Deferred}
  * ref: (based on) https://stackoverflow.com/questions/9711160/jquery-load-scripts-in-order/19777866#19777866 @@ https://archive.is/yt1su
  * ref: (based on) https://gist.github.com/rivy/5f1bd5225d4ee315a8d7f3c89986600f from https://gist.github.com/ngryman/7309432
+ * ref: [jqXHR ~ .done/.fail/.always/.then argument documentation] http://api.jquery.com/jQuery.ajax/#jqXHR
  */
 // CSS has order dependence (for rules with equivalent specificity); this function places the CSS in the specified order, creating determinate content for the document
     timeout = ((timeout !== null) && (timeout >= 0)) ?  timeout : 2 * 1000/* ms */;
