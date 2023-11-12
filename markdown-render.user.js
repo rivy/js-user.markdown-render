@@ -110,6 +110,40 @@ retVal = $.ajax( uri, { cache: true, dataType: 'text', timeout: timeout } )
 return retVal;
 }
 
+function load_asset( uri, timeout, optional ) { // ( {array} [, {int}timeout=0] [, {bool}optional=false] ) => {$.Deferred}
+/**
+ * load assets in parallel, insert/initialize results *in order* within the document
+ * @param {array} : an array of script uris, loaded asynchronously, but placed into the file in the given order
+ * @param {int}   : a timeout for download failure (default == 0 (aka, no timeout))
+ * @returns {$.Deferred}
+ * ref: (based on) https://stackoverflow.com/questions/9711160/jquery-load-scripts-in-order/19777866#19777866 @@ https://archive.is/yt1su
+ * ref: (based on) https://gist.github.com/rivy/5f1bd5225d4ee315a8d7f3c89986600f from https://gist.github.com/ngryman/7309432
+ * ref: [jqXHR ~ .done/.fail/.always/.then argument documentation] http://api.jquery.com/jQuery.ajax/#jqXHR
+ */
+// CSS has order dependence (for rules with equivalent specificity); this function places the CSS in the specified order, creating determinate content for the document
+    timeout = ((timeout !== null) && (timeout >= 0)) ?  timeout : 2 * 1000/* ms */;
+    let _ME = 'get_css()';
+    let style_uris = $.isArray( uri ) ? uri : [ uri ];
+    let requests = style_uris.map( function( style_uri ) {
+        console.log( `${_ME}: initiating AJAX download ("${style_uri}")` );
+        let jqXHR = $.ajax( style_uri, { cache: true, dataType: 'text', timeout: timeout } );
+        jqXHR.uri = style_uri;
+        return jqXHR;
+        });
+
+    return $.when.apply($, requests)
+        .done( function() {
+            Array.prototype.forEach.call( arguments, function( request /* :: [data, textStatus, jqXHR] */, index ) {
+                console.log( `${_ME}: done::${JSON.stringify(request)}:: (${request[2].status}) '${request[2].statusText}' for "${request[2].uri}"` );
+                let css = request[0];
+                $('<style type="text/css" />').html(css).attr('_uri', request[2].uri).attr('_index', index).appendTo('head');
+                });})
+        //.fail( function() { Array.prototype.forEach.call( arguments, function( request /* :: [jqXHR, textStatus, errorThrown] */, index ) { console.log( `${_ME}: FAIL::${JSON.stringify(request)}::` ); throw new Error(`${_ME}: FAIL`); }); })
+        .fail( function() { Array.prototype.forEach.call( arguments, function( request /* :: [jqXHR, textStatus, errorThrown] */, index ) { warn(`loading failed for '${request.uri}'`); console.log( `${_ME}: FAIL::${JSON.stringify(request)}::` ); throw new Error(`${_ME}: FAIL`); }); })
+        //.always( function() { Array.prototype.forEach.call( arguments, function( request /* :: [data | jqXHR, textStatus, jqXHR | errorThrown] */, index ) { console.log( `${_ME}: ALWAYS: '${request[1]}'` ); }); })
+        ;
+}
+
 function load_css( uri, timeout ) { // ( {array}, {int} ) => {$.Deffered}
 /**
  * load CSS in parallel keeping order for document placement
