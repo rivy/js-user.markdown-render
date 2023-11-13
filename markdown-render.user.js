@@ -35,9 +35,9 @@
 "use strict";
 
 const script_name = 'markdown-render';
-const script_repo_path = 'rivy/js-user.' + script_name + '/';
-const script_repo_CDN_commit = '9523559092f780d86c81246ce5b48afe2e6f8914'; // "0.0.231"
-const script_repo_CDN_base_url = '//cdn.rawgit.com/' + script_repo_path + script_repo_CDN_commit + '/';
+// const script_repo_path = 'rivy/js-user.' + script_name + '/';
+// const script_repo_CDN_commit = '9523559092f780d86c81246ce5b48afe2e6f8914'; // "0.0.231"
+// const script_repo_CDN_base_url = '//cdn.rawgit.com/' + script_repo_path + script_repo_CDN_commit + '/';
 
 const ClipboardJS = require('clipboard');
 
@@ -149,7 +149,7 @@ function initialize() {
 // note: see CDN ref @ https://cdnjs.com
 var CDN_base_url = '//cdnjs.cloudflare.com/ajax/libs/';
 var CDN_CM_base_url = CDN_base_url + 'codemirror/5.33.0/';
-var CDN_CSS_base_url = script_repo_CDN_base_url + 'css/';
+// var CDN_CSS_base_url = script_repo_CDN_base_url + 'css/';
 var assets_js = [
   // clipboard support
   // ... ref: [Name conflict with Chrome v61+](https://github.com/zenorocha/clipboard.js/issues/468)
