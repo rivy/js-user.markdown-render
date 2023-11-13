@@ -36,7 +36,7 @@
 
 const script_name = 'markdown-render';
 const script_repo_path = 'rivy/js-user.' + script_name + '/';
-const script_repo_CDN_commit = '520d0330bbc2202b0ca2b790e9a5a4d8a0c27c2b';
+const script_repo_CDN_commit = '9523559092f780d86c81246ce5b48afe2e6f8914'; // "0.0.231"
 const script_repo_CDN_base_url = '//cdn.rawgit.com/' + script_repo_path + script_repo_CDN_commit + '/';
 
 const ClipboardJS = require('clipboard');
